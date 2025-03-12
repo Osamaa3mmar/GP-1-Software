@@ -52,5 +52,9 @@ export const userModel =sequelize.define("User",{
     verifyEmail:{
         type:DataTypes.BOOLEAN,
         defaultValue:false,
+    },
+    sentVerifyEmail:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false,
     }
 })

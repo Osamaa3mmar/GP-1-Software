@@ -1,12 +1,25 @@
 import {Router} from "express";
-import { choseAccountType, signUp } from "./auth.controller.js";
+import { choseAccountType, login, sendConfirmationEmail, signUp, verifyEmail } from "./auth.controller.js";
 import { fileUpload } from "../../utils/fileUpload.js";
 import { validation } from "../../middleware/validation.js";
-import { signUpSchema, userTypeSchema } from "./auth.validate.js";
+import { loginSchema, signUpSchema, userTypeSchema } from "./auth.validate.js";
 const router=Router();
 
-router.post('/signup',fileUpload().single("profile"),validation(signUpSchema),signUp);
 
+// create  account 
+router.post('/signup',fileUpload().single("profile"),validation(signUpSchema),signUp);
+// decide account type
 router.put('/accounttype',validation(userTypeSchema),choseAccountType);
+
+
+// send confirmation email
+router.put('/email/send/confirm',sendConfirmationEmail)
+
+//confirm email
+router.put("/email/send/verify",verifyEmail);
+
+
+//login 
+router.post('/login',validation(loginSchema),login);
 
 export default router;
