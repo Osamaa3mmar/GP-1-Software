@@ -1,11 +1,13 @@
 import {createBrowserRouter, Link, RouterProvider} from 'react-router-dom';
+import AuthLayout from './layouts/auth/authLayout';
+import SignUp from './pages/signup/SignUp';
 export default function App() {
   const router=createBrowserRouter([
     {path:'/',
       element:<div>Landing Page <Link to={'/auth/login'}>Login</Link> </div>
     },
     {path:"auth",
-      element:<div>Auth Layout </div>,
+      element:<AuthLayout/>,
       children:[
         {
           index:true,
@@ -14,7 +16,7 @@ export default function App() {
         {path:"login",
           element:<div>Login</div>,
         }, {path:"signup",
-          element:<div>signup</div>,
+          element:<SignUp/>,
         }
 
       ]
