@@ -8,3 +8,9 @@ export const signUpSchema=Joi.object({
     email:Joi.string().required(),
     profile:Joi.string(),
 })
+
+
+export const userTypeSchema=Joi.object({
+    answer:Joi.string().valid('user', 'owner', 'tech').required(),
+    id:Joi.number().required(),
+})
