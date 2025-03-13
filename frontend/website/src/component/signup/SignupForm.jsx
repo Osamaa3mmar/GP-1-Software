@@ -1,81 +1,143 @@
 import {
-    Avatar,
-  Button,
-  TextField,
+  Box,
+  createTheme,
+  CssBaseline,
+  Step,
+  StepLabel,
+  Stepper,
+  ThemeProvider,
   Typography,
-} from "@mui/material";
-import Box from "@mui/material/Box";
-import { useForm } from "react-hook-form";
-import style from './form.module.css'
-import { CloudUpload, Person } from "@mui/icons-material";
-export default function SignupForm({pos}) {
-  const { register, handleSubmit } = useForm();
-  const signup = (data) => {
-    console.log(data);
-    pos(2);
-  };
   
+} from "@mui/material";
+import Form1 from './From1.jsx'
+import { useState } from "react";
+import Form2 from'./Form2/From2.jsx';
+import EmailForm from "./EmailForm/EmailForm.jsx";
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#6366F1", // Indigo
+      light: "#818CF8",
+      dark: "#4F46E5",
+      contrastText: "#ffffff",
+    },
+    secondary: {
+      main: "#EC4899", // Pink
+      light: "#F472B6",
+      dark: "#DB2777",
+      contrastText: "#ffffff",
+    },
+    background: {
+      default: "#F9FAFB",
+      paper: "#ffffff",
+    },
+    text: {
+      primary: "#1F2937",
+      secondary: "#6B7280",
+    },
+    divider: "#E5E7EB",
+  },
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontWeight: 700,
+    },
+    h2: {
+      fontWeight: 700,
+    },
+    h3: {
+      fontWeight: 600,
+    },
+    h4: {
+      fontWeight: 600,
+    },
+    h5: {
+      fontWeight: 600,
+    },
+    h6: {
+      fontWeight: 600,
+    },
+    button: {
+      fontWeight: 500,
+      textTransform: "none",
+    },
+  },
+  shape: {
+    borderRadius: 12,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          padding: "10px 20px",
+          boxShadow: "none",
+          "&:hover": {
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)",
+          },
+        },
+        contained: {
+          "&:hover": {
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 8,
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#6366F1",
+            },
+          },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
+        },
+      },
+    },
+  },
+})
+const steps = ["Account Details", "Account Type", "Verification"];
+export default function SignupForm() {
+  const [step, setStep] = useState(0);
+  
+
   return (
-    <form onSubmit={handleSubmit(signup)} className={style.form}>
-         <Avatar sx={{ m: 1, bgcolor: "primary.main", width: 70, height: 70, mx: "auto" }}>
-              <Person fontSize="large"/>
-          </Avatar>
-          <Typography component="h1" variant="h5" sx={{ mb: 3, textAlign: "center" }}>
-            Sign Up
-          </Typography>
-        <Button variant="outlined" component="label" startIcon={<CloudUpload />} fullWidth>
-                Upload Profile Image
-                <input {...register('image')} type="file" hidden accept="image/*"/>
-              </Button>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          bgcolor: "white",
-        }}
-      >
-        <TextField
-          required
-          autoComplete="off"
-          {...register("username")}
-          id="Username"
-          label="Username"
-          variant="outlined"
-          fullWidth
-        />
-        <TextField
-          required
-          autoComplete="off"
-          {...register("email")}
-          id="Email"
-          label="Email"
-          variant="outlined"
-          fullWidth
-        />
-        <TextField
-          required
-          autoComplete="off"
-          {...register("password")}
-          id="Password"
-          label="Password"
-          variant="outlined"
-          fullWidth
-        />
-        <TextField
-          required
-          autoComplete="off"
-          {...register("passwordConfirmation")}
-          id="passwordConfirmation"
-          label="Password"
-          variant="outlined"
-          fullWidth
-        />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+    <div className="  bg-white shadow-2xl w-[600px] p-14 rounded-xl flex flex-col gap-3">
+      <Box sx={{ width: "100%" }}>
+        <Stepper activeStep={step} alternativeLabel>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: "10px",padding:"10px 0px 20px 0px" }}>
-  <Button variant="contained" fullWidth type="submit">
-    Next
-  </Button>
-</Box>
-    </form>
+      
+      {step == 0 ? 
+      <>
+        <Box sx={{ mt: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Create your account
+        </Typography>
+        <Typography color="text.secondary" variant="body2" sx={{ mb: 3 }}>
+          Fill in your details to get started with our platform
+        </Typography>
+      </Box>
+        <Form1 setStep={setStep}/>
+        </> 
+      
+        : step==1?<Form2 setStep={setStep}/>:<EmailForm setStep={setStep}/>}
+    </div>
+    </ThemeProvider>
   );
 }

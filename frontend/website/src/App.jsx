@@ -1,6 +1,9 @@
 import {createBrowserRouter, Link, RouterProvider} from 'react-router-dom';
 import AuthLayout from './layouts/auth/authLayout';
 import SignUp from './pages/signup/SignUp';
+import SignupContextProvider from './component/signup/SignupContext';
+import Verify from './pages/verify/Verify';
+import { Bounce, ToastContainer, Zoom } from 'react-toastify';
 export default function App() {
   const router=createBrowserRouter([
     {path:'/',
@@ -16,7 +19,13 @@ export default function App() {
         {path:"login",
           element:<div>Login</div>,
         }, {path:"signup",
-          element:<SignUp/>,
+          element:
+          <SignupContextProvider>
+          <SignUp/>
+          </SignupContextProvider>,
+        },{
+          path:"verify/:id",
+          element:<Verify/>
         }
 
       ]
@@ -24,6 +33,18 @@ export default function App() {
   ]);
   return (
     <div>
+      <ToastContainer
+position="top-center"
+autoClose={2500}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={true}
+rtl={false}
+pauseOnFocusLoss
+draggable
+theme="light"
+transition={Zoom}
+/>
       <RouterProvider router={router}/>
     </div>
   )

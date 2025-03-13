@@ -64,7 +64,7 @@ export const sendConfirmationEmail = async (req, res) => {
         if (user.verifyEmail) {
           return res.status(400).json({ message: "Email already verified." });
         }
-        sendEmail(user.email);
+        sendEmail(user.email,id);
         user.sentVerifyEmail = true;
         await user.save();
         return res.status(200).json({
