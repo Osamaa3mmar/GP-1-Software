@@ -5,7 +5,7 @@ import { SignupContext } from '../SignupContext'
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Swal from "sweetalert2";
 export default function EmailForm({setStep}) {
     const {email,id}=useContext(SignupContext);
     const{handleSubmit}=useForm();
@@ -15,9 +15,19 @@ export default function EmailForm({setStep}) {
         try{
             const {data}=await axios.put('http://localhost:4545/auth/email/send/confirm',{id});
             console.log(data);
-            navigate('/auth/login')
+            Swal.fire({
+              title: data.message,
+              icon: "info",
+              draggable: true
+            });
+            navigate('/auth/login');
         }catch(error){
             console.log(error);
+            Swal.fire({
+              title: error.response.data.message,
+              icon: "erro",
+              draggable: true
+            });
         }
     }
   return (

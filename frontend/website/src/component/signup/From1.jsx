@@ -4,6 +4,7 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { SignupContext } from "./SignupContext";
+import { toast } from "react-toastify";
 
 export default function From1({setStep}) {
     const { register, handleSubmit,formState:{errors} } = useForm({mode:"onBlur"});
@@ -29,6 +30,7 @@ export default function From1({setStep}) {
         }
         catch(e){
             console.log(e);
+            toast.error(e.response.data.message);
         }
         finally{
             setLoading(false);
@@ -123,7 +125,7 @@ export default function From1({setStep}) {
             label="Password"
             required
             type={password?"text":"password"}
-            {...register("password",{required:"*Password Required !"})}
+            {...register("password",{required:"*Password Required !",minLength:{value:8,message:"* Must be at least 8 characters"}})}
             error={!!errors.password}
             helperText={errors.password?.message}
           />

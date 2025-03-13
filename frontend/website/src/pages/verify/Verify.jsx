@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 export default function Verify() {
     const [error,setError]=useState(null);
@@ -14,10 +15,18 @@ export default function Verify() {
         try{
             const {data}=await axios.put('http://localhost:4545/auth/email/send/verify',{id});
             console.log(data);
-            toast.success(data.message);
-            navigate('/auth/login');
+            Swal.fire({
+              title: data.message,
+              icon: "success",
+              draggable: true
+            });            navigate('/auth/login');
         }catch(e){
             setError(e.response.data.message);
+             Swal.fire({
+                          title:e.response.data.message,
+                          icon: "error",
+                          draggable: true
+                        });
             console.log("dfd")
         }
         finally{

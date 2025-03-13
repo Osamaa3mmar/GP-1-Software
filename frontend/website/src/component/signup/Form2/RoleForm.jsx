@@ -5,6 +5,7 @@ import ChoiseCard from "./ChoiseCard";
 import { useForm } from "react-hook-form";
 import { SignupContext } from "../SignupContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function RoleForm({setStep}) {
     const{handleSubmit}=useForm();
@@ -20,6 +21,7 @@ export default function RoleForm({setStep}) {
                 id
             })
             console.log(data);
+            toast.info(data.message);
             setStep(2);
         }
         catch(error){
