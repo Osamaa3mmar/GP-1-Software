@@ -66,8 +66,8 @@ export default function From1({setStep}) {
               
             }}
           >
-            <Box sx={{ width: "80px", height: "80px" ,position: "relative"}}>
-              <Avatar sx={{ width: "80px", height: "80px",bgcolor:"#818cf8" }}>
+            <Box sx={{ width: "90px", height: "90px" ,position: "relative"}}>
+              <Avatar sx={{ width: "90px", height: "90px",bgcolor:"#818cf8" }}>
                {image?<img src={image} alt="dfd" />:<Person sx={{fontSize:40}}/>}
               </Avatar>
               <IconButton component="label" sx={{position:"absolute",bgcolor:"#6366F1",bottom:'-4px',right:"-4px","&:hover":{bgcolor:"#4f46e5"}}}>
