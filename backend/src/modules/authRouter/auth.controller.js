@@ -3,6 +3,7 @@ import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import bcrypt from "bcryptjs";
 import { sendEmail } from "../../utils/sendEmail.js";
 import jwt from "jsonwebtoken";
+import cloudinary from '../../utils/Claoudinary.js'
 export const signUp = async (req, res) => {
   try {
     const { username, email, password, profile } = req.body;
@@ -17,16 +18,23 @@ export const signUp = async (req, res) => {
         .json({ message: "username or email already exists ." });
     }
     const hash = bcrypt.hashSync(password, 8);
+    console.log("here")
+    let secure_url=null;
+    if(req.file){
+    secure_url=await cloudinary.uploader.upload(req.file.path);
+    }
+    
+    //console.log(secure_url);
     const user = await userModel.create({
       username,
       email,
       password: hash,
-      profilePic: profile ? profile : "default.png",
+      profilePic: secure_url? secure_url.secure_url: "default.png",
     });
     if (user)
       return res
         .status(201)
-        .json({ message: "User created successfully.", id: user.id });
+        .json({ message: "User created successfully.", id: user.id,user });
       return res.status(400).json({ message: "User not created" });
   } catch (error) {
     return res

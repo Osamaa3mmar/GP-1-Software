@@ -83,7 +83,7 @@ export default function Form() {
             slotProps={{
                 input:{
                     endAdornment:(
-                        <InputAdornment>
+                        <InputAdornment position="end">
                         <IconButton onClick={changeVisability}>{visable?<VisibilityOff/>:<Visibility/>}</IconButton>
                         </InputAdornment>
                     )

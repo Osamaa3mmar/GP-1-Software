@@ -8,6 +8,7 @@ import Login from './pages/Login/Login';
 import MainPage from './pages/MainPage/MainPage';
 import MainLayout from './layouts/MainLayout/MainLayout';
 import Profile from './pages/Profile/Profile';
+import CoursesPage from './pages/Courses/CoursesPage';
 export default function App() {
   const router=createBrowserRouter([
     {path:'/',
@@ -49,6 +50,9 @@ export default function App() {
         {
           path:"profile",
           element:<Profile/>,
+        },{
+          path:"courses",
+          element:<CoursesPage/>
         }
       ]
     }
