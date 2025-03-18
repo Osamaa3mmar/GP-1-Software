@@ -9,6 +9,8 @@ import MainPage from './pages/MainPage/MainPage';
 import MainLayout from './layouts/MainLayout/MainLayout';
 import Profile from './pages/Profile/Profile';
 import CoursesPage from './pages/Courses/CoursesPage';
+import LoginCheck from './component/protected_route/LoginCheck';
+import UserContextProvider from './Context/userContext';
 export default function App() {
   const router=createBrowserRouter([
     {path:'/',
@@ -37,7 +39,7 @@ export default function App() {
     },
     {
       path:"main",
-      element:<MainLayout/>,
+      element:<LoginCheck><UserContextProvider><MainLayout/></UserContextProvider></LoginCheck>,
       children:[
         {
           index:true,
@@ -60,7 +62,7 @@ export default function App() {
   return (
     <div>
       <ToastContainer
-position="top-center"
+position="bottom-right"
 autoClose={2500}
 hideProgressBar={false}
 newestOnTop={false}

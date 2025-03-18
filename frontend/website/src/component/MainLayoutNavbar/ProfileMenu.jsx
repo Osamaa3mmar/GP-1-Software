@@ -1,9 +1,10 @@
-import { Logout, PersonAdd, Settings } from "@mui/icons-material";
-import { Avatar, Divider, IconButton, ListItemIcon, Menu, MenuItem } from "@mui/material";
+import { Logout, Settings } from "@mui/icons-material";
+import { Avatar, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { UserContext } from "../../Context/userContext";
 
 export default function ProfileMenu() {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -23,18 +24,20 @@ export default function ProfileMenu() {
         navigate('/auth');
     }
 
-
+    const {user}=useContext(UserContext);
 
   return (<>
+  <Tooltip title="Profile">
     <IconButton 
     onClick={handleClick}
     aria-controls={open ? 'account-menu' : undefined}
     aria-haspopup="true"
-    aria-expanded={open ? 'true' : undefined}>
-    <Avatar sx={{ bgcolor: deepOrange[500] }}>N</Avatar>
+    aria-expanded={open ? 'true' : undefined}
+    loading={user?false:true}>
+    <Avatar   src={user?user.profilePic:''}></Avatar>
     
     </IconButton>
-
+    </Tooltip>
 
 
 
@@ -78,7 +81,8 @@ export default function ProfileMenu() {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem component={Link} to={"profile"} onClick={handleClose}>
-          <Avatar /> Profile
+        
+          <Avatar src={user?user.profilePic:''}/> {user?user.username:'Profile'}
         </MenuItem>
         <Divider />
        
