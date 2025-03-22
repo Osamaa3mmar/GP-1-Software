@@ -4,12 +4,11 @@ import { userModel } from "../../../DB/models/UserModel/user.model.js";
 
 
 export const getMyProfile=async (req,res)=>{
-    console.log("Here")
     console.log(req.body.user);
     try{
         const {user}=req.body;
         const fullUser=await userModel.findByPk(user.id,{
-            attributes: ['username','profilePic','role','id']
+            attributes: ['username','profilePic','role','id','email']
         });
         if(fullUser){
             return res.status(200).json({message:"Success",user:fullUser});

@@ -4,9 +4,10 @@ import bcrypt from "bcryptjs";
 import { sendEmail } from "../../utils/sendEmail.js";
 import jwt from "jsonwebtoken";
 import cloudinary from '../../utils/Claoudinary.js'
+import { organizationModel } from "../../../DB/models/organaization/organaization.js";
 export const signUp = async (req, res) => {
   try {
-    const { username, email, password, profile } = req.body;
+    const { username, email, password } = req.body;
     const exist = await userModel.findOne({
       where: {
         [Op.or]: [{ username }, { email }],
@@ -18,23 +19,21 @@ export const signUp = async (req, res) => {
         .json({ message: "username or email already exists ." });
     }
     const hash = bcrypt.hashSync(password, 8);
-    console.log("here")
     let secure_url=null;
     if(req.file){
     secure_url=await cloudinary.uploader.upload(req.file.path);
     }
-    
-    //console.log(secure_url);
-    const user = await userModel.create({
+        const user = await userModel.create({
       username,
       email,
       password: hash,
       profilePic: secure_url? secure_url.secure_url: "default.png",
     });
-    if (user)
+    if (user){
       return res
         .status(201)
         .json({ message: "User created successfully.", id: user.id,user });
+    }
       return res.status(400).json({ message: "User not created" });
   } catch (error) {
     return res
@@ -94,10 +93,23 @@ export const verifyEmail = async (req, res) => {
 
     if (id) {
       const user = await userModel.findOne({ where: { id } });
+      
       if (user) {
         if (user.sentVerifyEmail) {
           user.sentVerifyEmail = false;
           user.verifyEmail = true;
+        if(user.role==='owner'){
+          
+            const org=await organizationModel.create({
+              name:user.username+"_org",
+              ownerId:user.id
+            })
+            user.orgId=org.id;
+            if(!org){
+              return res.status(500).json({message:"failed to create organization"});
+            }
+        }
+       
           await user.save();
           return res
             .status(200)

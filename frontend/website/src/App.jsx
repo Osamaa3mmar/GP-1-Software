@@ -11,6 +11,14 @@ import Profile from './pages/Profile/Profile';
 import CoursesPage from './pages/Courses/CoursesPage';
 import LoginCheck from './component/protected_route/LoginCheck';
 import UserContextProvider from './Context/userContext';
+import DashboardLayout from './layouts/DashboardLayout/DashboardLayout';
+import HomeAdmin from './pages/AdminPages/HomeAdmin';
+import EnrollmentsAdmin from './pages/AdminPages/EnrollmentsAdmin';
+import CoursesAdmin from './pages/AdminPages/CoursesAdmin';
+import InstructorsAdmin from './pages/AdminPages/InstructorsAdmin';
+import StudentsAdmin from './pages/AdminPages/StudentsAdmin';
+import TransactionsAdmin from './pages/AdminPages/TransactionsAdmin';
+import ReportsAdmin from './pages/AdminPages/ReportsAdmin';
 export default function App() {
   const router=createBrowserRouter([
     {path:'/',
@@ -56,6 +64,35 @@ export default function App() {
           path:"courses",
           element:<CoursesPage/>
         }
+      ]
+    },{
+      path:'dashboard',
+      element:<UserContextProvider><DashboardLayout/></UserContextProvider>,
+      children:[
+        {
+          index:true,
+          element:<HomeAdmin/>,
+        },
+        {path:"home",
+          element:<HomeAdmin/>
+        },
+        {path:"enrollments",
+          element:<EnrollmentsAdmin/>
+        },
+        {path:"courses",
+          element:<CoursesAdmin/>
+        },
+        {path:"instructors",
+          element:<InstructorsAdmin/>
+        },
+        {path:"students",
+          element:<StudentsAdmin/>
+        },
+        {path:"transactions",
+          element:<TransactionsAdmin/>
+        },{path:"reports",
+          element:<ReportsAdmin/>
+        },
       ]
     }
   ]);

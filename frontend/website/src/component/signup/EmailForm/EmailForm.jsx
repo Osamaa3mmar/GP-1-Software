@@ -72,7 +72,7 @@ export default function EmailForm({setStep}) {
    </Card>
 
    <Box sx={{ display: "flex", gap: 2 }}>
-     <Button variant="outlined" sx={{ flex: 1 }} onClick={()=>setStep(1)} startIcon={<ArrowBack />}>
+     <Button disabled variant="outlined" sx={{ flex: 1 }} onClick={()=>setStep(1)} startIcon={<ArrowBack />}>
        Back
      </Button>
      <Button variant="contained" sx={{ flex: 1 }} type='submit' startIcon={<Email />}>
