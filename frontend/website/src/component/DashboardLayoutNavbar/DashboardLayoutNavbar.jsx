@@ -107,28 +107,27 @@ const theme = createTheme({
           </Box>
         </ListItemButton>
         <Divider />
-        {nav.map((item,index) => {
-          return (
-            <>
-              <Tooltip placement="right"  title={item.label} key={index}>
-                <ListItem
-                  sx={{ padding: 1,
-                    color:item.path==target?'primary.main':'',
-                    fontWeight: target === item.path? 600 : 400,
-                   }}
-                  component={Link}
-                  to={item.path}
-                  
-                >
-                  <ListItemButton >
-                    <ListItemIcon sx={{color:item.path==target?'primary.main':''}} >{item.icon}</ListItemIcon>
-                    <ListItemText primary={dOpen ? item.label : ""} />
-                  </ListItemButton>
-                </ListItem>
-              </Tooltip>
-            </>
-          );
-        })}
+        {nav.map((item) => (
+  <Tooltip placement="right" title={item.label} key={item.path}>
+    <ListItem
+      sx={{
+        padding: 1,
+        color: item.path == target ? "primary.main" : "",
+        fontWeight: target === item.path ? 600 : 400,
+      }}
+      component={Link}
+      to={item.path}
+    >
+      <ListItemButton>
+        <ListItemIcon sx={{ color: item.path == target ? "primary.main" : "" }}>
+          {item.icon}
+        </ListItemIcon>
+        <ListItemText primary={dOpen ? item.label : ""} />
+      </ListItemButton>
+    </ListItem>
+  </Tooltip>
+))}
+
       </List>
     </Drawer>
     </ThemeProvider>

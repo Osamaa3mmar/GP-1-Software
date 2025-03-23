@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../Connection.js";
 import { userModel } from "../UserModel/user.model.js";
+import { courseModel } from "../CourseModel/course.model.js";
 
 export const organizationModel = sequelize.define("organaization", {
   id: {
@@ -45,3 +46,13 @@ userModel.belongsTo(organizationModel, {
     foreignKey: "orgId",
     constraints: false
 });
+
+organizationModel.hasMany(courseModel,{
+    as:'courses',
+    foreignKey:'orgId',
+})
+courseModel.belongsTo(organizationModel,{
+  as:"organization",
+  foreignKey: "orgId",
+
+})

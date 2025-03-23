@@ -2,7 +2,7 @@ import { FormControlLabel, Switch } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import { useState } from "react";
 
-export default function SwitchActive() {
+export default function SwitchActive({state}) {
   
     const IOSSwitch = styled((props) => (
         <Switch   focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -65,7 +65,7 @@ export default function SwitchActive() {
       }));
   return (
     <FormControlLabel
-        control={<IOSSwitch sx={{ m: 0 }} defaultChecked />}
+        control={<IOSSwitch sx={{ m: 0 }} defaultChecked={state=='notStarted'?false:true} />}
         label=""
       />
   )

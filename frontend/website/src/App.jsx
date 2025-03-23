@@ -19,7 +19,21 @@ import InstructorsAdmin from './pages/AdminPages/InstructorsAdmin';
 import StudentsAdmin from './pages/AdminPages/StudentsAdmin';
 import TransactionsAdmin from './pages/AdminPages/TransactionsAdmin';
 import ReportsAdmin from './pages/AdminPages/ReportsAdmin';
+import { createTheme, ThemeProvider } from '@mui/material';
 export default function App() {
+   const theme = createTheme({
+      palette: {
+        primary: {
+          main: "#6366f1",
+        },
+        secondary: {
+          main: "#f5f5f5",
+        },
+        warning:{
+          main:'#ff6a45'
+        }
+      },
+    });
   const router=createBrowserRouter([
     {path:'/',
       element:<div>Landing Page <Link to={'/auth/login'}>Login</Link> </div>
@@ -110,7 +124,9 @@ draggable
 theme="light"
 transition={Zoom}
 closeButton={false}/>
+<ThemeProvider theme={theme}>
       <RouterProvider router={router}/>
+      </ThemeProvider>
     </div>
   )
 }

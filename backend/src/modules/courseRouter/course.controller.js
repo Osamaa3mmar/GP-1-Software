@@ -1,4 +1,6 @@
+import { Model, where } from "sequelize";
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
+import { organizationModel } from "../../../DB/models/organaization/organaization.js";
 import cloudinary from "../../utils/Claoudinary.js";
 
 
@@ -17,11 +19,12 @@ const calcduration=(start,end)=>{
 
 export const createCourse=async (req,res)=>{
     try{
+        
         const {user}=req.body;
         delete req.body.user;
         if(user.role=='owner'){
             const newCourse=req.body;
-            newCourse.tags=JSON.parse(newCourse.tags)
+            newCourse.tags=newCourse.tags?JSON.parse(newCourse.tags):{};
             newCourse.certification=newCourse.certification==="true"?true:false;
             newCourse.duration=calcduration(newCourse.startDate,newCourse.endDate);
             let background="def.png";
@@ -43,8 +46,13 @@ export const createCourse=async (req,res)=>{
              }
             newCourse.backImage=background;
             newCourse.thumbnail=thumbnail;
-           const course =await courseModel.create(newCourse);
-            return res.status(200).json({message:newCourse.title+" Course created successfully!"});
+            const org=await organizationModel.findOne({where:{ownerId:user.id},attributes:['id']});
+            newCourse.orgId=org.id;
+           const createdCourse =await courseModel.create(newCourse);
+           const course = await courseModel.findByPk(createdCourse.id, {
+            attributes: ['id', 'title', 'price', 'completionStatus', 'thumbnail']
+        });
+            return res.status(200).json({message:course.title+" Course created successfully!",course});
         }
         else{
             return res.status(403).json({message:"You are not authorized to create courses"});
@@ -53,4 +61,33 @@ export const createCourse=async (req,res)=>{
     catch(error){
         return res.status(500).json({message:"serverError",error});
     }
+}
+
+
+export const getAdminCourses=async(req,res)=>{
+    try{
+    if(req.body.user.role=="owner"){
+        
+        const org=await organizationModel.findOne({
+            where:{ownerId:req.body.user.id},
+            attributes: ['ownerId'],
+        });
+        if(req.body.user.id==org.ownerId){
+            const org=await organizationModel.findOne({
+                where:{ownerId:req.body.user.id},attributes: [],
+               include:[{model:courseModel,as:'courses',attributes: ['id','title','price','completionStatus','thumbnail'],}]
+            });
+            return res.status(200).json({message:"success ",org});
+        }
+        
+    
+
+    }
+    
+        return res.status(403).json({message:"You are not authorized to view courses"});
+    
+    
+}catch(error){
+    return res.status(500).json({message:"Server Error",error});
+}
 }

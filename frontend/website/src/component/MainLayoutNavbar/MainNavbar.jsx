@@ -23,21 +23,11 @@ export default function MainNavbar() {
     setCollapse(!collapse);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: "#6366f1",
-      },
-      secondary: {
-        main: "#f5f5f5",
-      },
-    },
-  });
 
   
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Container maxWidth={"xl"} sx={{ bgcolor: "secondary.main" }}>
         <Stack
           direction={"row"}
@@ -76,6 +66,6 @@ export default function MainNavbar() {
       {isSmallScreen ? (
         <DrawerMain collapse={collapse} setCollapse={changeCollapse} />
       ) : null}
-    </ThemeProvider>
+    </>
   );
 }
