@@ -14,8 +14,6 @@ export default function From1({setStep}) {
     const {setId,setEmail}=useContext(SignupContext);
     const createUser = async(info) => {
         const formdata=new FormData();
-        console.log(info);
-        console.log(info.profile[0]);
         image?formdata.append("profile",info.profile[0]):'';
         formdata.append('username',info.username);
         formdata.append('password',info.password);

@@ -1,3 +1,9 @@
+/*
+import { ThemeProvider } from "@mui/material";
+import theme from "./theme/index";
+*/
+import { CartProvider } from "./contexts/CartContext";
+import CartPage from "./pages/Cart/CartPage";
 import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
 import AuthLayout from "./layouts/auth/authLayout";
 import SignUp from "./pages/signup/SignUp";
@@ -9,12 +15,57 @@ import MainPage from "./pages/MainPage/MainPage";
 import MainLayout from "./layouts/MainLayout/MainLayout";
 import Profile from "./pages/Profile/Profile";
 import CoursesPage from "./pages/Courses/CoursesPage";
-import { ThemeProvider } from "@mui/material";
-import { CartProvider } from './contexts/CartContext';
-import CartPage from "./pages/Cart/CartPage"; 
-import theme from "./theme/index";
-
+import LoginCheck from "./component/protected_route/LoginCheck";
+import UserContextProvider from "./Context/userContext";
+import DashboardLayout from "./layouts/DashboardLayout/DashboardLayout";
+import HomeAdmin from "./pages/AdminPages/HomeAdmin";
+import EnrollmentsAdmin from "./pages/AdminPages/EnrollmentsAdmin";
+import CoursesAdmin from "./pages/AdminPages/CoursesAdmin";
+import InstructorsAdmin from "./pages/AdminPages/InstructorsAdmin";
+import StudentsAdmin from "./pages/AdminPages/StudentsAdmin";
+import TransactionsAdmin from "./pages/AdminPages/TransactionsAdmin";
+import ReportsAdmin from "./pages/AdminPages/ReportsAdmin";
+import { createTheme, ThemeProvider } from "@mui/material";
 export default function App() {
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: "#6366f1",
+      },
+      secondary: {
+        main: "#f5f5f5",
+      },
+      warning: {
+        main: "#ff6a45",
+      },
+    },
+  });
+  // const router=createBrowserRouter([
+  //   {path:'/',
+  //     element:<div>Landing Page <Link to={'/auth/login'}>Login</Link> </div>
+  //   },
+  //   {
+  //     path:"auth",
+  //     element:<AuthLayout/>,
+  //     children:[
+  //       {
+  //         index:true,
+  //         element:<Login/>,
+  //       },
+  //       {path:"login",
+  //         element:<Login/>,
+  //       }, {path:"signup",
+  //         element:
+  //         <SignupContextProvider>
+  //         <SignUp/>
+  //         </SignupContextProvider>,
+  //       },{
+  //         path:"verify/:id",
+  //         element:<Verify/>
+  //       }
+  //     ]
+  //   },
+  // ]);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -49,7 +100,13 @@ export default function App() {
     },
     {
       path: "main",
-      element: <MainLayout />,
+      element: (
+        <LoginCheck>
+          <UserContextProvider>
+            <MainLayout />
+          </UserContextProvider>
+        </LoginCheck>
+      ),
       children: [
         {
           index: true,
@@ -66,35 +123,55 @@ export default function App() {
         {
           path: "courses",
           element: <CoursesPage />,
-          children: [
-          ],
+          children: [],
         },
         {
           path: "cart",
           element: <CartPage />,
-        }
+        },
+      ],
+    },
+    {
+      path: "dashboard",
+      element: (
+        <UserContextProvider>
+          <DashboardLayout />
+        </UserContextProvider>
+      ),
+      children: [
+        {
+          index: true,
+          element: <HomeAdmin />,
+        },
+        { path: "home", element: <HomeAdmin /> },
+        { path: "enrollments", element: <EnrollmentsAdmin /> },
+        { path: "courses", element: <CoursesAdmin /> },
+        { path: "instructors", element: <InstructorsAdmin /> },
+        { path: "students", element: <StudentsAdmin /> },
+        { path: "transactions", element: <TransactionsAdmin /> },
+        { path: "reports", element: <ReportsAdmin /> },
       ],
     },
   ]);
   return (
     <ThemeProvider theme={theme}>
       <CartProvider>
-      <div>
-        <ToastContainer
-          position="top-center"
-          autoClose={2500}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick={true}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          theme="light"
-          transition={Zoom}
-          closeButton={false}
-        />
-        <RouterProvider router={router} />
-      </div>
+        <UserContextProvider>
+          <ToastContainer
+            position="top-center"
+            autoClose={2500}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={true}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            theme="light"
+            transition={Zoom}
+            closeButton={false}
+          />
+          <RouterProvider router={router} />
+        </UserContextProvider>
       </CartProvider>
     </ThemeProvider>
   );
