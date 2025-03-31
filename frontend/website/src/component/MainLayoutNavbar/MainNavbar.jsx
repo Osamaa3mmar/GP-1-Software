@@ -1,17 +1,16 @@
 import {
   Box,
   Container,
-  createTheme,
   IconButton,
   Stack,
   useMediaQuery,
 } from "@mui/material";
-import { ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import DrawerMain from "./DrawerMain";
 import ProfileMenu from "./ProfileMenu";
 import Notification from "./Notification";
+import Cart from "./Cart";
 import Logo from "./Logo";
 import Search from "./Search";
 import Tabs from "./Tabs";
@@ -23,21 +22,8 @@ export default function MainNavbar() {
     setCollapse(!collapse);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: "#6366f1",
-      },
-      secondary: {
-        main: "#f5f5f5",
-      },
-    },
-  });
-
-  
-
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Container maxWidth={"xl"} sx={{ bgcolor: "secondary.main" }}>
         <Stack
           direction={"row"}
@@ -50,15 +36,9 @@ export default function MainNavbar() {
             </IconButton>
           ) : null}
 
-          {!isSmallScreen ? (
-            <Logo/>
-          ) : null}
-         <Search/>
-          {!isSmallScreen ? (
-           <Tabs/>
-          ) : (
-            ""
-          )}
+          {!isSmallScreen ? <Logo /> : null}
+          <Search />
+          {!isSmallScreen ? <Tabs /> : ""}
           <Box
             sx={{
               display: "flex",
@@ -67,6 +47,7 @@ export default function MainNavbar() {
               justifyContent: "space-between",
             }}
           >
+            <Cart />
             <Notification />
             <ProfileMenu />
           </Box>
@@ -76,6 +57,6 @@ export default function MainNavbar() {
       {isSmallScreen ? (
         <DrawerMain collapse={collapse} setCollapse={changeCollapse} />
       ) : null}
-    </ThemeProvider>
+    </>
   );
 }

@@ -1,62 +1,54 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PeopleIcon from '@mui/icons-material/People';
-import Rating from '@mui/material/Rating';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Popover from '@mui/material/Popover';
+import Card from "@mui/material/Card";
+import CardMedia from "@mui/material/CardMedia";
+import CardActions from "@mui/material/CardActions";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Popover from "@mui/material/Popover";
+import CoursePopover from "./CoursePopover/CoursePopover";
+import usePopover from "../../hooks/usePopover";
+import CourseCardContent from "./CourseContent/CourseCardContent";
+import CourseCardSchedule from "./CourseCardSchedule";
+import { Stack, Typography } from "@mui/material";
+import { red } from "@mui/material/colors";
+import PropTypes from "prop-types";
+import AddToCart from "./AddToCart";
+import CourseSchedule from "./CourseSchedule";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
-const Arrow = styled('div')(({ theme, direction }) => ({
-  position: 'absolute',
-  width: 0,
-  height: 0,
-  borderStyle: 'solid',
-  borderWidth: '8px 8px 8px 0',
-  borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
-  left: direction === 'left' ? '-8px' : 'auto',
-  right: direction === 'right' ? '-8px' : 'auto',
-  top: '50%',
-  transform: 'translateY(-50%)',
-}));
-
+const course = {
+  id: "web-dev-101",
+  title: "Modern Web Development",
+  instructor: "Sarah Johnson",
+  description: "Master full-stack development with modern tools...",
+  totalHours: 42,
+  level: "Intermediate",
+  enrolled: 2345,
+  schedule: [
+    { day: "Sunday", startTime: "14:00", endTime: "16:00" },
+    { day: "Tuesday", startTime: "14:00", endTime: "16:00" },
+    { day: "Thursday", startTime: "14:00", endTime: "16:00" },
+  ],
+};
 export default function CourseCard() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [popoverDirection, setPopoverDirection] = React.useState('right');
-
-  const handlePopoverOpen = (event) => {
-    const cardRect = event.currentTarget.getBoundingClientRect();
-    const isLeftHalf = cardRect.left < window.innerWidth / 2;
-    setPopoverDirection(isLeftHalf ? 'right' : 'left');
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
+  const {
+    anchorEl,
+    popoverDirection,
+    handlePopoverOpen,
+    handlePopoverClose,
+    open,
+  } = usePopover();
 
   return (
     <Box
       sx={{
         m: 3,
-        width: 'fit-content',
-        transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-        '&:hover': {
-          transform: 'translateY(-4px)',
+        width: "fit-content",
+        position: "relative",
+        transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+        "&:hover": {
+          transform: "translateY(-4px)",
           boxShadow: 6,
-        }
+        },
       }}
       onMouseEnter={handlePopoverOpen}
       onMouseLeave={handlePopoverClose}
@@ -67,16 +59,26 @@ export default function CourseCard() {
           height="194"
           image="https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png"
           alt="Web Development Course"
-          sx={{ objectFit: 'cover', maxHeight: 200 }}
+          sx={{ objectFit: "cover", maxHeight: 200 }}
         />
-        <CardContent>
+        <CourseCardContent />
+        {/* <CardContent>
           <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-            <Chip label="HTML" variant="outlined" color="primary" size="small" />
+            <Chip
+              label="HTML"
+              variant="outlined"
+              color="primary"
+              size="small"
+            />
             <Chip label="CSS" variant="outlined" color="primary" size="small" />
             <Chip label="JS" variant="outlined" color="primary" size="small" />
           </Stack>
-          
-          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ fontWeight: "bold", mb: 1 }}
+          >
             Introduction to Web Development
           </Typography>
 
@@ -91,8 +93,13 @@ export default function CourseCard() {
             sx={{ p: 0 }}
           />
 
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 2, mb: 2 }}>
-            Master the fundamentals of HTML, CSS, and JavaScript to build modern websites.
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 2, mb: 2 }}
+          >
+            Master the fundamentals of HTML, CSS, and JavaScript to build modern
+            websites.
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
@@ -110,8 +117,12 @@ export default function CourseCard() {
             />
           </Stack>
 
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
               $99.99
             </Typography>
             <Stack direction="row" alignItems="center" spacing={1}>
@@ -127,58 +138,63 @@ export default function CourseCard() {
               </Typography>
             </Stack>
           </Stack>
-        </CardContent>
-
-        <CardActions sx={{ p: 2 }}>
-          <Button 
-            variant="contained" 
-            fullWidth
-            sx={{
-              bgcolor: 'primary.main',
-              transition: 'background-color 0.3s ease',
-              '&:hover': {
-                bgcolor: 'primary.dark',
-              }
-            }}
-          >
-            Add to Cart
-          </Button>
-        </CardActions>
+        </CardContent> */}
+        <AddToCart
+          product={{
+            id: 1,
+            name: "Product Name",
+            price: 29.99,
+          }}
+        />
       </Card>
-
+      {/* <CoursePopover
+        anchorEl={anchorEl}
+        popoverDirection={popoverDirection}
+        handlePopoverClose={handlePopoverClose}
+        open={open}
+      /> */}
       <Popover
         sx={{
-          pointerEvents: 'none',
-          '& .MuiPopover-paper': {
-            position: 'relative',
+          pointerEvents: "none",
+          "& .MuiPopover-paper": {
+            position: "relative",
             borderRadius: 2,
             padding: 2,
-            maxWidth: 345,
+            maxWidth: 420,
           },
         }}
         open={open}
         anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: 'center',
-          horizontal: popoverDirection === 'right' ? 'right' : 'left',
+          vertical: "center",
+          horizontal: popoverDirection === "right" ? "right" : "left",
         }}
         transformOrigin={{
-          vertical: 'center',
-          horizontal: popoverDirection === 'right' ? 'left' : 'right',
+          vertical: "center",
+          horizontal: popoverDirection === "right" ? "left" : "right",
         }}
         onClose={handlePopoverClose}
         disableRestoreFocus
       >
-        <Arrow direction={popoverDirection} />
+        {/* <Arrow direction={popoverDirection} />  */}
         <Box>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+          <Stack direction="row" spacing={1} sx={{ mb: 1 , display: "flex", alignItems: "center"}}>
+          <AccessTimeIcon fontSize="small" />
+          <Typography variant="h6" sx={{ fontWeight: "bold"}}>
+            Course Schedule
+          </Typography>
+          </Stack>
+          <CourseSchedule schedule={course.schedule} />
+          <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1, mt: 2 }}>
             Course Details
           </Typography>
+
           <Typography variant="body2" sx={{ mb: 2 }}>
-            This comprehensive course will take you from zero to hero in web development fundamentals. 
-            You will learn HTML5, CSS3, and modern JavaScript (ES6+) through hands-on projects.
+            This comprehensive course will take you from zero to hero in web
+            development fundamentals. You will learn HTML5, CSS3, and modern
+            JavaScript (ES6+) through hands-on projects.
           </Typography>
-          <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
+          <Typography variant="body2" sx={{ fontWeight: "bold", mb: 1 }}>
             What You Will Learn:
           </Typography>
           <Typography component="ul" variant="body2" sx={{ pl: 2 }}>
@@ -192,3 +208,22 @@ export default function CourseCard() {
     </Box>
   );
 }
+CourseCard.propTypes = {
+  course: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    instructor: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    schedule: PropTypes.arrayOf(
+      PropTypes.shape({
+        day: PropTypes.string.isRequired,
+        startTime: PropTypes.string.isRequired,
+        endTime: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+    totalHours: PropTypes.number.isRequired,
+    level: PropTypes.string.isRequired,
+    enrolled: PropTypes.number,
+  }).isRequired,
+  className: PropTypes.string,
+};
