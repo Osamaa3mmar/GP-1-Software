@@ -21,6 +21,7 @@ export default function CoursesAdmin() {
         token:localStorage.getItem('token')
       }})
       setCourses(data.courses);
+      
     }catch(error){
       toast.error("Failed to get courses"+error.message);
     }
