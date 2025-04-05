@@ -29,4 +29,8 @@ export const getByOrganizationID=async (req,res)=>{
    
 }
 
-
+export const getinstructors=async(req,res)=>{
+    const {id}=req.params;
+    
+    return res.status(200).json({message:req.body});
+}

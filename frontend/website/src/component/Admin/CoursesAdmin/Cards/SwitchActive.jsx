@@ -1,8 +1,10 @@
 import { FormControlLabel, Switch } from "@mui/material";
 import { styled } from '@mui/material/styles';
+import axios from "axios";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
-export default function SwitchActive({state}) {
+export default function SwitchActive({state,id}) {
   
     const IOSSwitch = styled((props) => (
         <Switch   focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -63,8 +65,24 @@ export default function SwitchActive({state}) {
           }),
         },
       }));
+      const changeStatus=async()=>{
+        try{
+          const {data}=await axios.put(`http://localhost:4545/course/togglestatus/${id}`,{},
+            {
+              headers: {
+                token: localStorage.getItem("token"),
+              },
+            })
+          toast.info(data.message);
+        }
+        catch(error){
+          toast.error(error.response.data.message);
+        }
+
+      }
   return (
     <FormControlLabel
+    onChange={changeStatus}
         control={<IOSSwitch sx={{ m: 0 }} defaultChecked={state=='notStarted'?false:true} />}
         label=""
       />

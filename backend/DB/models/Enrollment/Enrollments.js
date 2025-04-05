@@ -30,7 +30,7 @@ enrollmentModel.belongsTo(userModel, {
 });
 
 
-courseModel.haveMany(enrollmentModel,{
+courseModel.hasMany(enrollmentModel,{
     as:'enrollments',
     foreignKey:'courseId',
 })

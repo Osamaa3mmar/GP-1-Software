@@ -29,8 +29,11 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       'react/jsx-no-target-blank': 'off',
-     'react/jsx-no-target-blank': 'off',
-  'react-refresh/only-export-components': 'off',
+      'react-refresh/only-export-components': 'off',
+      
+      // Disable props validation warnings/errors
+      'react/prop-types': 'off',
+      'react/require-default-props': 'off',
     },
   },
 ]

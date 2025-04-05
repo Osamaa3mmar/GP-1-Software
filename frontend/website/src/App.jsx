@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 /*
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme/index";
@@ -26,6 +27,32 @@ import StudentsAdmin from "./pages/AdminPages/StudentsAdmin";
 import TransactionsAdmin from "./pages/AdminPages/TransactionsAdmin";
 import ReportsAdmin from "./pages/AdminPages/ReportsAdmin";
 import { createTheme, ThemeProvider } from "@mui/material";
+=======
+import {createBrowserRouter, Link, RouterProvider} from 'react-router-dom';
+import AuthLayout from './layouts/auth/authLayout';
+import SignUp from './pages/signup/SignUp';
+import SignupContextProvider from './component/signup/SignupContext';
+import Verify from './pages/verify/Verify';
+import { ToastContainer, Zoom } from 'react-toastify';
+import Login from './pages/Login/Login';
+import MainPage from './pages/MainPage/MainPage';
+import MainLayout from './layouts/MainLayout/MainLayout';
+import Profile from './pages/Profile/Profile';
+import CoursesPage from './pages/Courses/CoursesPage';
+import LoginCheck from './component/protected_route/LoginCheck';
+import UserContextProvider from './Context/userContext';
+import DashboardLayout from './layouts/DashboardLayout/DashboardLayout';
+import HomeAdmin from './pages/AdminPages/HomeAdmin';
+import EnrollmentsAdmin from './pages/AdminPages/EnrollmentsAdmin';
+import CoursesAdmin from './pages/AdminPages/CoursesAdmin';
+import InstructorsAdmin from './pages/AdminPages/InstructorsAdmin';
+import StudentsAdmin from './pages/AdminPages/StudentsAdmin';
+import TransactionsAdmin from './pages/AdminPages/TransactionsAdmin';
+import ReportsAdmin from './pages/AdminPages/ReportsAdmin';
+import { createTheme, ThemeProvider } from '@mui/material';
+import CourseDetails from './pages/Course/CourseDetails';
+import ClassRoomsUser from './pages/UserClassRooms/ClassRoomsUser';
+>>>>>>> Stashed changes
 export default function App() {
   const theme = createTheme({
     palette: {
@@ -113,9 +140,30 @@ export default function App() {
           element: <MainPage />,
         },
         {
+<<<<<<< Updated upstream
           path: "main",
           element: <MainPage />,
         },
+=======
+          path:"profile",
+          element:<Profile/>,
+        },{
+          path:"courses",
+          element:<CoursesPage/>
+        },{
+          path:'course/:id',
+          element:<CourseDetails/>
+        },{
+          path:"classrooms",
+          element:<ClassRoomsUser/>
+
+        }
+      ]
+    },{
+      path:'dashboard',
+      element:<UserContextProvider><DashboardLayout/></UserContextProvider>,
+      children:[
+>>>>>>> Stashed changes
         {
           path: "profile",
           element: <Profile />,

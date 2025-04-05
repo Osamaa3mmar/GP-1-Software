@@ -15,7 +15,6 @@ export default function useFetch(url,auth) {
             }
         });
         setData(data);
-        console.log(data);
     }catch(error){
         setError(error);
     }

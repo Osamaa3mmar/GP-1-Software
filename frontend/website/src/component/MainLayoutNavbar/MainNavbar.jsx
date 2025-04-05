@@ -37,7 +37,13 @@ export default function MainNavbar() {
 
   return (
     <>
-      <Container maxWidth={"xl"} sx={{ bgcolor: "secondary.main" }}>
+      <Container style={{
+borderRadius: "0px 0px 12px 12px",
+boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+backdropFilter: 'blur(5px)',
+border: "1px solid rgba(255, 255, 255, 0.3)",
+position:"sticky"
+  }} maxWidth={"xl"} sx={{zIndex:33, bgcolor: "rgba(255, 255, 255, 0.6)",position:'fixed' ,top:0,right:0 }}>
         <Stack
           direction={"row"}
           sx={{ alignItems: "center", justifyContent: "space-between" }}

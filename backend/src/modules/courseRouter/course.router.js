@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { createCourse, getAdminCourses } from './course.controller.js';
+import { courseToggleStatus, createCourse, deleteCourse, getAdminCourses, getAllCourses, getDetailedCourseInfo } from './course.controller.js';
 import { fileUpload } from '../../utils/fileUpload.js';
 import { auth } from '../../middleware/auth.js';
 const router = Router();
@@ -10,8 +10,9 @@ router.post('/create',fileUpload().fields([{name:"thumbnail",maxCount:1},{name:"
 
 
 router.get('/owner/courses',auth(),getAdminCourses);
-
-
-
+router.put('/togglestatus/:id',auth(),courseToggleStatus);
+router.delete('/delete/:id',auth(),deleteCourse);
+router.get('/getall',getAllCourses);
+router.get('/getdetailedinfo/:id',auth(),getDetailedCourseInfo)
 
 export default router;

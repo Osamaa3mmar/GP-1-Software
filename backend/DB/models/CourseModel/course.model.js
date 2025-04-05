@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../Connection.js";
+import { userModel } from "../UserModel/user.model.js";
 
 export const courseModel = sequelize.define('Course', {
   id: {
@@ -101,3 +102,13 @@ export const courseModel = sequelize.define('Course', {
   timestamps: true
 });
 
+userModel.hasMany(courseModel, {
+  as: "courses", // Alias for easier access
+  foreignKey: "teacherId", // Foreign key in courseModel
+});
+
+// A Course belongs to a single Teacher
+courseModel.belongsTo(userModel, {
+  as: "teacher",
+  foreignKey: "teacherId",
+});

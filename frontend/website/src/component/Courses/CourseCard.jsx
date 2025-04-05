@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardActions from "@mui/material/CardActions";
@@ -14,6 +15,40 @@ import PropTypes from "prop-types";
 import AddToCart from "./AddToCart";
 import CourseSchedule from "./CourseSchedule";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+=======
+import * as React from 'react';
+import { styled } from '@mui/material/styles';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import { red } from '@mui/material/colors';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PeopleIcon from '@mui/icons-material/People';
+import Rating from '@mui/material/Rating';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Popover from '@mui/material/Popover';
+import { Link } from 'react-router-dom';
+
+const Arrow = styled('div')(({ theme, direction }) => ({
+  position: 'absolute',
+  width: 0,
+  height: 0,
+  borderStyle: 'solid',
+  borderWidth: '8px 8px 8px 0',
+  borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
+  left: direction === 'left' ? '-8px' : 'auto',
+  right: direction === 'right' ? '-8px' : 'auto',
+  top: '50%',
+  transform: 'translateY(-50%)',
+}));
+>>>>>>> Stashed changes
 
 const course = {
   id: "web-dev-101",
@@ -138,6 +173,7 @@ export default function CourseCard() {
               </Typography>
             </Stack>
           </Stack>
+<<<<<<< Updated upstream
         </CardContent> */}
         <AddToCart
           product={{
@@ -146,6 +182,28 @@ export default function CourseCard() {
             price: 29.99,
           }}
         />
+=======
+        </CardContent>
+
+        <CardActions sx={{ p: 2 }}>
+          <Button 
+            variant="contained" 
+            fullWidth
+            sx={{
+              bgcolor: 'primary.main',
+              transition: 'background-color 0.3s ease',
+              '&:hover': {
+                bgcolor: 'primary.dark',
+              }
+            }}
+          >
+            Add to Cart
+          </Button>
+          <Button component={Link} to={'/main/course/2'} fullWidth  variant='outlined'>
+            View
+          </Button>
+        </CardActions>
+>>>>>>> Stashed changes
       </Card>
       {/* <CoursePopover
         anchorEl={anchorEl}

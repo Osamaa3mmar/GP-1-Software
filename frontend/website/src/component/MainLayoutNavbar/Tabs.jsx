@@ -1,13 +1,14 @@
 import { LibraryBooks } from '@mui/icons-material'
 import { TabContext, TabList } from '@mui/lab'
 import { Box, Tab } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import HomeIcon from "@mui/icons-material/Home";
 import { useState } from 'react';
 
 export default function Tabs() {
-    const [tab, setTab] = useState("1");
-
+  const {pathname}=useLocation();
+    const [tab, setTab] = useState(pathname.split("/")[2]?pathname.split("/")[2]:'main');
+    
     const tabChange = (event, newval) => {
         setTab(newval);
       };
@@ -17,8 +18,9 @@ export default function Tabs() {
     <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
       <TabList onChange={tabChange} aria-label="lab API tabs example">
         <Tab
+        
           label="Home"
-          value="1"
+          value="main"
           iconPosition="start"
           icon={<HomeIcon />}
           component={Link}
@@ -26,13 +28,20 @@ export default function Tabs() {
         />
         <Tab
           label="Courses"
-          value="2"
+          value="courses"
           iconPosition="start"
           icon={<LibraryBooks />}
           component={Link}
           to={"courses"}
         />
-        
+         <Tab
+          label="Class Room"
+          value="classRoom"
+          iconPosition="start"
+          icon={<LibraryBooks />}
+          component={Link}
+          to={"classrooms"}
+        />
       </TabList>
     </Box>
   </TabContext>

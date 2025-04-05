@@ -2,7 +2,7 @@ import { Box, IconButton } from "@mui/material";
 import ImageIcon from '@mui/icons-material/Image';
 import { useState } from "react";
 
-export default function ImageUploader({register,title,regName}) {
+export default function ImageUploader({register,title,regName,value}) {
       const [image,setImage]=useState(null);
     
     const handleImage=(e)=>{
@@ -21,8 +21,8 @@ export default function ImageUploader({register,title,regName}) {
           </label>
             <Box sx={{overflow:"hidden",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",bgcolor:"#6366f108" ,width:"100%",height:"200px",borderRadius:"20px",borderColor:"primary.main",borderWidth:"1px",borderStyle:"dashed"}}>
               <input type="file" hidden {...register(regName)} id={regName} onInput={handleImage}/>
-              {image?
-              <img src={image} style={{width:"100%"}} alt="" />:<><label htmlFor={regName}>
+              {image||value?
+              <img src={image||value} style={{width:"100%"}} alt="" />:<><label htmlFor={regName}>
           <IconButton component="span">
           <ImageIcon sx={{fontSize:"36px",color:"primary.main"}}/>
 

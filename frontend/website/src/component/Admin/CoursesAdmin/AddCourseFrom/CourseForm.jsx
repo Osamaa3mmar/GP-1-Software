@@ -15,11 +15,11 @@ import axios from "axios";
 import MyTextArea from "./MyTextArea";
 import ImageUploader from "./ImageUploader";
 import MyInputField from "./MyInputField";
-import ListAltIcon from '@mui/icons-material/ListAlt';
+import ListAltIcon from "@mui/icons-material/ListAlt";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 
-export default function CourseForm({close}) {
+export default function CourseForm({ close,getCourses }) {
   const {
     control,
     register,
@@ -27,14 +27,14 @@ export default function CourseForm({close}) {
     reset,
     formState: { errors },
   } = useForm({ mode: "onChange" });
-  const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
   const [cirtificate, setCirtificate] = useState(false);
-  const clearForm=()=>{
+  const clearForm = () => {
     reset();
-    toast.info("Form Cleared !",{
-      position:"bottom-left"
-    })
-  }
+    toast.info("Form Cleared !", {
+      position: "bottom-left",
+    });
+  };
   const makeCourseApi = async (formData) => {
     try {
       setLoading(true);
@@ -47,22 +47,21 @@ export default function CourseForm({close}) {
           },
         }
       );
-       Swal.fire({
-                    title: data.message,
-                    icon: "success",
-                    draggable: true
-                  });   
-      console.log(data);
+      Swal.fire({
+        title: data.message,
+        icon: "success",
+        draggable: true,
+      });
+      getCourses();
       close();
     } catch (error) {
       console.log(error.response.data.message);
       Swal.fire({
         title: error.response.data.message,
         icon: "error",
-        draggable: true
-      });   
-    }
-    finally{
+        draggable: true,
+      });
+    } finally {
       setLoading(false);
     }
   };
@@ -96,7 +95,15 @@ export default function CourseForm({close}) {
         spacing={2}
       >
         <Grid size={{ lg: 4, md: 6, sm: 6, xs: 12 }}>
-        <MyInputField label={"Title"} register={register} type={"text"} errors={errors} errorConfig={{ required: "*Title must be provided" }} name={"title"} icon={<ListAltIcon/>}/>
+          <MyInputField
+            label={"Title"}
+            register={register}
+            type={"text"}
+            errors={errors}
+            errorConfig={{ required: "*Title must be provided" }}
+            name={"title"}
+            icon={<ListAltIcon />}
+          />
         </Grid>
         <Grid size={{ lg: 4, md: 6, sm: 6, xs: 12 }}>
           <Controller
@@ -143,17 +150,34 @@ export default function CourseForm({close}) {
           />
         </Grid>
         <Grid size={{ lg: 4, md: 6, sm: 6, xs: 12 }}>
-         <MyInputField register={register} errors={errors} errorConfig={ {required:"* Size cant be empty !",
+          <MyInputField
+            register={register}
+            errors={errors}
+            errorConfig={{
+              required: "* Size cant be empty !",
               min: { value: 1, message: "* Size must be at least 1 ." },
               max: { value: 999, message: "* Size must be at most 999" },
-            }} name={"size"} type={"number"} label={"Size"} icon={<GroupsIcon/>}/>
+            }}
+            name={"size"}
+            type={"number"}
+            label={"Size"}
+            icon={<GroupsIcon />}
+          />
         </Grid>
         <Grid size={{ lg: 4, md: 6, sm: 6, xs: 12 }}>
-        <MyInputField register={register} errors={errors} errorConfig={ {required:"* Price cant be empty !",
+          <MyInputField
+            register={register}
+            errors={errors}
+            errorConfig={{
+              required: "* Price cant be empty !",
               min: { value: 0, message: "* Size must be at least 1 ." },
               max: { value: 9999, message: "* Size must be at most 9999" },
-            }} name={"price"} type={"number"} label={"Course Price"} icon={<AttachMoneyIcon/>}/>
-          
+            }}
+            name={"price"}
+            type={"number"}
+            label={"Course Price"}
+            icon={<AttachMoneyIcon />}
+          />
         </Grid>
         <Grid size={{ lg: 4, md: 6, sm: 6, xs: 12 }}>
           <FormControlLabel
@@ -172,11 +196,27 @@ export default function CourseForm({close}) {
 
         <Grid size={{ lg: 6, md: 6, sm: 6, xs: 12 }}>
           <h3>Start Date:</h3>
-        <MyInputField label={""} register={register} type={"date"} errors={errors} errorConfig={{required: "* Start date should be selected !"}} name={"startDate"} icon={null}/>
+          <MyInputField
+            label={""}
+            register={register}
+            type={"date"}
+            errors={errors}
+            errorConfig={{ required: "* Start date should be selected !" }}
+            name={"startDate"}
+            icon={null}
+          />
         </Grid>
         <Grid size={{ lg: 6, md: 6, sm: 6, xs: 12 }}>
           <h3>End Date:</h3>
-        <MyInputField label={""} register={register} type={"date"} errors={errors} errorConfig={{required: "* End date should be selected !"}} name={"endDate"} icon={null}/>
+          <MyInputField
+            label={""}
+            register={register}
+            type={"date"}
+            errors={errors}
+            errorConfig={{ required: "* End date should be selected !" }}
+            name={"endDate"}
+            icon={null}
+          />
         </Grid>
         <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
           <ImageUploader
@@ -224,10 +264,19 @@ export default function CourseForm({close}) {
           gap: "10px",
         }}
       >
-        <Button onClick={clearForm} disabled={loading?true:false} sx={{ minWidth: "100px", background: "#6366F115" }}>
+        <Button
+          onClick={clearForm}
+          disabled={loading ? true : false}
+          sx={{ minWidth: "100px", background: "#6366F115" }}
+        >
           Clear
         </Button>
-        <Button loading={loading} type="submit" variant="contained" sx={{ minWidth: "100px" }}>
+        <Button
+          loading={loading}
+          type="submit"
+          variant="contained"
+          sx={{ minWidth: "100px" }}
+        >
           Add
         </Button>
       </Box>

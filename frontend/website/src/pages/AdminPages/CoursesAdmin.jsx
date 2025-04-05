@@ -3,40 +3,37 @@ import UserInfo from "../../component/Admin/CoursesAdmin/UserInfo";
 import AddCourseButton from "../../component/Admin/CoursesAdmin/AddCourseButton";
 import { useEffect, useState } from "react";
 import AddCourseForm from "../../component/Admin/CoursesAdmin/AddCourseFrom/AddCourseForm";
-import CourseCardAdmin from "../../component/Admin/CoursesAdmin/Cards/CourseCardAdmin";
 import axios from "axios";
 import { toast } from "react-toastify";
+import CoursesArea from "../../component/Admin/CoursesAdmin/Cards/CoursesArea";
 
 export default function CoursesAdmin() {
   const [modal,setModal]=useState(false);
-  const [courses,setCourses]=useState()
-  const [loading,setLoading]=useState(true);
-  const closeModal=()=>{setModal(false)}
+  const [courses,setCourses]=useState(null);
+  const closeModal=()=>{
+    setModal(false);
+  }
   const openModal=()=>{setModal(true)}
+
   const getCourses=async()=>{
     try{
       const {data}=await axios.get('http://localhost:4545/course/owner/courses',{headers:{
         token:localStorage.getItem('token')
       }})
-      toast.success("heyyy");
-      console.log(data)
-      setCourses(data.org.courses);
+      setCourses(data.courses);
     }catch(error){
-      console.log(error);
-    }
-    finally{
-      setLoading(false);
+      toast.error("Failed to get courses"+error.message);
     }
   }
-
+  
   useEffect(()=>{
     getCourses();
   },[])
   return (
     <Stack direction={"column"}sx={{width:"100%",padding:"25px 0px"}} spacing={2}>
-      <UserInfo/>
+      <UserInfo />
       <AddCourseButton action={openModal}/>
-      <CourseCardAdmin courses={courses} />
+      <CoursesArea setCourses={getCourses}   courses={courses} />
       <Modal
         open={modal}
         onClose={closeModal}
@@ -51,7 +48,7 @@ export default function CoursesAdmin() {
         }}
         sx={{display:"flex",alignItems: "center",justifyContent: "center"}}
       >
-        <AddCourseForm close={closeModal}/>
+        <AddCourseForm  getCorses={getCourses}  close={closeModal}/>
       </Modal>
     </Stack>
   )

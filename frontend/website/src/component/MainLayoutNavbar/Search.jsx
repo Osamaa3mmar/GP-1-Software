@@ -6,7 +6,7 @@ export default function Search() {
     <Box
     sx={{
       flexGrow: 1,
-      maxWidth:"40%",
+      maxWidth:"30%",
       padding: "8px 10px",
       borderRadius: "100px",
       display: "flex",
