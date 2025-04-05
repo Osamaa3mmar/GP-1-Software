@@ -1,39 +1,18 @@
-<<<<<<< Updated upstream
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Popover from "@mui/material/Popover";
-import CoursePopover from "./CoursePopover/CoursePopover";
 import usePopover from "../../hooks/usePopover";
 import CourseCardContent from "./CourseContent/CourseCardContent";
-import CourseCardSchedule from "./CourseCardSchedule";
 import { Stack, Typography } from "@mui/material";
-import { red } from "@mui/material/colors";
 import PropTypes from "prop-types";
 import AddToCart from "./AddToCart";
 import CourseSchedule from "./CourseSchedule";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-=======
-import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PeopleIcon from '@mui/icons-material/People';
-import Rating from '@mui/material/Rating';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Popover from '@mui/material/Popover';
+
 import { Link } from 'react-router-dom';
 
 const Arrow = styled('div')(({ theme, direction }) => ({
@@ -48,7 +27,6 @@ const Arrow = styled('div')(({ theme, direction }) => ({
   top: '50%',
   transform: 'translateY(-50%)',
 }));
->>>>>>> Stashed changes
 
 const course = {
   id: "web-dev-101",
@@ -182,8 +160,7 @@ export default function CourseCard() {
             price: 29.99,
           }}
         />
-=======
-        </CardContent>
+        {/* </CardContent> */}
 
         <CardActions sx={{ p: 2 }}>
           <Button 
@@ -203,7 +180,7 @@ export default function CourseCard() {
             View
           </Button>
         </CardActions>
->>>>>>> Stashed changes
+
       </Card>
       {/* <CoursePopover
         anchorEl={anchorEl}

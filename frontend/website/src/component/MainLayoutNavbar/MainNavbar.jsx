@@ -22,16 +22,6 @@ export default function MainNavbar() {
     setCollapse(!collapse);
   };
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: "#6366f1",
-      },
-      secondary: {
-        main: "#f5f5f5",
-      },
-    },
-  });
 
   
 
