@@ -6,13 +6,13 @@ export default function CourseCardHeader() {
   return (
     <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="instructor">
+          <Avatar sx={{ bgcolor: red[500]}} aria-label="instructor">
             JD
           </Avatar>
         }
         title="John Doe"
         subheader="Senior Web Developer"
-        sx={{ p: 0 }}
+        sx={{ p: 0 , mb: 2}}
       />
   );
 }

@@ -12,7 +12,7 @@ export default function CourseCardContent() {
       <CourseCardTags />
       <CourseCardTitle />
       <CourseCardHeader />
-      <CourseCardDescription />
+      {/* <CourseCardDescription /> */}
       <CourseCardStats />
       <CourseCardRating />
     </CardContent>

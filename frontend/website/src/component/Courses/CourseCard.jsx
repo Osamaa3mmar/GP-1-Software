@@ -12,6 +12,8 @@ import AddToCart from "./AddToCart";
 import CourseSchedule from "./CourseSchedule";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+
 
 import { Link } from 'react-router-dom';
 
@@ -29,7 +31,7 @@ const Arrow = styled('div')(({ theme, direction }) => ({
 }));
 
 const course = {
-  id: "web-dev-101",
+  id: 1,
   title: "Modern Web Development",
   instructor: "Sarah Johnson",
   description: "Master full-stack development with modern tools...",
@@ -43,6 +45,7 @@ const course = {
   ],
 };
 export default function CourseCard() {
+  const navigate = useNavigate();
   const {
     anchorEl,
     popoverDirection,
@@ -51,6 +54,9 @@ export default function CourseCard() {
     open,
   } = usePopover();
 
+  const handleCardClick = () => {
+    navigate(`/main/course/${course.id}`);
+  };
   return (
     <Box
       sx={{
@@ -61,12 +67,14 @@ export default function CourseCard() {
         "&:hover": {
           transform: "translateY(-4px)",
           boxShadow: 6,
+          cursor: "pointer",
         },
       }}
       onMouseEnter={handlePopoverOpen}
       onMouseLeave={handlePopoverClose}
+      onClick={handleCardClick}
     >
-      <Card sx={{ maxWidth: 345, boxShadow: 3 }}>
+      <Card sx={{ width: 350, boxShadow: 3 }}>
         <CardMedia
           component="img"
           height="194"
@@ -75,84 +83,6 @@ export default function CourseCard() {
           sx={{ objectFit: "cover", maxHeight: 200 }}
         />
         <CourseCardContent />
-        {/* <CardContent>
-          <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-            <Chip
-              label="HTML"
-              variant="outlined"
-              color="primary"
-              size="small"
-            />
-            <Chip label="CSS" variant="outlined" color="primary" size="small" />
-            <Chip label="JS" variant="outlined" color="primary" size="small" />
-          </Stack>
-
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ fontWeight: "bold", mb: 1 }}
-          >
-            Introduction to Web Development
-          </Typography>
-
-          <CardHeader
-            avatar={
-              <Avatar sx={{ bgcolor: red[500] }} aria-label="instructor">
-                JD
-              </Avatar>
-            }
-            title="John Doe"
-            subheader="Senior Web Developer"
-            sx={{ p: 0 }}
-          />
-
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ mt: 2, mb: 2 }}
-          >
-            Master the fundamentals of HTML, CSS, and JavaScript to build modern
-            websites.
-          </Typography>
-
-          <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-            <Chip
-              icon={<AccessTimeIcon fontSize="small" />}
-              label="8 weeks"
-              variant="outlined"
-              size="small"
-            />
-            <Chip
-              icon={<PeopleIcon fontSize="small" />}
-              label="1245 students"
-              variant="outlined"
-              size="small"
-            />
-          </Stack>
-
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              $99.99
-            </Typography>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Rating
-                name="course-rating"
-                value={4.5}
-                precision={0.5}
-                readOnly
-                size="medium"
-              />
-              <Typography variant="body2" color="text.secondary">
-                (1.2k)
-              </Typography>
-            </Stack>
-          </Stack>
-<<<<<<< Updated upstream
-        </CardContent> */}
         <AddToCart
           product={{
             id: 1,
@@ -162,7 +92,7 @@ export default function CourseCard() {
         />
         {/* </CardContent> */}
 
-        <CardActions sx={{ p: 2 }}>
+        {/* <CardActions sx={{ p: 2 }}>
           <Button 
             variant="contained" 
             fullWidth
@@ -179,7 +109,7 @@ export default function CourseCard() {
           <Button component={Link} to={'/main/course/2'} fullWidth  variant='outlined'>
             View
           </Button>
-        </CardActions>
+        </CardActions> */}
 
       </Card>
       {/* <CoursePopover
