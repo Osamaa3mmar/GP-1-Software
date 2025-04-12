@@ -1,7 +1,7 @@
 import { Backdrop, Modal, Stack } from "@mui/material";
 import UserInfo from "../../component/Admin/CoursesAdmin/UserInfo";
 import AddCourseButton from "../../component/Admin/CoursesAdmin/AddCourseButton";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AddCourseForm from "../../component/Admin/CoursesAdmin/AddCourseFrom/AddCourseForm";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ import CoursesArea from "../../component/Admin/CoursesAdmin/Cards/CoursesArea";
 export default function CoursesAdmin() {
   const [modal,setModal]=useState(false);
   const [courses,setCourses]=useState(null);
+  const [search,setSearch]=useState('');
   const closeModal=()=>{
     setModal(false);
   }
@@ -25,15 +26,21 @@ export default function CoursesAdmin() {
       toast.error("Failed to get courses"+error.message);
     }
   }
-  
+  const currentCourses=useMemo(()=>{
+    if(courses)
+    return courses.filter((item)=>{
+      return item.title.toLowerCase().includes(search.toLowerCase())||item.price<=search;
+    })
+    return [];
+  },[search,courses]);
   useEffect(()=>{
     getCourses();
   },[])
   return (
     <Stack direction={"column"}sx={{width:"100%",padding:"25px 0px"}} spacing={2}>
-      <UserInfo />
+      <UserInfo search={setSearch}/>
       <AddCourseButton action={openModal}/>
-      <CoursesArea setCourses={getCourses}   courses={courses} />
+      <CoursesArea setCourses={getCourses}   courses={currentCourses} />
       <Modal
         open={modal}
         onClose={closeModal}

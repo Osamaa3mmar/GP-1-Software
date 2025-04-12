@@ -16,6 +16,7 @@ const getUser=async ()=>{
         token:localStorage.getItem("token")
       }
     })
+    
   }catch(e){
     console.log(e)
   }

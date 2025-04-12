@@ -54,7 +54,7 @@ export default function CourseCardAdmin({ course,setCourses }) {
         padding: "10px",
         overflow: "hidden",
         transition: "transform 0.3s ease-out",
-
+        background:"#ffffff",
         "&:hover": {
           transform: "scale(1.01)",
         },
@@ -74,6 +74,7 @@ export default function CourseCardAdmin({ course,setCourses }) {
             <h2 style={{ fontWeight: "600", fontSize: "22px" }}>
               {course.title}
             </h2>
+            
             <Button sx={{ color: "#6366F1", bgcolor: "#6366F110" }}>
               View
             </Button>

@@ -190,7 +190,9 @@ export default function App() {
             transition={Zoom}
             closeButton={false}
           />
+          
           <RouterProvider router={router} />
+          
         </UserContextProvider>
       </CartProvider>
     </ThemeProvider>
