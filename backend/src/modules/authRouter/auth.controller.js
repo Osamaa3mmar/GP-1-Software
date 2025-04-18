@@ -1,10 +1,11 @@
-import { Op } from "sequelize";
+import { Op, where } from "sequelize";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import bcrypt from "bcryptjs";
 import { sendEmail } from "../../utils/sendEmail.js";
 import jwt from "jsonwebtoken";
 import cloudinary from '../../utils/Claoudinary.js'
 import { organizationModel } from "../../../DB/models/organaization/organaization.js";
+import { customAlphabet, nanoid } from "nanoid";
 export const signUp = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -71,7 +72,14 @@ export const sendConfirmationEmail = async (req, res) => {
         if (user.verifyEmail) {
           return res.status(400).json({ message: "Email already verified." });
         }
-        sendEmail(user.email,id);
+        sendEmail(user.email, `
+          <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
+              <h2 style="color: #333;">Welcome to Thuraa!</h2>
+              <p>Please confirm your email address by clicking the button below.</p>
+              <a href=${"http://localhost:5173/auth/verify/"+id} style="display: inline-block; padding: 10px 20px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;">Confirm Email</a>
+              <p>If you didn't sign up for this account, you can ignore this email.</p>
+          </div>
+      `,);
         user.sentVerifyEmail = true;
         await user.save();
         return res.status(200).json({
@@ -157,3 +165,61 @@ export const login = async (req, res) => {
       .json({ message: "server error", error: error.message });
   }
 };
+
+
+const generateRandomCode=(number)=>{
+  const range="abcdefghijklmnopqrstuvwxyz1234567890";
+  const nanoid=customAlphabet(range,number);
+  return nanoid();
+}
+
+export const forgetPassword=async (req,res)=>{
+  try{
+    const {email}=req.body;
+    const user=await userModel.findOne({ where:{email:email}});
+    if(!user){
+      return res.status(404).json({message:"Email not registered"});
+    }
+    user.resetCode=true;
+    const rand=generateRandomCode(6);
+    user.code=rand;
+    await user.save();
+    sendEmail(email,`<h2>${rand}</h2>`);
+    return res.status(200).json({message:"Check "+email+" inbox!",rand});
+
+  }catch(error){
+    return res
+    .status(500)
+    .json({ message: "Server error", error: error.message });
+  }
+}
+
+
+export const resetPass=async (req,res)=>{
+try{
+  const {email,password,code}=req.body;
+  if(!email|| !password || !code){
+    return res.status(400).json({message:"Fill all data !"});
+  }
+  const user=await userModel.findOne({where:{email:email}});
+  if(!user){
+    return res.status(404).json({message:"Email not registered"});
+  }
+  if(user.resetCode){
+    if(code==user.code){
+      const hash = bcrypt.hashSync(password, 8);
+      user.password=hash;
+      user.code=null;
+      user.resetCode=false;
+      await user.save();
+      return res.status(200).json({message:"Password changed !"});
+    }
+  }
+    return res.status(400).json({message:"This email not request password reset ."});
+  
+}catch(error){
+  return res
+    .status(500)
+    .json({ message: "Server error", error: error.message });
+}
+}

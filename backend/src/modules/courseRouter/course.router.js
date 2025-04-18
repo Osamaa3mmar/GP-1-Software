@@ -13,6 +13,5 @@ router.get('/owner/courses',auth(),getAdminCourses);
 router.put('/togglestatus/:id',auth(),courseToggleStatus);
 router.delete('/delete/:id',auth(),deleteCourse);
 router.get('/getall',getAllCourses);
-router.get('/getdetailedinfo/:id',auth(),getDetailedCourseInfo)
-
+router.get('/getdetailedinfo/:id',auth(),getDetailedCourseInfo);
 export default router;

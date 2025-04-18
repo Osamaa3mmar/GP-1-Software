@@ -15,6 +15,11 @@ export const enrollmentModel=sequelize.define("Enrollment",{
         allowNull: false,
         defaultValue:0,
     },
+    points:{
+        type:DataTypes.INTEGER,
+        defaultValue:0,
+        allowNull: false,
+    }
 }
 )
 

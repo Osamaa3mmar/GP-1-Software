@@ -11,20 +11,35 @@ export const createCourse=async (req,res)=>{
         const {user}=req.body;
         delete req.body.user;
         if(user.role=='owner'){
-            const newCourse=req.body;
+          const { isGenerated, ...newCourse } = req.body;
             newCourse.tags=newCourse.tags?JSON.parse(newCourse.tags):{};
             newCourse.certification=newCourse.certification==="true"?true:false;
             newCourse.duration = differenceInWeeks(new Date(newCourse.endDate), new Date(newCourse.startDate));
-            let background="def.png";
-            let thumbnail="def.png";
+            let background="https://res.cloudinary.com/dta649b70/image/upload/v1744806300/hbxtz8t7e8vjrjydaoa2.jpg";
+            let thumbnail="https://res.cloudinary.com/dta649b70/image/upload/v1744805803/yqjtliviomzzv8gvaefp.png";
              if(req.files){
+              console.log("line 24");
                 if(req.files.thumbnail){
+                    console.log("Line 26");
                     thumbnail=await cloudinary.uploader.upload(req.files.thumbnail[0].path);
                     newCourse.thumbnail=thumbnail.secure_url;
+                }else{
+                  console.log("osmaaaaa hereee");
+                  if(!isGenerated||isGenerated=='false'){
+                  console.log("osmaaaaa hereee");
+                  thumbnail=await cloudinary.uploader.upload(thumbnail);
+                    newCourse.thumbnail=thumbnail.secure_url;
+                    console.log(newCourse.thumbnail);
+                  }
                 }
                 if(req.files.background){
                     background=await cloudinary.uploader.upload(req.files.background[0].path);
                     newCourse.backImage=background.secure_url;
+                }
+                else{
+                  background=await cloudinary.uploader.upload(background);
+                    newCourse.backImage=background.secure_url;
+                    console.log(background.secure_url);
                 }
             }
             const org=await organizationModel.findOne({where:{ownerId:user.id},attributes:['id']});
