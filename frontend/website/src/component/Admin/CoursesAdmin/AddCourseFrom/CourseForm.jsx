@@ -20,15 +20,52 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 
 export default function CourseForm({ close,getCourses }) {
-  const {
+  const {watch,
     control,
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({ mode: "onChange" });
+  const [aiLoading,setAiLoading]=useState(false);
+
   const [loading, setLoading] = useState(false);
   const [cirtificate, setCirtificate] = useState(false);
+  const [generated,isGenerated]=useState(false);
+  const [urlGenerated,setUrlGenerated] = useState(null);
+  const generateAiThump=async()=>{
+    try{
+      setAiLoading(true);
+      const title=watch("title");
+      const description=watch("description");
+      if(title=='' || description=='' ){
+        toast.error("Title And Description Requaierd !");
+        return null;
+
+      }else if(generated){
+        toast.info("Image Allredy Generated !");
+        return null;
+      }
+      else{
+        const {data}=await axios.post("http://localhost:4545/ai/test",{
+          desc:description,
+          subject:title
+        });
+        console.log(data);
+        isGenerated(true);
+        setUrlGenerated(data.result);
+        return data.result;
+      }
+    }catch(error){
+      console.log(error);
+
+    }finally{
+      setAiLoading(false);
+    }
+  }
+
+
+
   const clearForm = () => {
     reset();
     toast.info("Form Cleared !", {
@@ -38,6 +75,7 @@ export default function CourseForm({ close,getCourses }) {
   const makeCourseApi = async (formData) => {
     try {
       setLoading(true);
+      
       const { data } = await axios.post(
         "http://localhost:4545/course/create",
         formData,
@@ -55,7 +93,7 @@ export default function CourseForm({ close,getCourses }) {
       getCourses();
       close();
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error);
       Swal.fire({
         title: error.response.data.message,
         icon: "error",
@@ -74,7 +112,14 @@ export default function CourseForm({ close,getCourses }) {
     delete data.topics;
     data.tags = JSON.stringify(tags);
     const formData = new FormData();
+    if(generated){
+      console.log("line 111");
+      formData.append("thumbnail",urlGenerated);
+    }
+    else{
     formData.append("thumbnail", data.thumbnail[0]);
+  console.log("line 115");  
+  }
     formData.append("background", data.background[0]);
     delete data.background;
     delete data.thumbnail;
@@ -82,6 +127,7 @@ export default function CourseForm({ close,getCourses }) {
     for (let key in data) {
       formData.append(key, data[key]);
     }
+    formData.append("isGenerated",generated?"true":"false");
     makeCourseApi(formData);
   };
   return (
@@ -220,6 +266,9 @@ export default function CourseForm({ close,getCourses }) {
         </Grid>
         <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
           <ImageUploader
+          setStatusGen={isGenerated}
+          aiLoading={aiLoading}
+            generate={generateAiThump}
             register={register}
             title={"Thumbnail"}
             regName={"thumbnail"}

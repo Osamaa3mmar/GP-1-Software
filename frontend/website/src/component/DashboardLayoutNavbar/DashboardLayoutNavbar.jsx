@@ -20,6 +20,7 @@ import { Link, useLocation } from "react-router-dom";
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import image from "../../../public/ac2.jpg";
 export default function DashboardLayoutNavbar() {
   const [dOpen, setdOpen] = useState(false);
   const toggleDrawer = () => {
@@ -91,10 +92,21 @@ export default function DashboardLayoutNavbar() {
         height:"100%"
       }}>
       <List>
+        <Tooltip title={"Knowlege Acadimy"} placement="right">
+      
+          <Box sx={{margin:"auto",marginY:"5px",display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"center",gap:"4px"}}>
+            <img src={image} style={{marginRight:"6px",width:"60px",border:"3px solid #6366f180 ",borderRadius:"10px"}}  alt="" />
+           {dOpen?<h4 style={{textAlign:"center",fontSize:"18px",fontWeight:"500",textTransform:"capitalize"}}>osama</h4>:""} 
+          </Box>
+        
+        </Tooltip>
+        <Divider />
+
         <ListItemButton key={"osama"} 
         sx={{paddingX:3,
           margin:"auto",
-        marginBottom:"10px",
+        marginBottom:"5px",
+        marginTop:"5px",
         }}  
         onClick={toggleDrawer}>
           <Box sx={{margin:"auto"}}>
@@ -115,7 +127,7 @@ export default function DashboardLayoutNavbar() {
       to={item.path}
     >
       <ListItemButton sx={{
-        
+          borderLeft:target===item.path?"4px solid #6366f1":'',
           background:target === item.path?"#6366f133":'',
            borderRadius:"4px",
           '&:hover':{

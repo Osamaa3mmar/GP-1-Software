@@ -7,6 +7,7 @@ import CardImage from "./CardImage";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { toast } from "react-toastify";
+
 export default function CourseCardAdmin({ course,setCourses }) {
   const deleteCourse = async (id) => {
     const answer = await Swal.fire({
@@ -49,18 +50,25 @@ export default function CourseCardAdmin({ course,setCourses }) {
     <Grid
       key={course.id}
       sx={{
+        
         boxShadow: "0px 0px 6px rgba(0,0,0,0.4)",
         borderRadius: "12px",
         padding: "10px",
         overflow: "hidden",
         transition: "transform 0.3s ease-out",
         background:"#ffffff",
+        margin:{
+          lg:"0px",
+          md:"0px",
+          xs:"auto"
+        },
         "&:hover": {
           transform: "scale(1.01)",
         },
       }}
-      size={{ lg: 4, md: 5, sm: 10, xs: 12 }}
+      size={{lg:4,md:6,sm:10,xs:12 }}
     >
+      
       <CardImage url={course.thumbnail} />
       <Box>
         <Stack sx={{ padding: "10px 20px 15px 20px" }}>
