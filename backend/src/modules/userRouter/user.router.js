@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/my-profile",auth(),getMyProfile);
 
-router.get("/fullprofile",auth(),getFullProfile);
+router.post("/fullprofile",auth(),getFullProfile);
 
 
 

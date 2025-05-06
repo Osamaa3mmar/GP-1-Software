@@ -130,12 +130,15 @@ export default function App() {
         },{
           path:"classrooms",
           element:<ClassRoomsUser/>
-
         }
       ]
     },{
       path:'dashboard',
-      element:<UserContextProvider><DashboardLayout/></UserContextProvider>,
+      element:<LoginCheck>
+        <UserContextProvider>
+          <DashboardLayout/>
+          </UserContextProvider>
+          </LoginCheck>,
       children:[
         {
           path: "profile",
@@ -155,9 +158,11 @@ export default function App() {
     {
       path: "dashboard",
       element: (
+        <LoginCheck>
         <UserContextProvider>
           <DashboardLayout />
         </UserContextProvider>
+        </LoginCheck>
       ),
       children: [
         {

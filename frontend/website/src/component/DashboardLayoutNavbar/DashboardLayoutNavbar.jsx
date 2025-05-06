@@ -16,18 +16,22 @@ import LocalLibraryRoundedIcon from "@mui/icons-material/LocalLibraryRounded";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import SchoolIcon from "@mui/icons-material/School";
 import FeedIcon from "@mui/icons-material/Feed";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import image from "../../../public/ac2.jpg";
+import { toast } from "react-toastify";
 export default function DashboardLayoutNavbar() {
   const [dOpen, setdOpen] = useState(false);
+  const navigate=useNavigate();
   const toggleDrawer = () => {
     setdOpen(!dOpen);
   };
   const logout=()=>{
-
+    toast.info("Logout Success.")
+            localStorage.removeItem('token');
+            navigate('/auth');
   }
   
   const {pathname}=useLocation();
@@ -145,7 +149,37 @@ export default function DashboardLayoutNavbar() {
 
       </List>
       <Box>
-      <Tooltip placement="right" title={"Logout"} key={'logout'}>
+      <Tooltip placement="right" title={"Home Page"} key={'Home'}>
+    <ListItem
+    component={Link}
+    to={"/main"}
+      sx={{
+        padding: 1,
+        color: "primary.main",
+        fontWeight: 600,
+      }}
+      
+      
+    >
+      <ListItemButton sx={{
+        background:"#6366f122",
+        borderRadius:"10px",
+        "&:hover":{
+          background:"#6366f140",
+        }
+      }}>
+        <ListItemIcon sx={{ color: "primary.main"}}>
+          <HomeRoundedIcon/>
+        </ListItemIcon>
+        <ListItemText sx={{
+          span:{
+            fontWeight: 600,
+          }
+        }} primary={"Main"} />
+      </ListItemButton>
+    </ListItem>
+  </Tooltip>
+  <Tooltip placement="right" title={"Logout"} key={'logout'}>
     <ListItem
     onClick={logout}
       sx={{
@@ -153,8 +187,8 @@ export default function DashboardLayoutNavbar() {
         color: "error.main",
         fontWeight: 600,
       }}
-      component={Link}
-      to={'/auth'}
+      
+      
     >
       <ListItemButton sx={{
         background:"#fb2c3622",

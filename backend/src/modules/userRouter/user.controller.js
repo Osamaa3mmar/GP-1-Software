@@ -27,20 +27,26 @@ export const getMyProfile=async (req,res)=>{
 
 export const getFullProfile=async (req,res)=>{
     try{
-        const {user}=req.body;
-        const fullUser=await userModel.findByPk(user.id,{
+        const {id}=req.body;
+        console.log(id);
+        const fullUser=await userModel.findByPk(id,{
+            attributes:['bio','links','files','specialization','username','profilePic'],
             include:[{
                 model:enrollmentModel,
                 as:"enrollments",
+                        attributes:['progress'],
                 include:[
                     {
                         model:courseModel,
                         as:"course",
-                        
+                        attributes:['title','duration','thumbnail'],
+
                     }
                 ]
             }]
         })
+        console.log("here");
+        
         return res.json({message:"Success !",user:fullUser});
     }catch(error){
         return res.status(404).json({message:" user not found!",error});
