@@ -21,6 +21,15 @@ export const organizationModel = sequelize.define("organaization", {
     type: DataTypes.JSON,
     allowNull: true,
     defaultValue: {},
+  },
+  profile:{
+    type: DataTypes.STRING,
+    allowNull: true,
+
+  },
+  backGroundImage:{
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 });
 

@@ -1,16 +1,24 @@
 import { Avatar, Box, InputAdornment, Stack, TextField } from "@mui/material";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../../../Context/UserContext";
 import SearchIcon from '@mui/icons-material/Search';
-export default function UserInfo() {
-    
+import { useWindowSize } from 'react-use';
+
+export default function UserInfo({search}) {
+  const { width } = useWindowSize();
+  const [val,setVal]=useState('');
+    const searchTerm=(e)=>{
+      search(e.target.value);
+      setVal(e.target.value);
+    }
     const {user}=useContext(UserContext);
   return (
-    <Box sx={{padding:"15px 35px",marginTop:"20px",width:"100%",bgcolor:"#d9d9db44",gap:"50px",borderRadius:"20px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap"}}>
+    <Box sx={{padding:"15px 35px",marginTop:"20px",width:"100%",bgcolor:"#d9d9db44",gap:"20px",borderRadius:"20px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap"}}>
      
-         <Stack sx={{flexGrow:1,alignItems:"center"}}  direction={"row"}>
+         <Stack sx={{flexGrow:1,maxWidth:width<700?"100%":"60%",alignItems:"center"}}  direction={"row"}>
           <TextField variant="standard" label="Search"
-          
+          value={val}
+          onChange={searchTerm}
           fullWidth
           slotProps={{
             input:{

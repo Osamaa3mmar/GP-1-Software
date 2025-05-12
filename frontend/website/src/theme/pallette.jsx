@@ -6,5 +6,8 @@ const palette = {
   secondary: {
     main: "#f5f5f5",
   },
+  error:{
+    main:"#fb2c36"
+  }
 }
 export default palette;

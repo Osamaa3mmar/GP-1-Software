@@ -28,6 +28,7 @@ import ReportsAdmin from "./pages/AdminPages/ReportsAdmin";
 import { createTheme, ThemeProvider } from "@mui/material";
 import CourseDetails from "./pages/Course/CourseDetails";
 import ClassRoomsUser from "./pages/UserClassRooms/ClassRoomsUser";
+import AuthProtectedRout from "./component/protected_route/AuthProtectedRout";
 export default function App() {
   const theme = createTheme({
     palette: {
@@ -79,7 +80,7 @@ export default function App() {
     },
     {
       path: "auth",
-      element: <AuthLayout />,
+      element: <AuthProtectedRout><AuthLayout/></AuthProtectedRout>,
       children: [
         {
           index: true,
@@ -129,12 +130,15 @@ export default function App() {
         },{
           path:"classrooms",
           element:<ClassRoomsUser/>
-
         }
       ]
     },{
       path:'dashboard',
-      element:<UserContextProvider><DashboardLayout/></UserContextProvider>,
+      element:<LoginCheck>
+        <UserContextProvider>
+          <DashboardLayout/>
+          </UserContextProvider>
+          </LoginCheck>,
       children:[
         {
           path: "profile",
@@ -154,9 +158,11 @@ export default function App() {
     {
       path: "dashboard",
       element: (
+        <LoginCheck>
         <UserContextProvider>
           <DashboardLayout />
         </UserContextProvider>
+        </LoginCheck>
       ),
       children: [
         {
@@ -178,7 +184,7 @@ export default function App() {
       <CartProvider>
         <UserContextProvider>
           <ToastContainer
-            position="top-center"
+            position="bottom-right"
             autoClose={2500}
             hideProgressBar={false}
             newestOnTop={false}
@@ -190,7 +196,9 @@ export default function App() {
             transition={Zoom}
             closeButton={false}
           />
+          
           <RouterProvider router={router} />
+          
         </UserContextProvider>
       </CartProvider>
     </ThemeProvider>

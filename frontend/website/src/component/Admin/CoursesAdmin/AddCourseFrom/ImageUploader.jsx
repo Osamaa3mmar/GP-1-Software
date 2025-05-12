@@ -1,23 +1,41 @@
-import { Box, IconButton } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
 import ImageIcon from '@mui/icons-material/Image';
 import { useState } from "react";
-
-export default function ImageUploader({register,title,regName,value}) {
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+export default function ImageUploader({aiLoading,generate,register,title,regName,value,setStatusGen}) {
       const [image,setImage]=useState(null);
-    
     const handleImage=(e)=>{
+      
         const file=e.target.files[0];
         if(file){
             const currentImage=URL.createObjectURL(file);
+            if(title=="Thumbnail"){
+            setStatusGen(false);
+            }
             setImage(currentImage);
+        }
+      }
+
+      const generateImage=async ()=>{
+        try{
+          const res=await generate();
+          setImage(res);
+        }catch(error){
+          console.log(error);
+        }
+        finally{
+          console.log("");
         }
       }
   return (
     <>
        <label htmlFor={regName}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"2px"}}>
             <h3 style={{fontSize:"18px",marginBottom:"6px",fontWeight:"600"}}>
             {title}
-          </h3>
+          </h3>{title=="Thumbnail"?<Button onClick={generateImage} loading={aiLoading} variant="contained" startIcon={<AutoAwesomeIcon/>}>AI</Button>:""}
+          
+          </div>
           </label>
             <Box sx={{overflow:"hidden",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",bgcolor:"#6366f108" ,width:"100%",height:"200px",borderRadius:"20px",borderColor:"primary.main",borderWidth:"1px",borderStyle:"dashed"}}>
               <input type="file" hidden {...register(regName)} id={regName} onInput={handleImage}/>

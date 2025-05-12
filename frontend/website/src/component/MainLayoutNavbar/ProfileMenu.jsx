@@ -25,7 +25,7 @@ export default function ProfileMenu() {
     }
 
     const {user}=useContext(UserContext);
-
+    console.log(user);
   return (<>
   <Tooltip title="Profile">
     <IconButton 
@@ -80,12 +80,11 @@ export default function ProfileMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem component={Link} to={"profile"} onClick={handleClose}>
+        <MenuItem component={"a"} href={`http://localhost:8081/profile/${localStorage.getItem("token")}?id=${user?.id}&isMe=true&isMobile=false`} onClick={handleClose}>
         
           <Avatar src={user?user.profilePic:''}/> {user?user.username:'Profile'}
         </MenuItem>
         <Divider />
-       
         <MenuItem component={Link} to={"settings"} onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize="small" />

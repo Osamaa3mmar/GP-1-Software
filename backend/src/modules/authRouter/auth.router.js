@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { choseAccountType, login, sendConfirmationEmail, signUp, verifyEmail } from "./auth.controller.js";
+import { choseAccountType, forgetPassword, login, resetPass, sendConfirmationEmail, signUp, verifyEmail } from "./auth.controller.js";
 import { fileUpload } from "../../utils/fileUpload.js";
 import { validation } from "../../middleware/validation.js";
 import { loginSchema, signUpSchema, userTypeSchema } from "./auth.validate.js";
@@ -21,5 +21,6 @@ router.put("/email/send/verify",verifyEmail);
 
 //login 
 router.post('/login',validation(loginSchema),login);
-
+router.post("/forget",forgetPassword);
+router.post("/reset",resetPass);
 export default router;

@@ -1,16 +1,27 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate, useNavigation } from "react-router-dom";
 import DashboardLayoutNavbar from "../../component/DashboardLayoutNavbar/DashboardLayoutNavbar";
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
+import { useContext } from "react";
+import { UserContext } from "../../Context/userContext";
+import { toast } from "react-toastify";
 
 export default function DashboardLayout() {
+  const {user}=useContext(UserContext);
+  if(user?.role=='user'){
+    toast.warning("You are not allowed 301");
+    return <Navigate to={"/main"}/>;
+  }
   return (
-    <div>
-      <Container maxWidth={"xl"} sx={{display:"flex",width:"100%"}}>
+    
+      <Box sx={{minHeight:"100dvh",display:"flex",background:"#edf0fe50"}}>
      <Box sx={{position:"sticky"}}>
       <DashboardLayoutNavbar/>
       </Box>
+      <Box sx={{width:"100%",paddingX:"2.5%"}}>
       <Outlet/>
-      </Container>
-    </div>
+      </Box>
+      
+      </Box>
+   
   )
 }

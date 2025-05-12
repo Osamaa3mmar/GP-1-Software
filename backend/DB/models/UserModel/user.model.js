@@ -56,5 +56,14 @@ export const userModel =sequelize.define("User",{
     sentVerifyEmail:{
         type:DataTypes.BOOLEAN,
         defaultValue:false,
+    },
+    resetCode:{
+        type:DataTypes.BOOLEAN,
+        allowNull:false,
+        defaultValue:false,
+    },
+    code:{
+        type:DataTypes.STRING,
+        allowNull:true,
     }
 })
