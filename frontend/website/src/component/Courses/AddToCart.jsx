@@ -6,7 +6,7 @@ export default function AddToCart({ product }) {
   const { addToCart } = useCart();
 
   return (
-    <CardActions sx={{ p: 2 }}>
+    <CardActions sx={{ px: 2 , pb: 2 }}>
       <Button
         variant="contained"
         fullWidth
@@ -15,7 +15,10 @@ export default function AddToCart({ product }) {
           transition: "background-color 0.3s ease",
           "&:hover": { bgcolor: "primary.dark" },
         }}
-        onClick={() => addToCart(product)}
+        onClick={(e) => {
+          addToCart(product)
+          e.stopPropagation();
+        }}
       >
         Add to Cart
       </Button>

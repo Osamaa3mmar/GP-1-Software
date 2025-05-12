@@ -4,7 +4,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleIcon from "@mui/icons-material/People";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
-export default function CourseCardStats() {
+export default function CourseCardStats({ duration, enrollmentNumber }) {
   const schedule = [
     { days: ["Sun", "Tue", "Thu"], time: "2:00 PM - 4:00 PM" },
     // Add more schedule entries as needed
@@ -14,13 +14,13 @@ export default function CourseCardStats() {
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <Chip
           icon={<AccessTimeIcon fontSize="small" />}
-          label="8 weeks"
+          label={`${duration || 0} weeks`}
           variant="outlined"
           size="small"
         />
         <Chip
           icon={<PeopleIcon fontSize="small" />}
-          label="1245 students"
+          label={`${enrollmentNumber || 0} students`}
           variant="outlined"
           size="small"
         />

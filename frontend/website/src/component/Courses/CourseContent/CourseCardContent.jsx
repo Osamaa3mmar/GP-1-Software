@@ -4,17 +4,19 @@ import CourseCardTitle from "./CourseCardTitle";
 import CourseCardStats from "./CourseCardStats";
 import CourseCardRating from "./CourseCardRating";
 import CourseCardHeader from "./CourseCardHeader";
-import CourseCardDescription from "./CourseCardDescription";
 
-export default function CourseCardContent() {
+export default function CourseCardContent({ course }) {
   return (
     <CardContent>
-      <CourseCardTags />
-      <CourseCardTitle />
-      <CourseCardHeader />
-      <CourseCardDescription />
-      <CourseCardStats />
-      <CourseCardRating />
+      <CourseCardTags tags={course.tags} />
+      <CourseCardTitle title={course.title} />
+      <CourseCardHeader teacher={course.teacher} />
+      {/* <CourseCardDescription description={course.description} /> */}
+      <CourseCardStats
+        duration={course.duration}
+        enrollmentNumber={course.enrollmentNumber}
+      />
+      <CourseCardRating price={course.price} />
     </CardContent>
   );
 }

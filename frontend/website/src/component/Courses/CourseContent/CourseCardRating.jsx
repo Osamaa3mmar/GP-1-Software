@@ -1,11 +1,11 @@
 import { Stack, Typography } from "@mui/material";
 import Rating from "@mui/material/Rating";
 
-export default function CourseCardRating() {
+export default function CourseCardRating({ price }) {
   return (
     <Stack direction="row" justifyContent="space-between" alignItems="center">
       <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-        $99.99
+        ${price}
       </Typography>
       <Stack direction="row" alignItems="center" spacing={1}>
         <Rating
