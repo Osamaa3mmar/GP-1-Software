@@ -43,12 +43,6 @@ export default function CourseCard({ course }) {
     navigate(`/main/course/${course.id}`);
   };
 
-  // Default schedule if not provided in course data
-  const defaultSchedule = [
-    { day: "Sunday", startTime: "14:00", endTime: "16:00" },
-    { day: "Tuesday", startTime: "14:00", endTime: "16:00" },
-    { day: "Thursday", startTime: "14:00", endTime: "16:00" },
-  ];
 
   return (
     <Box
@@ -67,7 +61,7 @@ export default function CourseCard({ course }) {
       onMouseLeave={handlePopoverClose}
       onClick={handleCardClick}
     >
-      <Card sx={{ width: 350, boxShadow: 3 }}>
+      <Card sx={{ width: 350, boxShadow: 3 , height: "100%" }}>
         <CardMedia
           component="img"
           height="194"
@@ -159,6 +153,7 @@ export default function CourseCard({ course }) {
       >
         {/* <Arrow direction={popoverDirection} />  */}
         <Box>
+          { !course.schedule.length ? null :
           <Stack
             direction="row"
             spacing={1}
@@ -168,25 +163,27 @@ export default function CourseCard({ course }) {
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
               Course Schedule
             </Typography>
-          </Stack>
-          <CourseSchedule schedule={course.schedule || defaultSchedule} />
+          </Stack>}
+          {!course.schedule.length ? null :<CourseSchedule schedule={course.schedule} />}
           <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1, mt: 2 }}>
             Course Details
           </Typography>
 
           <Typography variant="body2" sx={{ mb: 2 }}>
-            This comprehensive course will take you from zero to hero in web
+            {course.learningOutcomes}
+            {/* This comprehensive course will take you from zero to hero in web
             development fundamentals. You will learn HTML5, CSS3, and modern
-            JavaScript (ES6+) through hands-on projects.
+            JavaScript (ES6+) through hands-on projects. */}
           </Typography>
           <Typography variant="body2" sx={{ fontWeight: "bold", mb: 1 }}>
             What You Will Learn:
           </Typography>
           <Typography component="ul" variant="body2" sx={{ pl: 2 }}>
-            <li>Create responsive websites with HTML/CSS</li>
+            {course.learningPath}
+            {/* <li>Create responsive websites with HTML/CSS</li>
             <li>Implement interactive features with JavaScript</li>
             <li>Understand web development best practices</li>
-            <li>Build real-world projects</li>
+            <li>Build real-world projects</li> */}
           </Typography>
         </Box>
       </Popover>

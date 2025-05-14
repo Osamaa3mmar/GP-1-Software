@@ -4,11 +4,24 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PeopleIcon from "@mui/icons-material/People";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
-export default function CourseCardStats({ duration, enrollmentNumber }) {
-  const schedule = [
+export default function CourseCardStats({ duration, enrollmentNumber , schedule }) {
+  const scheduleTest = [
     { days: ["Sun", "Tue", "Thu"], time: "2:00 PM - 4:00 PM" },
     // Add more schedule entries as needed
   ];
+  const groupedSchedules = schedule.reduce((acc, session) => {
+  const timeKey = `${session.startTime}-${session.endTime}`;
+  if (!acc[timeKey]) {
+    acc[timeKey] = { 
+      days: [], 
+      time: `${session.startTime} - ${session.endTime}` 
+    };
+  }
+  acc[timeKey].days.push(session.day);
+  return acc;
+}, {});
+
+const scheduleGroups = Object.values(groupedSchedules);
   return (
     <Stack direction="column" spacing={1} sx={{ mb: 2 }}>
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
@@ -26,7 +39,7 @@ export default function CourseCardStats({ duration, enrollmentNumber }) {
         />
       </Stack>
       <Stack spacing={1}>
-        {schedule.map((session, index) => (
+        {scheduleGroups.map((session, index) => (
           <Chip
             key={index}
             label={`${session.days.join(", ")} | ${session.time}`}

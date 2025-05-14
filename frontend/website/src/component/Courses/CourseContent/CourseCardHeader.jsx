@@ -17,11 +17,11 @@ export default function CourseCardHeader({ teacher }) {
     <CardHeader
       avatar={
         <Avatar sx={{ bgcolor: red[500] }} aria-label="instructor">
-          {getInitials(teacher?.username)}
+          {getInitials(teacher?.name)}
         </Avatar>
       }
-      title={teacher?.username || "Instructor"}
-      subheader={teacher?.specialization || "Instructor"}
+      title={teacher?.name || "Instructor"}
+      subheader={teacher?.position || "Instructor"}
       sx={{ p: 0, mb: 2 }}
     />
   );

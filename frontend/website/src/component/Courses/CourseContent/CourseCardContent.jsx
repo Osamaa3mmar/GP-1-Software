@@ -15,8 +15,9 @@ export default function CourseCardContent({ course }) {
       <CourseCardStats
         duration={course.duration}
         enrollmentNumber={course.enrollmentNumber}
+        schedule={course.schedule}
       />
-      <CourseCardRating price={course.price} />
+      <CourseCardRating price={course.price} rating={course.rating}/>
     </CardContent>
   );
 }
