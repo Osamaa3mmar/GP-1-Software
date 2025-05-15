@@ -43,7 +43,7 @@ export default function Courses({courses}) {
           </View>
           <View style={styles.detailItem}>
             <Text style={styles.detailLabel}>Duration</Text>
-            <Text style={styles.detailValue}>{item.course.duration}</Text>
+            <Text style={styles.detailValue}>{item.course.duration} Weeks</Text>
           </View>
         </View>
 

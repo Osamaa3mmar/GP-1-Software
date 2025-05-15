@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { Button, Menu, TextInput } from "react-native-paper";
-
-export default function AddLink({setStatus}) {
+import Base from "../../api/Base";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+export default function AddLink({setStatus,update}) {
    const [info,setInfo]=useState('');
    const links=[
     "snapchat",
@@ -13,14 +14,35 @@ export default function AddLink({setStatus}) {
     "github",
 
    ]
-    const editBio=()=>{
-        console.log(info);
-    }
+   
     const dismess=()=>{
         setStatus(false);
     }
     const [visible, setVisible] = React.useState(false);
     const [selected, setSelected] = React.useState("Choose an option");
+    const addLink=async()=>{
+      try{
+        if(info==''||selected=="Choose an option"){
+          alert("fill the input ");
+        }
+        const{data}=await Base.post("/user/edit/addlink",{
+          link: {
+            url: info,
+            type: selected
+          }
+        },{
+          headers:{
+            token:await AsyncStorage.getItem("token")
+          }
+        })
+        update();
+        setStatus(false);
+        
+        
+      }catch(error){
+        console.log(error);
+      }
+    }
   return (
     <View>
          <Menu
@@ -44,7 +66,7 @@ export default function AddLink({setStatus}) {
       />
     <View style={styles.btnsCont}>
       <Button onPress={dismess}>Dismess</Button>
-      <Button onPress={editBio} mode='contained'>Save</Button>
+      <Button onPress={addLink} mode='contained'>Save</Button>
       </View>
     </View>
   );

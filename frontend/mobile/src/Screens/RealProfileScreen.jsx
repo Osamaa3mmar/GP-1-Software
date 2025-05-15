@@ -14,6 +14,10 @@ import EditBio from '../Component/Profile/EditBio';
 import EditName from '../Component/Profile/EditName';
 import AddLink from '../Component/Profile/AddLink';
 import axios from 'axios';
+import Base from '../api/Base';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import EditSpecialization from '../Component/Profile/EditSpecialization';
+
 export default function RealProfileScreen() {
     const route=useRoute();
     const {isMe,token,isMobile,id}=route.params;
@@ -21,21 +25,26 @@ export default function RealProfileScreen() {
     const [current,setCurrent]=useState(null);
    const [status, setStatus] =useState(false);
    const [user,setUser]=useState(null);
+   const setTokenAgain=async()=>{
+    await AsyncStorage.setItem("token",token);
+   }
+   setTokenAgain();
    const anyDialog=(text)=>{
     if(text=="bio"){
-        setContent( <EditBio setStatus={setStatus}/>)
+        setContent( <EditBio update={getData} setStatus={setStatus}/>)
     }else if(text=="Add Link"){
-        setContent(<AddLink setStatus={setStatus}/>)
+        setContent(<AddLink update={getData} setStatus={setStatus}/>)
+    }
+    else if(text=="specialization"){
+        setContent(<EditSpecialization update={getData} setStatus={setStatus}/>)
     }
     setStatus(true);
     setCurrent(text);
    }
-   console.log(user,"here")
 
    const getData=async()=>{
-    console.log("object")
     try{
-        const {data}=await axios.post("http://192.168.1.7:4545/user/fullprofile",{
+        const {data}=await Base.post("/user/fullprofile",{
             id
         },
     {
@@ -45,7 +54,6 @@ export default function RealProfileScreen() {
     })
     setUser(data.user);
     }catch(error){
-        console.log("s")
         console.log(error);
     }
    }
@@ -58,7 +66,7 @@ export default function RealProfileScreen() {
         <ImageBackground blurRadius={7} style={styles.profileImage} source={{uri:profileImage}}>
             <View style={styles.blurImage}></View>
             <View style={styles.circle}>
-            <ProfileCircle radius={20} spec={user?user.specialization?user.specialization:"Not Specilaized":''} name={user?.username} image={profileImage}/>
+            <ProfileCircle isEdit={isMe} onPress={anyDialog} radius={20} spec={user?user.specialization?user.specialization:"Not Specilaized":''} name={user?.username} image={profileImage}/>
             </View>
            {isMobile?
            <BackButton isMobile={isMobile} url={"Home"}/>

@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import { Button, TextInput } from "react-native-paper";
 import Base from "../../api/Base";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-export default function EditBio({setStatus,update}) {
+export default function EditSpecialization({setStatus,update}) {
    const [info,setInfo]=useState('');
-    const editBio=async()=>{
+    const editSpecialization=async()=>{
         try{
-          const {data}=await Base.post("/user/edit/bio",{bio:info},{
+          const {data}=await Base.post("/user/edit/specialization",{specialization:info},{
             headers:{
               token:await AsyncStorage.getItem("token"),
             }
@@ -24,17 +24,17 @@ export default function EditBio({setStatus,update}) {
   return (
     <View>
       <TextInput
-        label="Description"
+        label="Specialization"
         value={info}
         onChangeText={(info) => setInfo(info)}
         multiline
-        numberOfLines={10}
+        numberOfLines={1}
         mode="outlined"
         style={{ margin: 10 }}
       />
     <View style={styles.btnsCont}>
       <Button onPress={dismess}>Dismess</Button>
-      <Button onPress={editBio} mode='contained'>Save</Button>
+      <Button onPress={editSpecialization} mode='contained'>Save</Button>
       </View>
     </View>
   );
