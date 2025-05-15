@@ -1,9 +1,9 @@
 .profileContainer{
     height: 55dvh;
     position: relative;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    background-position: center !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,9 +47,13 @@
     background-color: #6366f1;
     padding:8px;
     border-radius: 50%;
-    
     cursor: pointer;
     transition: 400ms !important;
+}
+.editIcon3:hover{
+    background-color: white;
+    color: #6366f1;
+    border:solid 1px #6366f1
 }
 .acadimyNameDiv{
     position: absolute;
@@ -61,7 +65,7 @@
     gap: 15px;
 }
 .descriptionCont{
-    margin-top: 26%;
+    margin-top: 22%;
     background-color: white;
     padding: 20px 15px;
     border-radius: 20px;

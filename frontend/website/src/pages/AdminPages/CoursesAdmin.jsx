@@ -55,7 +55,7 @@ export default function CoursesAdmin() {
         }}
         sx={{display:"flex",alignItems: "center",justifyContent: "center"}}
       >
-        <AddCourseForm  getCorses={getCourses}  close={closeModal}/>
+        <AddCourseForm  title={"Add Course"} getCorses={getCourses}  close={closeModal}/>
       </Modal>
     </Stack>
   )

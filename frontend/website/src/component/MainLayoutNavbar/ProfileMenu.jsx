@@ -1,8 +1,7 @@
-import { Logout, Settings } from "@mui/icons-material";
+import { Logout } from "@mui/icons-material";
 import { Avatar, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip } from "@mui/material";
-import { deepOrange } from "@mui/material/colors";
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { UserContext } from "../../Context/userContext";
 
@@ -85,12 +84,7 @@ export default function ProfileMenu() {
           <Avatar src={user?user.profilePic:''}/> {user?user.username:'Profile'}
         </MenuItem>
         <Divider />
-        <MenuItem component={Link} to={"settings"} onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
+       
         <MenuItem onClick={logut}>
           <ListItemIcon>
             <Logout fontSize="small" />

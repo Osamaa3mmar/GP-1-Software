@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid2";
 
 export default function SwipeCard({openTable,course}) {
   return (
-    <Grid size={{lg:4,md:6,sm:6,xs:12}} sx={{gap:"6px",overflow:"hidden",borderRadius:"12px",background:"#ffffff",boxShadow:"0px 0px 6px rgba(0,0,0,0.2)"}}>
+    <Grid size={{lg:4,md:6,sm:12,xs:12}} sx={{gap:"6px",overflow:"hidden",borderRadius:"12px",background:"#ffffff",boxShadow:"0px 0px 6px rgba(0,0,0,0.2)"}}>
       <div style={{flexGrow:1}}>
         <Box sx={{borderRadius:"12px 12px 0px 0px",width:"100%",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",height:"170px"}}>
         <img src={course.thumbnail} style={{width:"100%"}}/>

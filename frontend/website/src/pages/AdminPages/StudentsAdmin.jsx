@@ -28,8 +28,6 @@ export default function StudentsAdmin() {
     <Stack direction={"column"} gap={5} sx={{paddingY:'26px',width:"100%" ,marginX:"auto"}}>
       <Tools setSearchTerm={setSearch}/>
       
-      
-      <CourseSwipeCard openTable={open}/>
       {
       showTable?
       <Box sx={{display:"flex",flexDirection:"column",gap:"10px",alignItems:"flex-start"}}>
@@ -38,9 +36,11 @@ export default function StudentsAdmin() {
       
       <UsersTable courseId={currentCourse}/>
       </Box>:<Box>
+      <CourseSwipeCard openTable={open}/>
         
       </Box>
 }
+     
       
       
     </Stack>

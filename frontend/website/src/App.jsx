@@ -29,11 +29,17 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import CourseDetails from "./pages/Course/CourseDetails";
 import ClassRoomsUser from "./pages/UserClassRooms/ClassRoomsUser";
 import AuthProtectedRout from "./component/protected_route/AuthProtectedRout";
+import OrgNotificationsContextProvider from "./Context/NotificationsOrgContext";
+import Notifications from "./component/Notifications/Notifications";
+import Landing from "./pages/Landing/Landing";
+import LandingPage from "./pages/Landing/Landing";
+import AcademyProfile from "./pages/AcademyProfile/AcademyProfile";
+import UserNotificationsContextProvider, { UserNotificationsContext } from "./Context/NotificationsUserContext";
 export default function App() {
   const theme = createTheme({
     palette: {
       primary: {
-        main: "#6366f1",
+        main: "#654dbf",
       },
       secondary: {
         main: "#f5f5f5",
@@ -73,9 +79,7 @@ export default function App() {
     {
       path: "/",
       element: (
-        <div>
-          Landing Page <Link to={"/auth/login"}>Login</Link>{" "}
-        </div>
+        <LandingPage/>
       ),
     },
     {
@@ -106,7 +110,9 @@ export default function App() {
       element: (
         <LoginCheck>
           <UserContextProvider>
+            <UserNotificationsContextProvider>
             <MainLayout />
+            </UserNotificationsContextProvider>
           </UserContextProvider>
         </LoginCheck>
       ),
@@ -130,39 +136,23 @@ export default function App() {
         },{
           path:"classrooms",
           element:<ClassRoomsUser/>
+        },
+        {
+          path:"academy/profile/:id",
+          element:<AcademyProfile />
         }
       ]
-    },{
-      path:'dashboard',
-      element:<LoginCheck>
-        <UserContextProvider>
-          <DashboardLayout/>
-          </UserContextProvider>
-          </LoginCheck>,
-      children:[
-        {
-          path: "profile",
-          element: <Profile />,
-        },
-        {
-          path: "courses",
-          element: <CoursesAdmin />,
-          children: [],
-        },
-        {
-          path: "cart",
-          element: <CartPage />,
-        },
-      ],
     },
     {
       path: "dashboard",
       element: (
         <LoginCheck>
-        <UserContextProvider>
-          <DashboardLayout />
-        </UserContextProvider>
-        </LoginCheck>
+         <UserContextProvider>
+         <OrgNotificationsContextProvider>
+           <DashboardLayout/>
+           </OrgNotificationsContextProvider>
+           </UserContextProvider>
+           </LoginCheck>
       ),
       children: [
         {
@@ -174,8 +164,8 @@ export default function App() {
         { path: "courses", element: <CoursesAdmin /> },
         { path: "instructors", element: <InstructorsAdmin /> },
         { path: "students", element: <StudentsAdmin /> },
-        { path: "transactions", element: <TransactionsAdmin /> },
         { path: "reports", element: <ReportsAdmin /> },
+        { path: "notifications", element: <Notifications type={"org"}/> },
       ],
     },
   ]);

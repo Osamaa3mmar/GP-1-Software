@@ -57,7 +57,7 @@ position:"sticky"
             }}
           >
             <Cart />
-            <Notification />
+            <Notification  />
             <ProfileMenu />
           </Box>
         </Stack>
