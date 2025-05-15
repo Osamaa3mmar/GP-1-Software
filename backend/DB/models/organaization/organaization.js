@@ -30,6 +30,38 @@ export const organizationModel = sequelize.define("organaization", {
   backGroundImage:{
     type: DataTypes.STRING,
     allowNull: true,
+  },  location: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+  },
+  website: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  contactEmail: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  phoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  foundedDate: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+  },
+  isVerified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  status: {
+    type: DataTypes.ENUM("active", "inactive", "banned"),
+    defaultValue: "active",
+  },
+  socialLinks: {
+    type: DataTypes.JSON,
+    allowNull: true,
+    defaultValue: {},
   }
 });
 

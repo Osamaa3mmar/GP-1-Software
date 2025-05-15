@@ -1,0 +1,16 @@
+import { DataTypes } from "sequelize";
+import { sequelize } from "../../Connection.js";
+
+export const categoryModel = sequelize.define('Category', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  name: {
+    type: DataTypes.STRING(50),
+    allowNull: false
+  }
+}, {
+  timestamps: true
+});

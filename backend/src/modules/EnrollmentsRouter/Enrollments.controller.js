@@ -3,11 +3,13 @@ import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { enrollmentModel } from "../../../DB/models/Enrollment/Enrollments.js";
 import { organizationModel } from "../../../DB/models/organaization/organaization.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
+import { notificationModel } from "../../../DB/models/NotificationsModel/Notification.js";
+import { makeNotification } from "../Notification/Notification.controller.js";
 export const enroll=async(req,res)=>{
     try{
     const {courseId,userId}=req.body;
     const isCourse=await courseModel.findByPk(courseId);
-    console.log(isCourse);
+    
     if(!isCourse||isCourse.completionStatus=="notStarted"){
         return res.status(404).json({message:"Course not found !"});
     }
@@ -22,9 +24,21 @@ export const enroll=async(req,res)=>{
         courseId,
         progress:0
     })
-    if(enroll)
-        return res.status(200).json({message:"Enrolled to "+isCourse.title+" successfully !"});
+    
+    if(enroll){
+        let message=`${isUser.username} Enroll in ${isCourse.title} Course .`;
+        let actionUrl="/dashboard/notifications";
+        makeNotification("Enroll","user",message,actionUrl,isCourse.orgId);
+        message=`Enrolled in ${isCourse.title} Course Success.`;
+        actionUrl="/main/course/"+courseId;
+        makeNotification("Enroll","user",message,actionUrl,null,false,isUser.id);
 
+
+
+
+
+        return res.status(200).json({message:"Enrolled to "+isCourse.title+" successfully !"});
+    }
     }else{
         return res.status(400).json({message:"User already enrolled in this course!"});
     }

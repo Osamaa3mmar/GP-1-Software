@@ -148,9 +148,9 @@ export const login = async (req, res) => {
       if (user.verifyEmail) {
         const check =await bcrypt.compare(password, user.password);
         if (check) {
-          const { id, email, username, role } = user;
+          const { id, email, username, role,orgId } = user;
           await user.save();
-          const token = jwt.sign({ id, email, username, role }, "GP1");
+          const token = jwt.sign({ id, email, username, role,orgId }, "GP1");
           return res.status(200).json({ message: "Login successful", token });
         }
         return res.status(400).json({ message: "Wrong password" });

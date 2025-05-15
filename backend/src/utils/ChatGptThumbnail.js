@@ -3,7 +3,7 @@ import cloudinary from "../utils/Claoudinary.js";
 
 const client = new GPT({
   apiKey:
-    "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    ",
+  "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"
 });
 
 export const makeThump = async (subject,desc) => {

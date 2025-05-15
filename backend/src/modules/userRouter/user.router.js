@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getFullProfile, getMyProfile } from "./user.controller.js";
+import { addLink, editBio, editSpecialization, getFullProfile, getMyProfile } from "./user.controller.js";
 import {auth} from '../../middleware/auth.js'
 const router = Router();
 
@@ -7,7 +7,9 @@ const router = Router();
 router.get("/my-profile",auth(),getMyProfile);
 
 router.post("/fullprofile",auth(),getFullProfile);
-
+router.post("/edit/specialization",auth(),editSpecialization);
+router.post("/edit/bio",auth(),editBio);
+router.post("/edit/addlink",auth(),addLink);
 
 
 export default router;
