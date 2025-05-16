@@ -11,139 +11,67 @@ import {
   TextField,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, set, useForm } from "react-hook-form";
 import GroupsIcon from "@mui/icons-material/Groups";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import MyTextArea from "./MyTextArea";
-import ImageUploader from "./ImageUploader";
-import MyInputField from "./MyInputField";
+import MyTextArea from "../AddCourseFrom/MyTextArea";
+import ImageUploader from "../AddCourseFrom/ImageUploader";
+import MyInputField from "../AddCourseFrom/MyInputField";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import { UserContext } from "../../../../Context/UserContext";
+import { OrgNotificationsContext } from "../../../../Context/NotificationsOrgContext";
 
-export default function CourseForm({ close,getCourses }) {
+export default function EditCourseFormForm({close,reload,course}){
+   const {user}=useContext(UserContext);
+   const {setNotificationCount}=useContext(OrgNotificationsContext);
   const {watch,
     control,
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ mode: "onChange" });
+  } = useForm({ mode: "onChange",
+    defaultValues: {
+    title: course?.title || "",
+    category: course?.tags?.category || [],
+    topics: course?.tags?.topics || [],
+    size: course?.size || "",
+    price: course?.price || "",
+    startDate: course?.startDate.slice(0, 10) || "",
+    endDate: course?.endDate.slice(0, 10) || "",
+    learningPath: course?.learningPath || "",
+    learningOutcomes: course?.learningOutcomes || "",
+    description: course?.description || "",
+  },
+   });
   const [categories, setCategories] = useState([]);
   const [topics, setTopics] = useState([]);
-  const [aiLoading,setAiLoading]=useState(false);
   const [loading, setLoading] = useState(false);
-  const [cirtificate, setCirtificate] = useState(false);
-  const [generated,isGenerated]=useState(false);
-  const [urlGenerated,setUrlGenerated] = useState(null);
-  const generateAiThump=async()=>{
-    try{
-      setAiLoading(true);
-      const title=watch("title");
-      const description=watch("description");
-      if(title=='' || description=='' ){
-        toast.error("Title And Description Requaierd !");
-        return null;
-
-      }else if(generated){
-        toast.info("Image Allredy Generated !");
-        return null;
-      }
-      else{
-        const {data}=await axios.post("http://localhost:4545/ai/test",{
-          desc:description,
-          subject:title
-        });
-        console.log(data);
-        isGenerated(true);
-        setUrlGenerated(data.result);
-        return data.result;
-      }
-    }catch(error){
-      console.log(error);
-
-    }finally{
-      setAiLoading(false);
-    }
-  }
+  const [cirtificate, setCirtificate] = useState(course?course.certification:false);
   const clearForm = () => {
     reset();
     toast.info("Form Cleared !", {
       position: "bottom-left",
     });
   };
-  const makeCourseApi = async (formData) => {
-    try {
-      setLoading(true);
-      const { data } = await axios.post(
-        "http://localhost:4545/course/create",
-        formData,
-        {
-          headers: {
-            token: localStorage.getItem("token"),
-          },
-        }
-      );
-      Swal.fire({
-        title: data.message,
-        icon: "success",
-        draggable: true,
-      });
-      getCourses();
-      close();
-    } catch (error) {
-      console.log(error);
-      Swal.fire({
-        title: error.response.data.message,
-        icon: "error",
-        draggable: true,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-  const makeCourse = async (data) => {
-    let tags = {
-      category: data.category,
-      topics: data.topics,
-    };
-    delete data.category;
-    delete data.topics;
-    data.tags = JSON.stringify(tags);
-    const formData = new FormData();
-    if(generated){
-      console.log("line 111");
-      formData.append("thumbnail",urlGenerated);
-    }
-    else{
-    formData.append("thumbnail", data.thumbnail[0]);
-  console.log("line 115");  
-  }
-    formData.append("background", data.background[0]);
-    delete data.background;
-    delete data.thumbnail;
-    formData.append("certification", cirtificate ? "true" : "false");
-    for (let key in data) {
-      formData.append(key, data[key]);
-    }
-    formData.append("isGenerated",generated?"true":"false");
-    makeCourseApi(formData);
-  };
+  
   const getCategory = async () => {
     try {
       const { data } = await axios.get("http://localhost:4545/category");
-      console.log(data.data);
       let categories=data.data.map((item) => {
         return item.name;
       })
-      console.log(categories)
       setCategories(categories);
     } catch (error) {
       console.log(error);
     }
   };
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
   const getTopics = async (category) => {
     try {
       const {data}=await axios.get(`http://localhost:4545/topics/getByCategoryName/${category}`);
@@ -157,11 +85,44 @@ export default function CourseForm({ close,getCourses }) {
   }
   useEffect(()=>{
     getCategory();
-  },[])
+    
+  },[course])
+
+  const editCourse=async (info) => {
+    try{
+        setLoading(true);
+        info.cirtificate=cirtificate;
+        await delay(1000);
+        const {data}=await axios.post('http://localhost:4545/course/editall/'+course.id,{editedCourse:info,orgId:user?.orgId},
+            {
+                headers:{
+                    token:localStorage.getItem('token')
+                }
+            }
+        );
+        close();
+        reload();
+        setNotificationCount((prev)=>(prev+1));
+        toast.success(info.title+" Course Edited Successfully !")
+    }catch(error){
+        console.log(error);
+    }
+    finally{
+        
+        setLoading(false);
+    }
+
+  }
+
+
+
+
+
+
   return (
     <form
       style={{ height: "80dvh", overflow: "auto" }}
-      onSubmit={handleSubmit(makeCourse)}
+      onSubmit={handleSubmit(editCourse)}
     >
       <Grid
         container
@@ -173,6 +134,7 @@ export default function CourseForm({ close,getCourses }) {
             label={"Title"}
             register={register}
             type={"text"}
+            
             errors={errors}
             errorConfig={{ required: "*Title must be provided" }}
             name={"title"}
@@ -196,7 +158,7 @@ export default function CourseForm({ close,getCourses }) {
           field.onChange(e.target.value);
           getTopics(e.target.value); // Call your function with the selected values
         }}
-        renderValue={(selected) => selected.join(', ')} // or customize how selected items appear
+        renderValue={(selected) => selected?.join(', ')} // or customize how selected items appear
       >
         {categories.map((option) => (
           <MenuItem key={option} value={option}>
@@ -299,23 +261,6 @@ export default function CourseForm({ close,getCourses }) {
           />
         </Grid>
         <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
-          <ImageUploader
-          setStatusGen={isGenerated}
-          aiLoading={aiLoading}
-            generate={generateAiThump}
-            register={register}
-            title={"Thumbnail"}
-            regName={"thumbnail"}
-          />
-        </Grid>
-        <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
-          <ImageUploader
-            register={register}
-            title={"Background"}
-            regName={"background"}
-          />
-        </Grid>
-        <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
           <MyTextArea
             text={"Learning Path"}
             register={register}
@@ -347,20 +292,14 @@ export default function CourseForm({ close,getCourses }) {
           gap: "10px",
         }}
       >
-        <Button
-          onClick={clearForm}
-          disabled={loading ? true : false}
-          sx={{ minWidth: "100px", background: "#6366F115" }}
-        >
-          Clear
-        </Button>
+       
         <Button
           loading={loading}
           type="submit"
           variant="contained"
           sx={{ minWidth: "100px" }}
         >
-          Add
+          Edit
         </Button>
       </Box>
     </form>

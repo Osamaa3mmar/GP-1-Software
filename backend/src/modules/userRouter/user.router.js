@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { addLink, editBio, editSpecialization, getFullProfile, getMyProfile } from "./user.controller.js";
 import {auth} from '../../middleware/auth.js'
+import { topicModel } from "../../../DB/models/Topic/Topic.js";
 const router = Router();
 
 

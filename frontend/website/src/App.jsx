@@ -35,6 +35,7 @@ import Landing from "./pages/Landing/Landing";
 import LandingPage from "./pages/Landing/Landing";
 import AcademyProfile from "./pages/AcademyProfile/AcademyProfile";
 import UserNotificationsContextProvider, { UserNotificationsContext } from "./Context/NotificationsUserContext";
+import CoursesAdminTemp from "./pages/AdminPages/CoursesAdminTemp";
 export default function App() {
   const theme = createTheme({
     palette: {
@@ -162,6 +163,7 @@ export default function App() {
         { path: "home", element: <HomeAdmin /> },
         { path: "enrollments", element: <EnrollmentsAdmin /> },
         { path: "courses", element: <CoursesAdmin /> },
+        { path: "courses/:id", element: <CoursesAdminTemp /> },
         { path: "instructors", element: <InstructorsAdmin /> },
         { path: "students", element: <StudentsAdmin /> },
         { path: "reports", element: <ReportsAdmin /> },

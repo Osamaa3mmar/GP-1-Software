@@ -6,16 +6,23 @@ import AddCourseForm from "../../component/Admin/CoursesAdmin/AddCourseFrom/AddC
 import axios from "axios";
 import { toast } from "react-toastify";
 import CoursesArea from "../../component/Admin/CoursesAdmin/Cards/CoursesArea";
+import { set } from "react-hook-form";
+import EditCourseForm from "../../component/Admin/CoursesAdmin/EditCourseForm/EditCourseForm";
 
-export default function CoursesAdmin() {
+export default function CoursesAdmin({id}) {
   const [modal,setModal]=useState(false);
   const [courses,setCourses]=useState(null);
   const [search,setSearch]=useState('');
+  const [currentCourse,setCurrentCourse]=useState(null);
+  const [fromNoti,setFromNoti]=useState(null);
   const closeModal=()=>{
     setModal(false);
+    setCurrentCourse(null);
   }
-  const openModal=()=>{setModal(true)}
-
+  const openModal=()=>{
+    setModal(true);
+    
+  }
   const getCourses=async()=>{
     try{
       const {data}=await axios.get('http://localhost:4545/course/owner/courses',{headers:{
@@ -27,9 +34,19 @@ export default function CoursesAdmin() {
     }
   }
   const currentCourses=useMemo(()=>{
+    
+    if(id&&courses&&!fromNoti){
+      setFromNoti(courses.filter((item)=>{
+        return item.id==id;
+      })[0].title);
+      return courses?.filter((item)=>{
+        return item.id==id;
+      })
+    }
+    
     if(courses)
     return courses.filter((item)=>{
-      return item.title.toLowerCase().includes(search.toLowerCase())||item.price<=search;
+      return item.title.toLowerCase().includes(search.toLowerCase())||item.price<=search ||item.id==search;
     })
     return [];
   },[search,courses]);
@@ -38,9 +55,9 @@ export default function CoursesAdmin() {
   },[])
   return (
     <Stack direction={"column"}sx={{width:"100%",padding:"25px 0px"}} spacing={2}>
-      <UserInfo search={setSearch}/>
+      <UserInfo noti={fromNoti?id:''} search={setSearch}/>
       <AddCourseButton action={openModal}/>
-      <CoursesArea setCourses={getCourses}   courses={currentCourses} />
+      <CoursesArea setCourses={getCourses} setCurrentCourse={setCurrentCourse} openModal={openModal}courses={currentCourses} />
       <Modal
         open={modal}
         onClose={closeModal}
@@ -55,7 +72,7 @@ export default function CoursesAdmin() {
         }}
         sx={{display:"flex",alignItems: "center",justifyContent: "center"}}
       >
-        <AddCourseForm  title={"Add Course"} getCorses={getCourses}  close={closeModal}/>
+        {currentCourse?<EditCourseForm title={"Edit Course Info"} reload={getCourses} course={currentCourse} close={closeModal}/>:<AddCourseForm  title={"Add Course"} getCorses={getCourses}  close={closeModal}/>}
       </Modal>
     </Stack>
   )

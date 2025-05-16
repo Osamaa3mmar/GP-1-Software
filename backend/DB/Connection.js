@@ -6,7 +6,7 @@ export const sequelize = new Sequelize('software_gp1', 'root', '', {
   });
 
 export const connectDB=()=>{
-    sequelize.sync({force:true}).then(()=>{
+    sequelize.sync().then(()=>{
         console.log(" connecting to database .");
     }).catch((err)=>{
         console.log(err);

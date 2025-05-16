@@ -18,8 +18,11 @@ const iconColores = {
     create: "#388e3c",
     edit: "#f57c00",
     warning: "#d32f2f",
-    applay:"#00007c"
+    applay:"#00007c",
+    add:"#6a1b9a"
   };
+ 
+
 
   function timeAgo(dateString) {
     const now = new Date();

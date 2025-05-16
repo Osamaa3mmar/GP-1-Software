@@ -4,14 +4,16 @@ import { UserContext } from "../../../Context/UserContext";
 import SearchIcon from '@mui/icons-material/Search';
 import { useWindowSize } from 'react-use';
 
-export default function UserInfo({search}) {
+export default function UserInfo({search,noti}) {
+  console.log(noti,"here");
   const { width } = useWindowSize();
-  const [val,setVal]=useState('');
+  const [val,setVal]=useState(noti?noti:'');
     const searchTerm=(e)=>{
       search(e.target.value);
       setVal(e.target.value);
     }
     const {user}=useContext(UserContext);
+    
   return (
     <Box sx={{padding:"15px 35px",marginTop:"20px",width:"100%",bgcolor:"#d9d9db44",gap:"20px",borderRadius:"20px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap"}}>
      
