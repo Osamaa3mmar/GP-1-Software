@@ -36,6 +36,7 @@ import LandingPage from "./pages/Landing/Landing";
 import AcademyProfile from "./pages/AcademyProfile/AcademyProfile";
 import UserNotificationsContextProvider, { UserNotificationsContext } from "./Context/NotificationsUserContext";
 import CoursesAdminTemp from "./pages/AdminPages/CoursesAdminTemp";
+import ForgetPassword from "./pages/ForgetPassword/ForgetPAssword";
 export default function App() {
   const theme = createTheme({
     palette: {
@@ -103,7 +104,10 @@ export default function App() {
         {
           path: "verify/:id",
           element: <Verify />,
-        },
+        },{
+          path:'forget',
+          element:<ForgetPassword/>
+        }
       ],
     },
     {

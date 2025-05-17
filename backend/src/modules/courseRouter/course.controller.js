@@ -82,6 +82,13 @@ export const getAdminCourses = async (req, res) => {
                 "completionStatus",
                 "thumbnail",
               ],
+              include: [
+        {
+          model: userModel,
+          as: "teacher",
+          attributes: ["id", "username", "email", "profilePic"],
+        },
+      ],
             },
           ],
         });

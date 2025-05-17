@@ -1,5 +1,5 @@
 import { ArrowForward, CloudUpload, Person, Visibility, VisibilityOff } from "@mui/icons-material";
-import { Avatar, Box, Button, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Avatar, Box, Button, IconButton, InputAdornment, TextField, useTheme } from "@mui/material";
 import axios from "axios";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import { SignupContext } from "./SignupContext";
 import { toast } from "react-toastify";
 
 export default function From1({setStep}) {
+    const theme=useTheme();
     const { register, handleSubmit,formState:{errors} } = useForm({mode:"onBlur"});
     const [image,setImage]=useState(null);
     const [password,setPassword]=useState(false);
@@ -65,10 +66,10 @@ export default function From1({setStep}) {
             }}
           >
             <Box sx={{ width: "90px", height: "90px" ,position: "relative"}}>
-              <Avatar sx={{ width: "90px", height: "90px",bgcolor:"#818cf8" }}>
+              <Avatar sx={{ width: "90px", height: "90px",bgcolor:`${theme.palette.primary.main}` }}>
                {image?<img src={image} alt="dfd" />:<Person sx={{fontSize:40}}/>}
               </Avatar>
-              <IconButton component="label" sx={{position:"absolute",bgcolor:"#6366F1",bottom:'-4px',right:"-4px","&:hover":{bgcolor:"#4f46e5"}}}>
+              <IconButton component="label" sx={{border:"3px solid white",position:"absolute",bgcolor:`${theme.palette.primary.main}`,bottom:'-10px',right:"-10px","&:hover":{bgcolor:"#4f46e5"}}}>
                 <CloudUpload sx={{color:"white"}}/>
                 <input type="file" accept="image/*" {...register("profile")} hidden onInput={handleImage} />
               </IconButton>
@@ -76,7 +77,7 @@ export default function From1({setStep}) {
             </Box>
           </Box>
           <TextField
-          sx={{"&:hover":{borderColor:"#818cf8"}}}
+          sx={{"&:hover":{borderColor:`${theme.palette.primary.main}`}}}
             InputProps={{
               style: { borderRadius: "12px" },
             }}
@@ -133,7 +134,7 @@ export default function From1({setStep}) {
             loading={loading?true:false}
             type="submit"
             variant="contained"
-            sx={{ padding: "13px",bgcolor:"#818cf8", borderRadius: "12px" }}
+            sx={{ padding: "13px",bgcolor:`${theme.palette.primary.main}`, borderRadius: "12px" }}
             endIcon={            <ArrowForward/>
             }
           >

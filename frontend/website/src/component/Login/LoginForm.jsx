@@ -15,7 +15,7 @@ export default function LoginForm() {
   return (
   <ThemeProvider theme={theme}>
   <Container maxWidth={"sm"}>
-    <Stack spacing={4} sx={{bgcolor:"white",boxShadow:"0px 0px 10px rgba(0,0,0,0.3)",padding:"30px 80px",borderRadius:"20px"}}>
+    <Stack spacing={4} sx={{bgcolor:"white",boxShadow:"0px 0px 10px rgba(0,0,0,0.3)",padding:"30px 40px",borderRadius:"20px"}}>
       <LoginText/>
       <Form/>
       <Stack spacing={2}>

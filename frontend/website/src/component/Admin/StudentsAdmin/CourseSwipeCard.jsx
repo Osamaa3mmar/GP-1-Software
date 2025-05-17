@@ -2,16 +2,21 @@ import { Box, CircularProgress, Typography } from '@mui/material';
 import Grid from "@mui/material/Grid2";
 
 import SwipeCard from './SwipeCard'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { UserContext } from '../../../Context/UserContext'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import hold from "../../../../public/Swipehold.png"
-export default function CourseSwipeCard({openTable}) {
+export default function CourseSwipeCard({openTable,search}) {
   const {user}=useContext(UserContext)
   const [courses, setCourse]=useState(null);
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState(null);
+  const currentCourses=useMemo(()=>{
+    return courses?.filter((course)=>{
+      return search?course.title.toLowerCase().includes(search.toLowerCase()):true;
+    })
+  },[search,courses])
   const getCourses=async(orgId)=>{
     if(!orgId){
       return null;
@@ -37,7 +42,7 @@ export default function CourseSwipeCard({openTable}) {
   return (
     
     <Grid container spacing={2}  sx={{margin:"auto",width:"92%"}}>
-      {!loading && courses?courses.map((course,index)=>{
+      {!loading && currentCourses?currentCourses.map((course,index)=>{
         return <SwipeCard course={course} openTable={openTable} key={index} /> 
       }):
       <Box sx={{width:"100%",paddingTop:"",display:"flex",alignItems:"center",justifyContent:"center",height:`${loading?"400px":""}`}}>{loading?<CircularProgress size={"100px"}/>:<img style={{width:"50%"}} src={hold}/>}</Box>

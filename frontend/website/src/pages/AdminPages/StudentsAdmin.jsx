@@ -36,7 +36,7 @@ export default function StudentsAdmin() {
       
       <UsersTable courseId={currentCourse}/>
       </Box>:<Box>
-      <CourseSwipeCard openTable={open}/>
+      <CourseSwipeCard search={search} openTable={open}/>
         
       </Box>
 }

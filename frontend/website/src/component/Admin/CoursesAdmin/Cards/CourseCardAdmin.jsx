@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Stack } from "@mui/material";
+import { Avatar, Box, Button, Divider, IconButton, ListItemButton, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import SwitchActive from "./SwitchActive";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
@@ -125,6 +125,39 @@ export default function CourseCardAdmin({ course,setCourses,openModal,setCurrent
               <SwitchActive id={course.id} state={course.completionStatus} />
             </Stack>
           </Stack>
+          {course?.teacher!=null?
+          <Stack sx={{marginBottom:"10px"}}>
+            <h3 style={{fontWeight:"500",fontSize:"18px",color:"gray"}}>Instructor:</h3>
+        <Stack direction={"row"} sx={{padding:"0px 0px 10px 0px"}}>
+        <ListItemButton sx={{display:"flex",alignItems:"center",justifyContent:"start",gap:"10px"}}>
+            <Avatar src={course.teacher.profilePic}/>
+            <div >
+            <h3 style={{fontWeight:"500"}}>{course.teacher.username}</h3>
+            <p style={{color:"gray"}}>{course.teacher.email}</p>
+            </div>
+            
+            </ListItemButton>
+           
+        </Stack>
+        
+        </Stack>
+          :
+          <>
+            <h3 style={{fontWeight:"500",fontSize:"18px",color:"gray"}}>Instructor:</h3>
+        <Stack direction={"row"} sx={{
+          marginBottom:"10px",
+        background:"#FFA50010",
+        borderRadius:"10px",
+        padding:"0px 0px 0px 0px",
+        border:"2px solid #FFA500",
+          }}>
+            <Typography component={"h3"} variant="p" sx={{margin:"auto",paddingY:"20px",color:"orange",fontWeight:"500",fontSize:"18px"
+            }}>
+            No Instructor Assigned To This Course
+          </Typography>
+        </Stack>
+        </>
+          }
           {/* <Stack>
             <h3 style={{fontWeight:"500",fontSize:"18px",color:"gray"}}>Instructor:</h3>
         <Stack direction={"row"} sx={{padding:"0px 0px 10px 0px"}}>
@@ -138,7 +171,6 @@ export default function CourseCardAdmin({ course,setCourses,openModal,setCurrent
             </ListItemButton>
             <IconButton sx={{width:"40px",height:"40px",alignSelf:'center'}}>
             
-                <MoreVertIcon/>
             </IconButton>
         </Stack>
         

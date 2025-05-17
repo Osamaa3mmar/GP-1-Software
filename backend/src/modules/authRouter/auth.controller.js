@@ -180,6 +180,9 @@ export const forgetPassword=async (req,res)=>{
     if(!user){
       return res.status(404).json({message:"Email not registered"});
     }
+    if( user.resetCode){
+      return res.status(200).json({message:"This email already requested password reset ."});
+    }
     user.resetCode=true;
     const rand=generateRandomCode(6);
     user.code=rand;

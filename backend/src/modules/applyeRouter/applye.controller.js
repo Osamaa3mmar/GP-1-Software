@@ -1,4 +1,5 @@
 import { applayModal } from "../../../DB/models/Applyes/Applayes.modal.js";
+import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
 
@@ -57,14 +58,18 @@ export const setResumeStatusDenied=async(req,res)=>{
 
 export const makeApplay=async(req,res)=>{
     try{
-        const {userId,orgId}=req.body;
+        const {userId,orgId,user}=req.body;
+        console.log(user)
+        if(user.role=="user"){
+            return res.status(403).json({message:"You are not authorized to apply for this academy."});
+        }
          const alreadyAccepted = await applayModal.findOne({
             where: { userId, status: "Accepted" }
         });
         if (alreadyAccepted) {
             return res.status(400).json({ message: "You are already accepted in an academy and cannot apply to another." });
         }
-        const applay=await applayModal.findOne({where:{userId,orgId}});
+        const applay=await applayModal.findOne({where:{userId,orgId,status:"Pending"}});
         if(applay){
             return res.status(400).json({message:"You already applied to this academy."});
         }
@@ -128,6 +133,13 @@ export const getuser=async(req,res)=>{
         const {id}=req.params;
         const user=await userModel.findByPk(id,{
             attributes:["id","username","email","profilePic","specialization","files"],
+            include:[
+                {
+                    model:courseModel,
+                    as:"courses",
+                    attributes:["id","title","price","completionStatus","thumbnail"],
+                }
+            ]
         });
         if(!user){
             return res.status(404).json({message:"not found"});
@@ -154,5 +166,55 @@ export const kickInstructor = async (req, res) => {
         return res.status(200).json({ message: "Instructor kicked successfully." });
     } catch (error) {
         return res.status(500).json({ message: "server error", error });
+    }
+}
+
+
+
+export const assignInstructor = async (req, res) => {
+    try {
+        const { userId, courseId ,user} = req.body;
+        const course = await courseModel.findByPk(courseId);
+        if (!course) {
+            return res.status(404).json({ message: "Course not found" });
+        }
+        if(user.orgId !== course.orgId){
+            return res.status(403).json({message:"You are not authorized to assign instructor to this course."});
+        }
+        const instructor = await userModel.findByPk(userId);
+        if (!instructor) {
+            return res.status(404).json({ message: "Instructor not found" });
+        }
+        course.teacherId = userId;
+        await course.save();
+        return res.status(200).json({ message: "Instructor assigned successfully", course });
+    } catch (error) {
+        return res.status(500).json({ message: "server error", error });
+    }
+}
+
+
+
+
+
+
+
+
+export const checkisinit=async(req,res)=>{
+    try{
+        const {user,orgId}=req.body;
+        const isInIt=await applayModal.findOne({
+            where:{
+                orgId,
+                userId:user.id,
+                status:"Accepted"
+            }
+        })
+        if(isInIt){
+            return res.status(200).json({message:"success",isInIt:true});
+        }
+        return res.status(200).json({message:"success",isInIt:false});
+    }catch(error){
+        return res.status(500).json({message:"server error",error});
     }
 }

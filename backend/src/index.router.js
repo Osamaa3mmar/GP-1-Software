@@ -38,4 +38,5 @@ export const initApp=(app,express)=>{
     app.use("/cart",cartRouter);
     app.use("/cartcourse",cartCourseRouter);
     app.use("/topics",topicRouter);
+    app.use("/applye",applyeRouter);
 }

@@ -2,6 +2,7 @@ import {
   Box,
   createTheme,
   CssBaseline,
+  IconButton,
   Step,
   StepLabel,
   Stepper,
@@ -9,10 +10,13 @@ import {
   Typography,
   
 } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import Form1 from './From1.jsx'
 import { useState } from "react";
 import Form2 from'./Form2/From2.jsx';
 import EmailForm from "./EmailForm/EmailForm.jsx";
+import { Link } from "react-router-dom";
 const theme = createTheme({
   palette: {
     primary: {
@@ -113,6 +117,10 @@ export default function SignupForm() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
     <div className="  bg-white shadow-2xl w-[600px] p-14 rounded-xl flex flex-col gap-3">
+      <IconButton sx={{alignSelf:"flex-start"}} component={Link } to={"/auth/login"}>
+
+      <ArrowBackIcon sx={{fontSize:"30px"}}/>
+      </IconButton>
       <Box sx={{ width: "100%" }}>
         <Stepper activeStep={step} alternativeLabel>
           {steps.map((label) => (

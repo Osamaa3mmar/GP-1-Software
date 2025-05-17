@@ -62,8 +62,9 @@ export default function InstructorsTools() {
         }
   return (
     <Box
-    sx={{display:"flex",flexWrap:"wrap",gap:"10px",alignItems:"center",justifyContent:"space-between",padding:"20px",backgroundColor:"#e5e5e5",borderRadius:"8px"}}>
+    sx={{display:"flex",flexWrap:"wrap",gap:"10px",alignItems:"center",justifyContent:"space-between",padding:"20px",backgroundColor:"#f1f1f5",borderRadius:"8px"}}>
         <TextField
+        variant="filled"
         label={"Search"}
         sx={{width:"500px"}}/>
         <Badge badgeContent={number} color="primary">
