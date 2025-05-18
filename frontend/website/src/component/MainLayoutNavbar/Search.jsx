@@ -177,7 +177,7 @@ export default function CourseSearch() {
   };
 
   const handleCourseClick = (courseId) => {
-    navigate(`/course/${courseId}`);
+    navigate(`/main/course/${courseId}`);
     setQuery('');
     setIsFocused(false);
   };

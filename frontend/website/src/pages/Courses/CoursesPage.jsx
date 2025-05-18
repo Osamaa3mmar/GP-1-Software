@@ -77,7 +77,6 @@ const staticCourses = [
 //     price: 99.99,
 //     enrollmentNumber: 156,
 //     teacher: { name: "John Doe" , position : "Senior Web Developer" },
-//     isSchedulized: true,
 //     schedule: [
 //       { day: "Mon", startTime: "10:00 AM", endTime: "12:00 PM" },
 //       { day: "Wed", startTime: "10:00 AM", endTime: "12:00 PM" },
@@ -105,7 +104,6 @@ const expectedCourses = [
     price: 99.99,
     enrollmentNumber: 156,
     teacher: { name: "John Doe", position: "Senior Web Developer" },
-    isSchedulized: true,
     schedule: [
       { day: "Mon", startTime: "10:00 AM", endTime: "12:00 PM" },
       { day: "Wed", startTime: "10:00 AM", endTime: "12:00 PM" },
@@ -130,7 +128,6 @@ const expectedCourses = [
     price: 149.99,
     enrollmentNumber: 98,
     teacher: { name: "Sara Chen", position: "Data Scientist" },
-    isSchedulized: true,
     schedule: [
       { day: "Tue", startTime: "2:00 PM", endTime: "4:00 PM" },
       { day: "Thu", startTime: "2:00 PM", endTime: "4:00 PM" },
@@ -155,7 +152,6 @@ const expectedCourses = [
     price: 89.99,
     enrollmentNumber: 210,
     teacher: { name: "Alex Morgan", position: "UI/UX Designer" },
-    isSchedulized: false,
     schedule: [],
     rating: { value: 4.3, count: 200 },
   },
@@ -177,7 +173,6 @@ const expectedCourses = [
     price: 129.99,
     enrollmentNumber: 134,
     teacher: { name: "Emily Nguyen", position: "Mobile Developer" },
-    isSchedulized: true,
     schedule: [
       { day: "Sat", startTime: "9:00 AM", endTime: "12:00 PM" },
     ],
@@ -201,7 +196,6 @@ const expectedCourses = [
     price: 199.99,
     enrollmentNumber: 76,
     teacher: { name: "David Lee", position: "DevOps Engineer" },
-    isSchedulized: true,
     schedule: [
       { day: "Mon", startTime: "6:00 PM", endTime: "8:00 PM" },
       { day: "Wed", startTime: "6:00 PM", endTime: "8:00 PM" },
@@ -226,7 +220,6 @@ const expectedCourses = [
     price: 109.99,
     enrollmentNumber: 182,
     teacher: { name: "Fatima Al-Hassan", position: "Cybersecurity Analyst" },
-    isSchedulized: false,
     schedule: [],
     rating: { value: 4.4, count: 95 },
   },
@@ -262,3 +255,4 @@ export default function CoursesPage() {
     </div>
   );
 }
+
