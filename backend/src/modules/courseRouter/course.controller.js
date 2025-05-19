@@ -220,3 +220,23 @@ export const editAll=async(req,res)=>{
         return res.status(500).json({ message: "Server Error", error });
     }
 }
+
+
+export const getallnotassigninorg=async (req,res)=>{
+  try{
+    const {id}=req.params;
+    console.log(id); 
+    const courses=await courseModel.findAll({
+      where:{
+        teacherId:null,
+        orgId:id
+      }
+    })
+    if(!courses){
+      return res.status(200).json({message:"no Courses"})
+    }
+    return res.status(200).json({message:"success",courses });
+  }catch(error){
+   return res.status(500).json({ message: "Server Error", error });
+  }
+}

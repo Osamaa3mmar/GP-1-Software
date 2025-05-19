@@ -1,7 +1,9 @@
+import { Op } from "sequelize";
 import { applayModal } from "../../../DB/models/Applyes/Applayes.modal.js";
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
+import { organizationModel } from "../../../DB/models/organaization/organaization.js";
 
 
 export const getResumesOrgInfo = async (req, res) => {
@@ -26,15 +28,21 @@ export const setResumeStatusAccepted=async(req,res)=>{
         if(!resume){
             return res.status(404).json({message:"not found"});
         }
+        if(resume.status=="Accepted"){
+            return res.status(400).json({message:"already accepted"});
+        }
+        if(resume.status=="Denied"){
+            return res.status(400).json({message:"already denied"});
+        }   
+
         resume.status="Accepted";
         await resume.save();
-        await applayModal.destroy({
-            where: {
-                userId: resume.userId,
-                id: { [applayModal.sequelize.Op.ne]: resume.id }
-            }
-        });
-
+       await applayModal.destroy({
+    where: {
+        userId: resume.userId,
+        id: { [Op.ne]: resume.id }
+    }
+});
         return res.status(200).json({message:"success",resume});
     }catch(error){
         return res.status(500).json({message:"server error",error});
@@ -151,23 +159,41 @@ export const getuser=async(req,res)=>{
 }
 
 export const kickInstructor = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        // Delete all accepted applications for this user
-        const deleted = await applayModal.destroy({
-            where: {
-                userId,
-                status: "Accepted"
-            }
-        });
-        if (deleted === 0) {
-            return res.status(404).json({ message: "No accepted instructor found to kick." });
-        }
-        return res.status(200).json({ message: "Instructor kicked successfully." });
-    } catch (error) {
-        return res.status(500).json({ message: "server error", error });
+  try {
+    const { userId } = req.params;
+
+    // Get user and their accepted application first
+    const user = await userModel.findByPk(userId);
+    const acceptedApply = await applayModal.findOne({
+      where: {
+        userId,
+        status: "Accepted"
+      }
+    });
+
+    if (!acceptedApply) {
+      return res.status(404).json({ message: "No accepted instructor found to kick." });
     }
-}
+
+    // Delete the accepted application
+    await acceptedApply.destroy();
+
+    const org = await organizationModel.findByPk(acceptedApply.orgId);
+
+    // Send notifications
+    const orgMessage = `${user.username} was unemployeed from Academy`;
+    const userMessage = `You have been unemployeed from ${org.name} Academy`;
+
+    makeNotification("Kick", "kick", orgMessage, "", org.id, false, null);
+    makeNotification("Kick", "kick", userMessage, "/main/classroom", null, false, user.id);
+
+    return res.status(200).json({ message: "Instructor kicked successfully." });
+
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error });
+  }
+};
+
 
 
 
@@ -186,6 +212,12 @@ export const assignInstructor = async (req, res) => {
             return res.status(404).json({ message: "Instructor not found" });
         }
         course.teacherId = userId;
+         let message=`${instructor.username} assign to be a teacher for ${course.title} course.`;
+        let actionUrl=`/main/classroom/${course.id}`;
+        makeNotification("Assign","assign",message,actionUrl,course.orgId,false,null);
+         actionUrl=`/main/classroom/${course.id}`;
+         message=`You Assigned To Be Teacher Fro ${course.title} Course`
+        makeNotification("Unassign","unassign",message,actionUrl,null,false,userId);
         await course.save();
         return res.status(200).json({ message: "Instructor assigned successfully", course });
     } catch (error) {
@@ -216,5 +248,33 @@ export const checkisinit=async(req,res)=>{
         return res.status(200).json({message:"success",isInIt:false});
     }catch(error){
         return res.status(500).json({message:"server error",error});
+    }
+}
+
+
+
+
+export const unassignInstructor = async (req, res) => {
+    try {
+        const { userId, courseId } = req.body;
+        const course = await courseModel.findByPk(courseId);
+        if (!course) {
+            return res.status(404).json({ message: "Course not found" });
+        }
+        if (course.teacherId !== userId) {
+            return res.status(403).json({ message: "You are not authorized to unassign this instructor." });
+        }
+        const teacher=await userModel.findByPk(userId);
+        course.teacherId = null;
+        let message=`${teacher.username} unassigned from ${course.title} course.`;
+        let actionUrl=`/main/classroom/${course.id}`;
+        makeNotification("Unassign","unassign",message,actionUrl,course.orgId,false,null);
+         actionUrl=`/main/classroom`;
+         message=`You Removed As Teacher From ${course.title} Course`
+        makeNotification("Unassign","unassign",message,actionUrl,null,false,userId);
+        await course.save();
+        return res.status(200).json({ message: "Instructor unassigned successfully", course });
+    } catch (error) {
+        return res.status(500).json({ message: "server error", error });
     }
 }

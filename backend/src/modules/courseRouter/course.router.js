@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { courseToggleStatus, createCourse, deleteCourse, editAll, getAdminCourses, getAllCourses, getDetailedCourseInfo } from './course.controller.js';
+import { courseToggleStatus, createCourse, deleteCourse, editAll, getAdminCourses, getAllCourses, getallnotassigninorg, getDetailedCourseInfo } from './course.controller.js';
 import { fileUpload } from '../../utils/fileUpload.js';
 import { auth } from '../../middleware/auth.js';
 const router = Router();
@@ -15,4 +15,5 @@ router.delete('/delete/:id',auth(),deleteCourse);
 router.get('/getall',getAllCourses);
 router.get('/getdetailedinfo/:id',auth(),getDetailedCourseInfo);
 router.post('/editall/:id',auth(),editAll);
+router.get('/getallnotassigninorg/:id',auth(),getallnotassigninorg);
 export default router;
