@@ -2,7 +2,11 @@ import {
   Autocomplete,
   Box,
   Button,
+  FormControl,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
   Switch,
   TextField,
 } from "@mui/material";
@@ -10,7 +14,7 @@ import Grid from "@mui/material/Grid2";
 import { Controller, useForm } from "react-hook-form";
 import GroupsIcon from "@mui/icons-material/Groups";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import MyTextArea from "./MyTextArea";
 import ImageUploader from "./ImageUploader";
@@ -27,8 +31,9 @@ export default function CourseForm({ close,getCourses }) {
     reset,
     formState: { errors },
   } = useForm({ mode: "onChange" });
+  const [categories, setCategories] = useState([]);
+  const [topics, setTopics] = useState([]);
   const [aiLoading,setAiLoading]=useState(false);
-
   const [loading, setLoading] = useState(false);
   const [cirtificate, setCirtificate] = useState(false);
   const [generated,isGenerated]=useState(false);
@@ -63,9 +68,6 @@ export default function CourseForm({ close,getCourses }) {
       setAiLoading(false);
     }
   }
-
-
-
   const clearForm = () => {
     reset();
     toast.info("Form Cleared !", {
@@ -75,7 +77,6 @@ export default function CourseForm({ close,getCourses }) {
   const makeCourseApi = async (formData) => {
     try {
       setLoading(true);
-      
       const { data } = await axios.post(
         "http://localhost:4545/course/create",
         formData,
@@ -130,6 +131,33 @@ export default function CourseForm({ close,getCourses }) {
     formData.append("isGenerated",generated?"true":"false");
     makeCourseApi(formData);
   };
+  const getCategory = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:4545/category");
+      console.log(data.data);
+      let categories=data.data.map((item) => {
+        return item.name;
+      })
+      console.log(categories)
+      setCategories(categories);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getTopics = async (category) => {
+    try {
+      const {data}=await axios.get(`http://localhost:4545/topics/getByCategoryName/${category}`);
+      let topics =data.data.map((item) => {
+        return item.name;
+      })
+      setTopics(prev=>[...prev,...topics]);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(()=>{
+    getCategory();
+  },[])
   return (
     <form
       style={{ height: "80dvh", overflow: "auto" }}
@@ -152,28 +180,34 @@ export default function CourseForm({ close,getCourses }) {
           />
         </Grid>
         <Grid size={{ lg: 4, md: 6, sm: 6, xs: 12 }}>
-          <Controller
-            name="category"
-            control={control}
-            defaultValue={[]}
-            render={({ field }) => (
-              <Autocomplete
-                {...field}
-                multiple
-                id="tags-outlined"
-                options={["osama", "ammar", "othman"]}
-                filterSelectedOptions
-                onChange={(_, newValue) => field.onChange(newValue)} // Update field value on change
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Category"
-                    placeholder="Category"
-                  />
-                )}
-              />
-            )}
-          />
+         <Controller
+  name="category"
+  control={control}
+  defaultValue={[]}
+  render={({ field }) => (
+    <FormControl fullWidth>
+      <InputLabel id="category-label">Category</InputLabel>
+      <Select
+        {...field}
+        labelId="category-label"
+        multiple
+        value={field.value}
+        onChange={(e) => {
+          field.onChange(e.target.value);
+          getTopics(e.target.value); // Call your function with the selected values
+        }}
+        renderValue={(selected) => selected.join(', ')} // or customize how selected items appear
+      >
+        {categories.map((option) => (
+          <MenuItem key={option} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  )}
+/>
+          
         </Grid>
         <Grid size={{ lg: 4, md: 6, sm: 6, xs: 12 }}>
           <Controller
@@ -185,7 +219,7 @@ export default function CourseForm({ close,getCourses }) {
                 {...field}
                 multiple
                 id="tags-outlined"
-                options={["osama", "ammar", "othman"]}
+                options={topics}
                 filterSelectedOptions
                 onChange={(_, newValue) => field.onChange(newValue)} // Update field value on change
                 renderInput={(params) => (

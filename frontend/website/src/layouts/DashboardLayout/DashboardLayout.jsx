@@ -4,9 +4,11 @@ import { Box } from "@mui/material";
 import { useContext } from "react";
 import { UserContext } from "../../Context/userContext";
 import { toast } from "react-toastify";
+import { OrgNotificationsContext } from "../../Context/NotificationsOrgContext";
 
 export default function DashboardLayout() {
   const {user}=useContext(UserContext);
+
   if(user?.role=='user'){
     toast.warning("You are not allowed 301");
     return <Navigate to={"/main"}/>;

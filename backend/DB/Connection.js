@@ -10,7 +10,7 @@ export const connectDB=()=>{
         console.log(" connecting to database .");
     }).catch((err)=>{
         console.log(err);
-    });
+    }); 
 }
 
   

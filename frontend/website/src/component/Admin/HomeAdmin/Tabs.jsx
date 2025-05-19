@@ -13,14 +13,12 @@ export default function Tabs() {
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList variant="fullWidth" onChange={handleChange} aria-label="lab API tabs example">
-            <Tab label="Reviews"  value="1" />
-            <Tab label="Courses"  value="2" />
-            <Tab label="Staff"  value="3" />
+            <Tab label="Courses"  value="1" />
+            <Tab label="Staff"  value="2" />
           </TabList>
         </Box>
-        <TabPanel value="1">Item One</TabPanel>
-        <TabPanel value="2">Item Two</TabPanel>
-        <TabPanel value="3">Item Three</TabPanel>
+        <TabPanel value="1">Item Two</TabPanel>
+        <TabPanel value="2">Item Three</TabPanel>
       </TabContext>
     </Box>
   )

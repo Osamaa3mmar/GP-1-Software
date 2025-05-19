@@ -1,12 +1,17 @@
 import { View, Text, ImageBackground, StyleSheet, useWindowDimensions } from 'react-native'
 import React from 'react'
+import { IconButton } from 'react-native-paper';
 
-export default function ProfileCircle({image,name,radius,spec}) {
+export default function ProfileCircle({image,name,radius,spec,onPress,isEdit}) {
     const {width}=useWindowDimensions();
   return (
     <View style={styles.ProfileCircleContainer}>
         <ImageBackground style={[styles.imgContainer,{borderRadius: radius}]} source={{uri:image}}>
         </ImageBackground>
+        {isEdit?
+       <IconButton onPress={()=>{onPress("specialization")}} icon="pencil" size={20} iconColor="rgba(102, 94, 223, 1)" />
+       
+       :''} 
         <View style={styles.NameSpec}>
         <Text style={styles.name} >{name}</Text>
         <Text style={styles.spec} >{spec}</Text>

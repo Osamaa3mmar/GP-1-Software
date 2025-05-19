@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Divider,
   Drawer,
@@ -9,7 +10,7 @@ import {
   ListItemText,
   Tooltip,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import LogoutIcon from '@mui/icons-material/Logout';
 import LocalLibraryRoundedIcon from "@mui/icons-material/LocalLibraryRounded";
@@ -22,8 +23,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import image from "../../../public/ac2.jpg";
 import { toast } from "react-toastify";
+import { OrgNotificationsContext } from "../../Context/NotificationsOrgContext";
 export default function DashboardLayoutNavbar() {
   const [dOpen, setdOpen] = useState(false);
+  const {notificationCount}=useContext(OrgNotificationsContext);
+
   const navigate=useNavigate();
   const toggleDrawer = () => {
     setdOpen(!dOpen);
@@ -58,15 +62,16 @@ export default function DashboardLayoutNavbar() {
       path: "students",
     },
    
-    {
-      label: "Reports",
-      icon: <FeedIcon />,
-      path: "reports",
-    },
+    // {
+    //   label: "Reports",
+    //   icon: <FeedIcon />,
+    //   path: "reports",
+    // },
     {
       label: "Notifications",
       icon: <NotificationsIcon />,
-      path: "Notifications",
+      path: "notifications",
+      number:notificationCount
     },
   ];
   return (
@@ -140,6 +145,10 @@ export default function DashboardLayoutNavbar() {
       }} >
         <ListItemIcon sx={{ color: item.path == target ? "primary.main" : "" }}>
           {item.icon}
+          {item.number!=null?
+          <Badge badgeContent={item.number} color="primary" overlap="circular" />
+          :''}
+
         </ListItemIcon>
         <ListItemText sx={{ span:{fontWeight:(target == item.path ? 800 : 400)}}} primary={dOpen ? item.label : ""} />
       </ListItemButton>

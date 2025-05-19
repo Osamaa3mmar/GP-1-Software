@@ -4,7 +4,7 @@ import { Box, CircularProgress } from "@mui/material";
 import placeHolder from '../../../../../public/coursesPlaceholderAdmin.png';
 import { useEffect, useState } from "react";
 
-export default function CoursesArea({ courses,setCourses }) {
+export default function CoursesArea({ courses,setCourses,setCurrentCourse ,openModal}) {
   const [loading,setLoading]=useState(true);
 
 const dellay=async()=>{
@@ -23,7 +23,7 @@ const dellay=async()=>{
   {courses.length>0
     ? courses.map((course,index) => {
         return (
-          <CourseCardAdmin setCourses={setCourses} key={index} course={course} />
+          <CourseCardAdmin setCurrentCourse={setCurrentCourse} openModal={openModal} setCourses={setCourses} key={index} course={course} />
         );
       })
     : <Box sx={{margin:"auto",width:"50%",overflow:"hidden"}}>

@@ -7,6 +7,7 @@ import {
   InputAdornment,
   Stack,
   TextField,
+  useTheme,
 } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,7 +16,9 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { color } from "framer-motion";
 export default function Form() {
+  const theme=useTheme();
   const {
     register,
     handleSubmit,
@@ -102,13 +105,10 @@ export default function Form() {
             justifyContent: "space-between",
           }}
         >
-          <FormControlLabel
-            control={<Checkbox  />}
-            label="Remember me"
-          />
+          
           <Link
             to={"/auth/forget"}
-            style={{ color: "blue", textDecoration: "underline" }}
+            style={{ color:theme.palette.primary.main, textDecoration: "none" }}
           >
             Forgot password?
           </Link>
@@ -123,7 +123,7 @@ export default function Form() {
             textTransform: "capitalize",
           }}
           loading={loading}
-          startIcon={<LoginIcon />}
+          endIcon={<LoginIcon />}
         >
           Log in
         </Button>

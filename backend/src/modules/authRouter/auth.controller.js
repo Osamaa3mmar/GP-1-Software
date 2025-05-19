@@ -148,9 +148,9 @@ export const login = async (req, res) => {
       if (user.verifyEmail) {
         const check =await bcrypt.compare(password, user.password);
         if (check) {
-          const { id, email, username, role } = user;
+          const { id, email, username, role,orgId } = user;
           await user.save();
-          const token = jwt.sign({ id, email, username, role }, "GP1");
+          const token = jwt.sign({ id, email, username, role,orgId }, "GP1");
           return res.status(200).json({ message: "Login successful", token });
         }
         return res.status(400).json({ message: "Wrong password" });
@@ -179,6 +179,9 @@ export const forgetPassword=async (req,res)=>{
     const user=await userModel.findOne({ where:{email:email}});
     if(!user){
       return res.status(404).json({message:"Email not registered"});
+    }
+    if( user.resetCode){
+      return res.status(200).json({message:"This email already requested password reset ."});
     }
     user.resetCode=true;
     const rand=generateRandomCode(6);

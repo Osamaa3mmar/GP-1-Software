@@ -1,11 +1,22 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { Button, TextInput } from "react-native-paper";
-
-export default function EditBio({setStatus}) {
+import Base from "../../api/Base";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+export default function EditBio({setStatus,update}) {
    const [info,setInfo]=useState('');
-    const editBio=()=>{
-        console.log(info);
+    const editBio=async()=>{
+        try{
+          const {data}=await Base.post("/user/edit/bio",{bio:info},{
+            headers:{
+              token:await AsyncStorage.getItem("token"),
+            }
+          })
+          update();
+          setStatus(false);
+        }catch(error){
+          console.log(error);
+        }
     }
     const dismess=()=>{
         setStatus(false);

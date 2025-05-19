@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../Connection.js";
+import { assign } from "nodemailer/lib/shared/index.js";
 
 
 
@@ -65,5 +66,13 @@ export const userModel =sequelize.define("User",{
     code:{
         type:DataTypes.STRING,
         allowNull:true,
-    }
+    },
+    resume:{
+        type:DataTypes.TEXT,
+        allowNull:true,
+    },
+    interests: {
+    type: DataTypes.JSON,
+    allowNull: true, // Example: { topics: ["math", "science"], categories: ["programming"] }
+    },
 })

@@ -4,6 +4,7 @@ import { organizationModel } from "../../../DB/models/organaization/organaizatio
 import cloudinary from "../../utils/Claoudinary.js";
 import { differenceInWeeks } from 'date-fns';
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
+import { makeNotification } from "../Notification/Notification.controller.js";
 
 
 export const createCourse=async (req,res)=>{
@@ -18,18 +19,13 @@ export const createCourse=async (req,res)=>{
             let background="https://res.cloudinary.com/dta649b70/image/upload/v1744806300/hbxtz8t7e8vjrjydaoa2.jpg";
             let thumbnail="https://res.cloudinary.com/dta649b70/image/upload/v1744805803/yqjtliviomzzv8gvaefp.png";
              if(req.files){
-              console.log("line 24");
                 if(req.files.thumbnail){
-                    console.log("Line 26");
                     thumbnail=await cloudinary.uploader.upload(req.files.thumbnail[0].path);
                     newCourse.thumbnail=thumbnail.secure_url;
                 }else{
-                  console.log("osmaaaaa hereee");
                   if(!isGenerated||isGenerated=='false'){
-                  console.log("osmaaaaa hereee");
                   thumbnail=await cloudinary.uploader.upload(thumbnail);
                     newCourse.thumbnail=thumbnail.secure_url;
-                    console.log(newCourse.thumbnail);
                   }
                 }
                 if(req.files.background){
@@ -39,14 +35,17 @@ export const createCourse=async (req,res)=>{
                 else{
                   background=await cloudinary.uploader.upload(background);
                     newCourse.backImage=background.secure_url;
-                    console.log(background.secure_url);
                 }
             }
             const org=await organizationModel.findOne({where:{ownerId:user.id},attributes:['id']});
             newCourse.orgId=org.id;
            const createdCourse =await courseModel.create(newCourse);
-           if(createdCourse)
+           if(createdCourse){
+            let message=`${createdCourse.title} Course Created !`;
+            let actionUrl='/dashboard/courses/'+createdCourse.id;
+                makeNotification("Add","add",message,actionUrl,org.id);
             return res.status(200).json({message:createdCourse.title+" Course created successfully!"});
+           }
         else
         return res.status(400).json({message:"Course not created !"});
 
@@ -83,6 +82,13 @@ export const getAdminCourses = async (req, res) => {
                 "completionStatus",
                 "thumbnail",
               ],
+              include: [
+        {
+          model: userModel,
+          as: "teacher",
+          attributes: ["id", "username", "email", "profilePic"],
+        },
+      ],
             },
           ],
         });
@@ -177,9 +183,60 @@ export const getDetailedCourseInfo=async(req,res)=>{
         if(!course){
             return res.status(404).json({message:"Invalid Course ID"});
         }
-        console.log(course)
         return res.status(200).json({message: "Course retrieved successfully",course});
     }catch(error){
         return res.status(500).json({ message: "Server Error", error });
     }
+}
+
+
+
+export const editAll=async(req,res)=>{
+    try{
+        const {id}=req.params;
+        const {editedCourse,orgId}=req.body;
+            let course=await courseModel.findByPk(id);
+            if(!course){
+                  return res.status(404).json({message:"Invalid Course ID"});
+              }
+                      let tags={
+                  topics:editedCourse.topics,
+            category:editedCourse.category 
+                }
+                delete editedCourse.topics;
+                delete editedCourse.category;
+                editedCourse.tags=tags;
+                editedCourse.duration = differenceInWeeks(new Date(editedCourse.endDate), new Date(editedCourse.startDate));
+                let message=`${course.title} Course Info Updated !`;
+                course=await course.update(editedCourse);
+                if(!course){
+                  return res.status(400).json({message:"Course not updated !"});
+                } 
+                console.log("here");
+                let actionUrl='/dashboard/courses/'+id;
+                makeNotification("Edit","edit",message,actionUrl,orgId);
+        return res.status(200).json({message: "Course retrieved successfully"});
+    }catch(error){
+        return res.status(500).json({ message: "Server Error", error });
+    }
+}
+
+
+export const getallnotassigninorg=async (req,res)=>{
+  try{
+    const {id}=req.params;
+    console.log(id); 
+    const courses=await courseModel.findAll({
+      where:{
+        teacherId:null,
+        orgId:id
+      }
+    })
+    if(!courses){
+      return res.status(200).json({message:"no Courses"})
+    }
+    return res.status(200).json({message:"success",courses });
+  }catch(error){
+   return res.status(500).json({ message: "Server Error", error });
+  }
 }
