@@ -23,8 +23,8 @@ export default function CourseCardStats({ duration, enrollmentNumber , schedule 
 
 const scheduleGroups = Object.values(groupedSchedules);
   return (
-    <Stack direction="column" spacing={1} sx={{ mb: 2 }}>
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+     <Stack direction="column" spacing={1} sx={{ mb: 2 }}>
+      <Stack direction="row" spacing={1}>
         <Chip
           icon={<AccessTimeIcon fontSize="small" />}
           label={`${duration || 0} weeks`}
@@ -38,23 +38,25 @@ const scheduleGroups = Object.values(groupedSchedules);
           size="small"
         />
       </Stack>
-      <Stack spacing={1}>
-        {scheduleGroups.map((session, index) => (
-          <Chip
-            key={index}
-            label={`${session.days.join(", ")} | ${session.time}`}
-            icon={<CalendarTodayIcon fontSize="small" />}
-            variant="outlined"
-            size="small"
-            sx={{
-              width: "fit-content",
-              justifyContent: "flex-start",
-              bgcolor: "background.paper",
-              "& .MuiChip-label": { flexGrow: 1 },
-            }}
-          />
-        ))}
-      </Stack>
+      {scheduleGroups.length > 0 && (
+        <Stack spacing={1}>
+          {scheduleGroups.map((session, index) => (
+            <Chip
+              key={index}
+              label={`${session.days.join(", ")} | ${session.time}`}
+              icon={<CalendarTodayIcon fontSize="small" />}
+              variant="outlined"
+              size="small"
+              sx={{
+                width: "fit-content",
+                justifyContent: "flex-start",
+                bgcolor: "background.paper",
+                "& .MuiChip-label": { flexGrow: 1 },
+              }}
+            />
+          ))}
+        </Stack>
+      )}
     </Stack>
   );
 }

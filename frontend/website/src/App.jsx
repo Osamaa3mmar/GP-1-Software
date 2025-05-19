@@ -29,7 +29,14 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import CourseDetails from "./pages/Course/CourseDetails";
 import ClassRoomsUser from "./pages/UserClassRooms/ClassRoomsUser";
 import AuthProtectedRout from "./component/protected_route/AuthProtectedRout";
+import { useEffect } from 'react';
+import { registerSyncfusionLicense } from './utils/syncfusion-license';
+
 export default function App() {
+  useEffect(() => {
+    registerSyncfusionLicense();
+  }, []);
+
   const theme = createTheme({
     palette: {
       primary: {

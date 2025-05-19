@@ -1,4 +1,3 @@
-// components/CardSchedule.jsx
 import {
   ScheduleComponent,
   Day,
@@ -12,9 +11,19 @@ import {
   ViewsDirective,
   ViewDirective,
 } from "@syncfusion/ej2-react-schedule";
+import { registerLicense } from "@syncfusion/ej2-base";
 import { useEffect, useState } from "react";
 import { Box, Typography, Alert } from "@mui/material";
 import PropTypes from "prop-types";
+
+// Register Syncfusion License Key
+registerLicense(
+  "Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCeExzWmFZfVtgd19FZlZSRWYuP1ZhSXxWdkBiUX5bdXJVQmZdVER9XUs="
+);
+
+// Import Syncfusion styles
+import "@syncfusion/ej2-base/styles/material.css";
+import "@syncfusion/ej2-react-schedule/styles/material.css";
 
 const CardSchedule = ({ cartItems = [] }) => {
   const [conflicts, setConflicts] = useState([]);
@@ -30,6 +39,7 @@ const CardSchedule = ({ cartItems = [] }) => {
           const course1 = items[i].course;
           const course2 = items[j].course;
           if (!course1.schedule || !course2.schedule) continue;
+          
           const course1Start = new Date(course1.schedule.start);
           const course1End = new Date(course1.schedule.end);
           const course2Start = new Date(course2.schedule.start);
@@ -52,12 +62,16 @@ const CardSchedule = ({ cartItems = [] }) => {
     const newResources = cartItems.map((item) => ({
       Id: item.course.id,
       Name: item.course.title,
-      Color: "#ff5722",
+      Color: getRandomColor(),
     }));
 
     setResources(newResources);
     setConflicts(detectConflicts(cartItems));
   }, [cartItems]);
+
+  const getRandomColor = () => {
+    return "#" + Math.floor(Math.random()*16777215).toString(16);
+  };
 
   if (!cartItems.length) {
     return (
@@ -86,20 +100,23 @@ const CardSchedule = ({ cartItems = [] }) => {
         currentView="Week"
         selectedDate={new Date()}
         eventSettings={{
-          dataSource: cartItems.map((item) => ({
-            Id: item.course.id,
-            Subject: item.course.title,
-            StartTime: new Date(item.course.schedule.start),
-            EndTime: new Date(item.course.schedule.end),
-            ResourceID: item.course.id,
-          })),
+          dataSource: cartItems
+            .filter(item => item.course.schedule)
+            .map((item) => ({
+              Id: item.course.id,
+              Subject: item.course.title,
+              StartTime: new Date(item.course.schedule.start),
+              EndTime: new Date(item.course.schedule.end),
+              ResourceID: item.course.id,
+            })),
         }}
         group={{ resources: ["Resources"] }}
+        cssClass="schedule-print"
       >
         <ResourcesDirective>
           <ResourceDirective
             field="ResourceID"
-            title="Resources"
+            title="Course"
             name="Resources"
             dataSource={resources}
             textField="Name"
@@ -114,6 +131,8 @@ const CardSchedule = ({ cartItems = [] }) => {
             startHour="08:00"
             endHour="22:00"
           />
+          <ViewDirective option="Day" />
+          <ViewDirective option="Month" />
         </ViewsDirective>
         <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
       </ScheduleComponent>
@@ -131,7 +150,7 @@ CardSchedule.propTypes = {
         schedule: PropTypes.shape({
           start: PropTypes.string.isRequired,
           end: PropTypes.string.isRequired,
-        }).isRequired,
+        }),
       }).isRequired,
     })
   ),

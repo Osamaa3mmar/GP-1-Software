@@ -1,11 +1,22 @@
-import { Chip, Stack } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 
 export default function CourseCardTags({ tags }) {
   const topics = tags?.topics || ["HTML", "CSS", "JavaScript"];
   const category = tags?.category || "";
 
   return (
-    <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+    <Box sx={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 0.5,
+      mb: 1,
+      maxWidth: 350, // Match card width
+      '& .MuiChip-root': {
+        maxWidth: 'calc(50% - 4px)', // Ensure chips don't overflow
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+      }
+    }}>
       {category && (
         <Chip
           label={category}
@@ -24,6 +35,6 @@ export default function CourseCardTags({ tags }) {
             size="small"
           />
         ))}
-    </Stack>
+    </Box>
   );
 }

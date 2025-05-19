@@ -61,7 +61,9 @@ export default function CourseCard({ course }) {
       onMouseLeave={handlePopoverClose}
       onClick={handleCardClick}
     >
-      <Card sx={{ width: 350, boxShadow: 3 , height: "100%" }}>
+      <Card sx={{ width: 350, boxShadow: 3 , height: 560, 
+  display: 'flex',
+  flexDirection: 'column'}}>
         <CardMedia
           component="img"
           height="194"
