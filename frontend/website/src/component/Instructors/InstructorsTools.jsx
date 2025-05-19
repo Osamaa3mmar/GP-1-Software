@@ -6,7 +6,7 @@ import { UserContext } from "../../Context/userContext";
 import InstractorCard from "./InstractorCard";
 import { toast } from "react-toastify";
 
-export default function InstructorsTools() {
+export default function InstructorsTools({reload,setSearchedUser}) {
      const [number,setNumber]=useState(0);
      const [Applications,setApplications]=useState([]);
       const {user}=useContext(UserContext);
@@ -46,7 +46,7 @@ export default function InstructorsTools() {
             const {data}=await axios.get(`http://localhost:4545/applye/setStatusaccept/${id}`);
             toast.success(data.message);
             getApplications();
-            
+            reload();
         }catch(error){
             console.log(error);
         }
@@ -56,6 +56,7 @@ export default function InstructorsTools() {
                 const {data}=await axios.get(`http://localhost:4545/applye/setStatusdenied/${id}`);
                 toast.success(data.message);
                 getApplications();
+                reload();
             }catch(error){
                 console.log(error);
             }
@@ -65,6 +66,7 @@ export default function InstructorsTools() {
     sx={{display:"flex",flexWrap:"wrap",gap:"10px",alignItems:"center",justifyContent:"space-between",padding:"20px",backgroundColor:"#f1f1f5",borderRadius:"8px"}}>
         <TextField
         variant="filled"
+        onChange={(e)=>setSearchedUser(e.target.value)}
         label={"Search"}
         sx={{width:"500px"}}/>
         <Badge badgeContent={number} color="primary">

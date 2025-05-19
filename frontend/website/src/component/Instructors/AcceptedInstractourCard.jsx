@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 import style from "../Notifications/animation.module.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { toast } from "react-toastify";
@@ -21,15 +21,20 @@ import Swal from "sweetalert2";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import CloseIcon from "@mui/icons-material/Close";
 import Header from "../Admin/CoursesAdmin/AddCourseFrom/Header";
-export default function AcceptedInstractourCard({ index, userId, getAll }) {
+import Assigned from "./Assigned";
+import AssignedToCourse from "./AssignedToCourse";
+import { OrgNotificationsContext } from "../../Context/NotificationsOrgContext";
+export default function AcceptedInstractourCard({ index, userId, getAll,search }) {
   const [user, setUser] = useState({});
   const theme = useTheme();
+      const {setNotificationCount}=useContext(OrgNotificationsContext);
+  
   const [open, setOpen] = useState(false);
   const [currentModal, setCurrentModal] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const handleOpen = (name,id) =>{
-    setCurrentModal(name);
     setCurrentUser(id);
+    setCurrentModal(name);
     setOpen(true);
   } 
   const handleClose = () => setOpen(false);
@@ -73,6 +78,7 @@ export default function AcceptedInstractourCard({ index, userId, getAll }) {
         );
         toast.success(data.message);
         getAll();
+        setNotificationCount((prev)=>(prev+1));
       }
     });
   };
@@ -90,6 +96,8 @@ export default function AcceptedInstractourCard({ index, userId, getAll }) {
   useEffect(() => {
     getUser();
   }, [userId]);
+
+  if(user?.username?.toLowerCase().includes(search.toLowerCase()) || user?.email?.toLowerCase().includes(search.toLowerCase())){
   return (
     <Paper
       className={style.animateCard}
@@ -124,7 +132,7 @@ export default function AcceptedInstractourCard({ index, userId, getAll }) {
             justifyContent: "center",
             flexShrink: 0,
           }}
-        >
+          >
           <Avatar src={user?.profilePic} />
         </Box>
 
@@ -137,7 +145,7 @@ export default function AcceptedInstractourCard({ index, userId, getAll }) {
             {/* {timeAgo(createdAt)} */}
             {user
               ? user.specialization
-                ? user.specialization
+              ? user.specialization
                 : user.email
               : ""}
           </Typography>
@@ -150,14 +158,14 @@ export default function AcceptedInstractourCard({ index, userId, getAll }) {
         <VisibilityIcon sx={{color:iconColores[icon]}} />
         </IconButton>
         </Tooltip>
-      </Box>
-      :''} */}
+        </Box>
+        :''} */}
 
       <Box sx={{ display: "flex", gap: 0 }}>
         {user?.courses?.length > 0 ? (
           <>
             <Tooltip title="Assign to Course">
-              <IconButton>
+              <IconButton onClick={()=>handleOpen("assignToCourse",userId)}>
                 <AssignmentIndIcon
                   sx={{ fontSize: 28, color: theme.palette.primary.main }}
                 />
@@ -181,17 +189,17 @@ export default function AcceptedInstractourCard({ index, userId, getAll }) {
         ) : (
           <>
             <Tooltip title="Assign to Course">
-              <IconButton>
+              <IconButton onClick={()=>handleOpen("assignToCourse",userId)}>
                 <AssignmentIndIcon
                   sx={{ fontSize: 28, color: theme.palette.primary.main }}
-                />
+                  />
               </IconButton>
             </Tooltip>
             <Tooltip title="Remove Instructor">
               <IconButton onClick={kick}>
                 <CloseIcon
                   sx={{ fontSize: 28, color: theme.palette.error.main }}
-                />
+                  />
               </IconButton>
             </Tooltip>
           </>
@@ -200,8 +208,8 @@ export default function AcceptedInstractourCard({ index, userId, getAll }) {
         {/* <Tooltip title="View Course">
         <IconButton>
             <KeyboardArrowRightIcon sx={{fontSize:28,color:theme.palette.primary.main}} />
-        </IconButton>
-        </Tooltip> */}
+            </IconButton>
+            </Tooltip> */}
       </Box>
     <Modal
         open={open}
@@ -224,9 +232,14 @@ export default function AcceptedInstractourCard({ index, userId, getAll }) {
         setCurrentModal(null);
         setCurrentUser(null);
       }} title={currentModal}/>
+      {currentModal==="coursesAssigned"?<Assigned reload={getUser} userId={currentUser} />:<AssignedToCourse reload={getUser} userId={currentUser} />}
       </Stack>
     </Box>
 </Modal>
     </Paper>
   );
+}
+else{
+  return '';
+}
 }

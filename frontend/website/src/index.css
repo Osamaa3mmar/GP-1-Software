@@ -1,1 +1,4 @@
 @import "tailwindcss";
+.my-zindex-class {
+  z-index: 2000 !important; /* higher than MUI's modal z-index (1300-1500) */
+}

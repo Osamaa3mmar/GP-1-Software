@@ -10,11 +10,12 @@ export default function AcademyProfile() {
   const {user}=useContext(UserContext);
   const [isInIt,setIsInIt]=useState(false);
   const {id}=useParams();
+  console.log(user?.id,id);
   const applay=async()=>{
     try{
       const {data}=await axios.post("http://localhost:4545/applye/makeapplay",{
         userId:user?.id,
-        orgId:user?.orgId,
+        orgId:id,
       },{
         headers:{
           token:localStorage.getItem("token"),

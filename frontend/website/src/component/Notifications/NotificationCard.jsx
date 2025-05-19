@@ -19,7 +19,10 @@ const iconColores = {
     edit: "#f57c00",
     warning: "#d32f2f",
     applay:"#00007c",
-    add:"#6a1b9a"
+    add:"#6a1b9a",
+    unassign:"#d32f2f",
+    assign:"#388e3c",
+    kick:"#ff0000"
   };
  
 

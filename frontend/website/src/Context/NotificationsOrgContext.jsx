@@ -34,7 +34,7 @@ const OrgNotificationsContextProvider=({children})=>{
         getCount(user?.orgId);
     },[user])
     return (
-        <OrgNotificationsContext.Provider value={{getCount,notifications,setNotifications,setNotificationCount,notificationCount}}>
+        <OrgNotificationsContext.Provider value={{getUnseen,getCount,notifications,setNotifications,setNotificationCount,notificationCount}}>
             {children}
         </OrgNotificationsContext.Provider>
     )

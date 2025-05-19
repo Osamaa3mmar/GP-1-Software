@@ -1,7 +1,7 @@
 import { Box, Grid } from '@mui/material'
 import AcceptedInstractourCard from './AcceptedInstractourCard'
 
-export default function InstructorsArea({getAll,instructors}) {
+export default function InstructorsArea({getAll,instructors,search}) {
   return (
     <Box 
     sx={{
@@ -10,9 +10,9 @@ export default function InstructorsArea({getAll,instructors}) {
     >
       <Grid  container  spacing={2}>
       {instructors?.map((item, index) => (
-        <Grid item key={index} xs={12} sm={6} md={4} lg={4}>
+        <Grid item key={index} xs={10} sm={8} md={6} lg={4}>
         <Box key={index} sx={{ mb: 2 }}>
-          <AcceptedInstractourCard getAll={getAll} {...item} index={index} />
+          <AcceptedInstractourCard search={search} getAll={getAll} {...item} index={index} />
         </Box>
         </Grid>
       ))}

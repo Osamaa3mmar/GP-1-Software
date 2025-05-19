@@ -1,12 +1,13 @@
 import { FileCopy } from '@mui/icons-material';
 import { Avatar, Box, Button, IconButton, Tooltip, Typography, Paper } from '@mui/material';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { OrgNotificationsContext } from '../../Context/NotificationsOrgContext';
 
 export default function InstractorCard({ userId,id,accept,denied }) {
   const [user, setUser] = useState(null);
-    
+    const {setNotificationCount}=useContext(OrgNotificationsContext);
   const getUser = async () => {
     try {
       const { data } = await axios.get(`http://localhost:4545/applye/instractour/${userId}`);
@@ -61,10 +62,10 @@ export default function InstractorCard({ userId,id,accept,denied }) {
             </IconButton>
           </a>
         </Tooltip>
-        <Button  onClick={()=>{denied(id)}} variant="outlined" color="error" size="small">
+        <Button  onClick={()=>{denied(id);setNotificationCount((prev)=>(prev+1)) }} variant="outlined" color="error" size="small">
           Deny
         </Button>
-        <Button  onClick={()=>{accept(id)}} variant="contained" color="success" size="small">
+        <Button  onClick={()=>{accept(id);setNotificationCount((prev)=>(prev+1)) }} variant="contained" color="success" size="small">
           Accept
         </Button>
       </Box>
