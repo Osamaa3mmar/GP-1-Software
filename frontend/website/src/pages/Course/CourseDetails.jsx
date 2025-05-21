@@ -17,62 +17,85 @@ import {
 import { ExpandMore, PlayCircle, Check, Share, Favorite } from '@mui/icons-material';
 import { useParams, Link } from 'react-router-dom';
 import CourseSchedule from '../../component/Courses/CourseSchedule';
+import { useEffect, useState } from 'react';
+import axios from "axios";
 // import CourseCarousel from '../components/CourseCarousel';
 
 const CourseDetails = () => {
-  const { courseId } = useParams();
+  const { id } = useParams();
+    const [course, setCourse] = useState(null);
   
+    useEffect(() => {
+      const fetchCourse = async () => {
+        try {
+          console.log(id);
+          const response = await axios.get(`http://localhost:4545/getdetailedinfo/${id}`,{
+      headers:{
+        token:localStorage.getItem("token")
+      }
+    });
+          setCourse(response.data);
+          console.log(response.data);
+        } catch (error) {
+            console.error("Failed to fetch courses:", error);
+          }
+      };
+  
+      fetchCourse();
+    }, [id]);
+    console.log(course);
+    
   // Mock data - replace with API calls
-  const course = {
-    id: courseId,
-    title: "Modern Web Development Bootcamp",
-    videoUrl: "https://www.youtube.com/embed/your-video-id",
-    description: "Become a full-stack developer with modern technologies...",
-    requirements: ["Basic HTML/CSS knowledge", "JavaScript fundamentals", "Computer with 4GB RAM"],
-    goals: ["Build production-ready apps", "Master React & Node.js", "Deploy to cloud platforms"],
-    tags: {
-      category: ["Web Development", "Programming"],
-      stats: [
-        { label: "Online", icon: "🌐" },
-        { label: "60 Hours", icon: "⏳" },
-        { label: "Lifetime Access", icon: "🔒" }
-      ]
-    },
-    price: 189.99,
-    rating: 4.7,
-    topics: [
-      {
-        module: "HTML & CSS Fundamentals",
-        lessons: ["Semantic HTML", "CSS Grid", "Responsive Design"]
-      },
-      {
-        module: "JavaScript Mastery",
-        lessons: ["ES6+ Features", "Async Programming", "DOM Manipulation"]
-      }
-    ],
-    reviews: [
-      {
-        user: "John D.",
-        rating: 5,
-        comment: "Best course I've ever taken!",
-        date: "2024-03-15"
-      }
-    ],
-    instructor: {
-      name: "Sarah Johnson",
-      bio: "Senior Full-Stack Developer with 10+ years experience...",
-      avatar: "/path/to/avatar.jpg",
-      coursesCount: 15
-    }
-  };
+  // const course = {
+  //   id: courseId,
+  //   title: "Modern Web Development Bootcamp",
+  //   videoUrl: "https://www.youtube.com/embed/your-video-id",
+  //   description: "Become a full-stack developer with modern technologies...",
+  //   requirements: ["Basic HTML/CSS knowledge", "JavaScript fundamentals", "Computer with 4GB RAM"],
+  //   goals: ["Build production-ready apps", "Master React & Node.js", "Deploy to cloud platforms"],
+  //   tags: {
+  //     category: ["Web Development", "Programming"],
+  //     stats: [
+  //       { label: "Online", icon: "🌐" },
+  //       { label: "60 Hours", icon: "⏳" },
+  //       { label: "Lifetime Access", icon: "🔒" }
+  //     ]
+  //   },
+  //   price: 189.99,
+  //   rating: 4.7,
+  //   topics: [
+  //     {
+  //       module: "HTML & CSS Fundamentals",
+  //       lessons: ["Semantic HTML", "CSS Grid", "Responsive Design"]
+  //     },
+  //     {
+  //       module: "JavaScript Mastery",
+  //       lessons: ["ES6+ Features", "Async Programming", "DOM Manipulation"]
+  //     }
+  //   ],
+  //   reviews: [
+  //     {
+  //       user: "John D.",
+  //       rating: 5,
+  //       comment: "Best course I've ever taken!",
+  //       date: "2024-03-15"
+  //     }
+  //   ],
+  //   instructor: {
+  //     name: "Sarah Johnson",
+  //     bio: "Senior Full-Stack Developer with 10+ years experience...",
+  //     avatar: "/path/to/avatar.jpg",
+  //     coursesCount: 15
+  //   }
+  // };
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       {/* Header Section */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h3" gutterBottom>{course.title}</Typography>
+        <Typography variant="h3" gutterBottom>{course?.title}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Rating value={course.rating} precision={0.1} readOnly />
+          <Rating value={course?.rating} precision={0.1} readOnly />
           <Typography variant="subtitle1">4,567 students enrolled</Typography>
           <Chip label="Bestseller" color="primary" />
         </Box>
@@ -89,17 +112,15 @@ const CourseDetails = () => {
             boxShadow: 3,
             mb: 4
           }}>
-            <iframe
+            <img
               width="100%"
               height="450"
-              src={course.videoUrl}
+              src={course?.thumbnail}
               frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              title="Course trailer"
+              title="Course thumbnail"
             />
           </Box>
-          {/* <CourseSchedule schedule={course.schedule} /> */}
+          {/* <CourseSchedule schedule={course?.schedule} /> */}
 
           {/* Course Content Accordion */}
           <Accordion defaultExpanded>
@@ -107,7 +128,7 @@ const CourseDetails = () => {
               <Typography variant="h5">Curriculum</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {course.topics.map((module, index) => (
+              {course?.topics.map((module, index) => (
                 <Accordion key={index} sx={{ mb: 1 }}>
                   <AccordionSummary expandIcon={<ExpandMore />}>
                     <Typography variant="h6">{module.module}</Typography>
@@ -128,11 +149,11 @@ const CourseDetails = () => {
           {/* Description & Requirements */}
           <Box sx={{ my: 4 }}>
             <Typography variant="h5" gutterBottom>Description</Typography>
-            <Typography paragraph>{course.description}</Typography>
+            <Typography paragraph>{course?.description}</Typography>
             
             <Typography variant="h5" gutterBottom>Requirements</Typography>
             <ul style={{ paddingLeft: 24 }}>
-              {course.requirements.map((req, i) => (
+              {course?.requirements.map((req, i) => (
                 <li key={i}>
                   <Typography variant="body1">{req}</Typography>
                 </li>
@@ -143,7 +164,7 @@ const CourseDetails = () => {
           {/* Reviews Section */}
           <Box sx={{ my: 4 }}>
             <Typography variant="h4" gutterBottom>Student Reviews</Typography>
-            {course.reviews.map((review, index) => (
+            {course?.reviews.map((review, index) => (
               <Box key={index} sx={{ mb: 3, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <Avatar sx={{ mr: 2 }} />
@@ -168,7 +189,7 @@ const CourseDetails = () => {
           }}>
             {/* Pricing Section */}
             <Typography variant="h4" gutterBottom>
-              ${course.price}
+              ${course?.price}
               {/* <Typography variant="body2" color="text.secondary" component="span" sx={{ ml: 1 }}>
                 84% off
               </Typography> */}
@@ -194,7 +215,7 @@ const CourseDetails = () => {
 
             {/* Course Stats */}
             <Box sx={{ my: 3 }}>
-              {course.tags.stats.map((stat, i) => (
+              {course?.tags.stats.map((stat, i) => (
                 <Chip
                   key={i}
                   label={`${stat.icon} ${stat.label}`}
@@ -207,11 +228,11 @@ const CourseDetails = () => {
             <Box sx={{ mt: 3, cursor: 'pointer' }} component={Link} to="/instructor-profile">
               <Typography variant="h6" gutterBottom>Instructor</Typography>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar src={course.instructor.avatar} sx={{ width: 56, height: 56, mr: 2 }} />
+                <Avatar src={course?.instructor.avatar} sx={{ width: 56, height: 56, mr: 2 }} />
                 <Box>
-                  <Typography variant="h6">{course.instructor.name}</Typography>
+                  <Typography variant="h6">{course?.instructor.name}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {course.instructor.coursesCount} courses
+                    {course?.instructor.coursesCount} courses
                   </Typography>
                 </Box>
               </Box>
@@ -240,7 +261,7 @@ const CourseDetails = () => {
       <Box sx={{ mt: 6, p: 4, bgcolor: 'background.paper', borderRadius: 2 }}>
         <Typography variant="h4" gutterBottom>What You will Learn</Typography>
         <Grid container spacing={3}>
-          {course.goals.map((goal, i) => (
+          {course?.goals.map((goal, i) => (
             <Grid item xs={12} sm={6} key={i}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Check sx={{ color: 'primary.main', mr: 2 }} />

@@ -37,6 +37,7 @@ import AcademyProfile from "./pages/AcademyProfile/AcademyProfile";
 import UserNotificationsContextProvider, { UserNotificationsContext } from "./Context/NotificationsUserContext";
 import CoursesAdminTemp from "./pages/AdminPages/CoursesAdminTemp";
 import ForgetPassword from "./pages/ForgetPassword/ForgetPAssword";
+import ClassroomsListPage from "./pages/UserClassRooms/ClassroomsListPage";
 export default function App() {
  
 
@@ -142,7 +143,10 @@ export default function App() {
           element:<CourseDetails/>
         },{
           path:"classrooms",
-          element:<ClassRoomsUser/>
+          element:<ClassroomsListPage/>,
+          children:[
+            {path:":id",element:<ClassRoomsUser/>}
+          ]
         },
         {
           path:"academy/profile/:id",
