@@ -10,6 +10,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import DrawerMain from "./DrawerMain";
 import ProfileMenu from "./ProfileMenu";
 import Notification from "./Notification";
+import Chat from "./Chat";
 import Cart from "./Cart";
 import Logo from "./Logo";
 import Search from "./Search";
@@ -58,6 +59,7 @@ position:"sticky"
           >
             <Cart />
             <Notification  />
+            <Chat/>
             <ProfileMenu />
           </Box>
         </Stack>

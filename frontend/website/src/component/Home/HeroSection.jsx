@@ -1,7 +1,9 @@
 import { Box, Container, Typography, Button, Stack } from '@mui/material';
 import HeroSearch from './HeroSearch';
+import { useNavigate } from 'react-router-dom';
 
 export default function HeroSection() {
+  const navigate = useNavigate();
   return (
     <Box sx={{
       background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
@@ -21,11 +23,11 @@ export default function HeroSection() {
           <HeroSearch />
 
           <Stack direction="row" spacing={2}>
-            <Button variant="contained" size="large" color="secondary">
+            {/* <Button variant="contained" size="large" color="secondary">
               Explore Courses
-            </Button>
-            <Button variant="outlined" size="large" color="inherit">
-              How It Works
+            </Button> */}
+            <Button onClick={() => {navigate("/main/courses")}} variant="outlined" size="large" color="inherit">
+              Explore Courses
             </Button>
           </Stack>
         </Stack>

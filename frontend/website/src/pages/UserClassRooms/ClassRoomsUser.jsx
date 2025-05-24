@@ -1,13 +1,10 @@
-import { useState } from 'react';
-import { Box, Container , Typography } from '@mui/material';
-import { ClassroomList } from '../../component/UserClassRooms/ClassroomList';
-import { LessonAccordions } from '../../component/UserClassRooms/LessonAccordions';
+// pages/ClassroomPage.jsx
+import { Container, Box, Typography, Button } from "@mui/material";
+import { useParams } from "react-router-dom";
+// import LessonAccordions from "../../component/UserClassRooms/LessonAccordions";
+// import mockClassrooms from "../data/mockClassrooms"; // Your mock data
 
-const ClassRoomsUser = () => {
-  const [selectedClassroom, setSelectedClassroom] = useState(null);
-
-  // Mock data - replace with API call
-  const classrooms = [
+const mockClassrooms = [
     {
       id: '1',
       title: 'Mathematics 101',
@@ -50,39 +47,37 @@ const ClassRoomsUser = () => {
     }
   ];
 
-  const selectedClassroomData = classrooms.find(c => c.id === selectedClassroom);
+const ClassroomPage = () => {
+  const { classroomId } = useParams();
+  const classroom = mockClassrooms.find(c => c.id === classroomId);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ 
-        display: 'flex', 
-        gap: 4, 
-        flexDirection: { xs: 'column', md: 'row' } 
-      }}>
-        <ClassroomList
-          classrooms={classrooms}
-          selectedClassroom={selectedClassroom}
-          onSelectClassroom={setSelectedClassroom}
-        />
-        
-        {selectedClassroom ? (
-          <LessonAccordions lessons={selectedClassroomData?.lessons || []} />
-        ) : (
-          <Box sx={{ 
-            flex: 1, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            height: 300
-          }}>
-            <Typography variant="h6" color="text.secondary">
-              Select a classroom to view lessons
-            </Typography>
-          </Box>
-        )}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h3" fontWeight="600" gutterBottom>
+          {classroom?.title}
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary">
+          {classroom?.courseCode} • Instructor: {classroom?.instructor}
+        </Typography>
       </Box>
+
+      {classroom?.lessons?.length > 0 ? (
+        <LessonAccordions lessons={classroom.lessons} />
+      ) : (
+        <Box sx={{ 
+          height: '60vh', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center' 
+        }}>
+          <Typography variant="h6" color="text.secondary">
+            No lessons available for this classroom
+          </Typography>
+        </Box>
+      )}
     </Container>
   );
 };
 
-export default ClassRoomsUser;
+export default ClassroomPage;

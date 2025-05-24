@@ -6,7 +6,7 @@ export default function HeroSearch() {
     <Box sx={{ width: '100%', maxWidth: 800 }}>
       <TextField
         fullWidth
-        placeholder="Search courses, companies, or instructors..."
+        placeholder="Search companies, or instructors..."
         variant="outlined"
         InputProps={{
           sx: { 
