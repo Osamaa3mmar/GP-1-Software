@@ -14,7 +14,14 @@ import {
   Snackbar,
   Card,
   CardContent,
-  CardActions
+  CardActions,
+  Modal,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  IconButton
 } from "@mui/material";
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import EditIcon from '@mui/icons-material/Edit';
@@ -23,6 +30,8 @@ import QuizIcon from '@mui/icons-material/Quiz';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import HomeIcon from '@mui/icons-material/Home';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QustionCardMaker from "../../component/Qustion/QustionCardMaker";
@@ -51,6 +60,13 @@ export default function QuizeMaker() {
     totalMarks: 0
   });
 
+  // State for AI question generation modal
+  const [openAIModal, setOpenAIModal] = useState(false);
+  const [aiQuestionTopic, setAiQuestionTopic] = useState('');
+  const [aiQuestionDetails, setAiQuestionDetails] = useState('');
+  const [aiQuestionDifficulty, setAiQuestionDifficulty] = useState('medium');
+  const [generatingQuestion, setGeneratingQuestion] = useState(false);
+
   // Create a new empty question
   const makeEmptyQuestion = () => {
     const newQuestion = {
@@ -71,6 +87,31 @@ export default function QuizeMaker() {
         behavior: 'smooth'
       });
     }, 100);
+  }
+
+  // Handle opening and closing the AI question generation modal
+  const handleOpenAIModal = () => setOpenAIModal(true);
+  const handleCloseAIModal = () => setOpenAIModal(false);
+
+  // Handle AI question generation (frontend only for now)
+  const handleGenerateAIQuestion = () => {
+    // This is just a placeholder - backend implementation will come later
+    setGeneratingQuestion(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      setGeneratingQuestion(false);
+      handleCloseAIModal();
+      
+      // Show success message
+      toast.success("Question generated successfully!", {
+        position: "bottom-left",
+      });
+      
+      // For now, just create an empty question
+      // Later this will be replaced with the actual AI-generated question
+      makeEmptyQuestion();
+    }, 1500);
   }
 
   // Check if quiz exists by trying to fetch its questions
@@ -288,15 +329,26 @@ export default function QuizeMaker() {
             <Typography variant="subtitle1" color="text.secondary">Total Marks: {quizInfo.totalMarks}</Typography>
           </Box>
           
-          <Button 
-            variant="contained" 
-            color="primary" 
-            startIcon={<AddCircleIcon />}
-            onClick={makeEmptyQuestion}
-            sx={{ borderRadius: 2 }}
-          >
-            Add Question
-          </Button>
+          <Stack direction="row" spacing={2}>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              startIcon={<AddCircleIcon />}
+              onClick={makeEmptyQuestion}
+              sx={{ borderRadius: 2 }}
+            >
+              Add Question
+            </Button>
+            <Button 
+              variant="contained" 
+              color="secondary" 
+              startIcon={<SmartToyIcon />}
+              onClick={handleOpenAIModal}
+              sx={{ borderRadius: 2 }}
+            >
+              Generate with AI
+            </Button>
+          </Stack>
         </Box>
       </Paper>
       
@@ -363,6 +415,100 @@ export default function QuizeMaker() {
           onClick={makeEmptyQuestion}
         />
       </Tooltip>
+
+      {/* AI Question Generation Modal */}
+      <Modal
+        open={openAIModal}
+        onClose={handleCloseAIModal}
+        aria-labelledby="ai-question-generation-modal"
+      >
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 500,
+          maxWidth: '90%',
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 4,
+        }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h5" component="h2" sx={{ display: 'flex', alignItems: 'center' }}>
+              <SmartToyIcon sx={{ mr: 1, color: 'secondary.main' }} />
+              Generate Questions with AI
+            </Typography>
+            <IconButton onClick={handleCloseAIModal} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          <Divider sx={{ mb: 3 }} />
+          
+          <Stack spacing={3}>
+            <TextField
+              required
+              label="Quiz Topic"
+              fullWidth
+              value={aiQuestionTopic}
+              onChange={(e) => setAiQuestionTopic(e.target.value)}
+              placeholder="e.g., JavaScript Basics, World War II, Photosynthesis"
+              helperText="Enter the main topic for the questions"
+            />
+            
+            <TextField
+              label="Detailed Points (Optional)"
+              fullWidth
+              multiline
+              rows={3}
+              value={aiQuestionDetails}
+              onChange={(e) => setAiQuestionDetails(e.target.value)}
+              placeholder="e.g., Focus on variables, functions, and control flow. Include questions about scope and closures."
+              helperText="Provide specific points to focus on (optional)"
+            />
+            
+            <FormControl fullWidth>
+              <InputLabel id="question-difficulty-label">Difficulty Level</InputLabel>
+              <Select
+                labelId="question-difficulty-label"
+                value={aiQuestionDifficulty}
+                label="Difficulty Level"
+                onChange={(e) => setAiQuestionDifficulty(e.target.value)}
+              >
+                <MenuItem value="easy">Easy</MenuItem>
+                <MenuItem value="medium">Medium</MenuItem>
+                <MenuItem value="hard">Hard</MenuItem>
+                <MenuItem value="expert">Expert</MenuItem>
+              </Select>
+            </FormControl>
+            
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button 
+                variant="outlined" 
+                onClick={handleCloseAIModal} 
+                sx={{ mr: 2 }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="contained" 
+                color="secondary"
+                startIcon={<SmartToyIcon />}
+                onClick={handleGenerateAIQuestion}
+                disabled={!aiQuestionTopic.trim() || generatingQuestion}
+              >
+                {generatingQuestion ? (
+                  <>
+                    <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
+                    Generating...
+                  </>
+                ) : 'Generate Question'}
+              </Button>
+            </Box>
+          </Stack>
+        </Box>
+      </Modal>
     </Container>
   )
 }
