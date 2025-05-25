@@ -65,6 +65,8 @@ export default function QuizeMaker() {
   const [aiQuestionTopic, setAiQuestionTopic] = useState('');
   const [aiQuestionDetails, setAiQuestionDetails] = useState('');
   const [aiQuestionDifficulty, setAiQuestionDifficulty] = useState('medium');
+  const [aiQuestionType, setAiQuestionType] = useState('mcq');
+  const [aiQuestionCount, setAiQuestionCount] = useState(1);
   const [generatingQuestion, setGeneratingQuestion] = useState(false);
 
   // Create a new empty question
@@ -93,25 +95,64 @@ export default function QuizeMaker() {
   const handleOpenAIModal = () => setOpenAIModal(true);
   const handleCloseAIModal = () => setOpenAIModal(false);
 
-  // Handle AI question generation (frontend only for now)
-  const handleGenerateAIQuestion = () => {
-    // This is just a placeholder - backend implementation will come later
-    setGeneratingQuestion(true);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      setGeneratingQuestion(false);
+  // Handle AI question generation with backend API
+  const handleGenerateAIQuestion = async () => {
+    try {
+      // Validate input
+      if (!aiQuestionTopic.trim()) {
+        toast.error("Please enter a topic for the question", {
+          position: "bottom-left",
+        });
+        return;
+      }
+      
+      setGeneratingQuestion(true);
+      
+      // Call backend API to generate question
+      const response = await axios.post(
+        "http://localhost:4545/qustion/generate-ai",
+        {
+          topic: aiQuestionTopic,
+          details: aiQuestionDetails,
+          difficulty: aiQuestionDifficulty,
+          questionType: aiQuestionType,
+          count: aiQuestionCount,
+          quizId: quizId
+        },
+        {
+          headers: {
+            token: localStorage.getItem("token")
+          }
+        }
+      );
+      console.log(response.data)
+      // Close modal and show success message
       handleCloseAIModal();
       
-      // Show success message
-      toast.success("Question generated successfully!", {
+      // Show appropriate success message based on number of questions generated
+      if (aiQuestionCount > 1) {
+        toast.success(`${aiQuestionCount} questions generated successfully!`, {
+          position: "bottom-left",
+        });
+      } else {
+        toast.success("Question generated successfully!", {
+          position: "bottom-left",
+        });
+      }
+      
+      // Reset form fields for next use
+      setAiQuestionTopic('');
+      setAiQuestionDetails('');
+      
+      // Refresh questions list to include the new AI-generated questions
+      getAllQuestions();
+    } catch (error) {
+      console.error("Error generating question:", error);
+      toast.error(error.response?.data?.message || "Failed to generate question", {
         position: "bottom-left",
       });
-      
-      // For now, just create an empty question
-      // Later this will be replaced with the actual AI-generated question
-      makeEmptyQuestion();
-    }, 1500);
+      setGeneratingQuestion(false);
+    }
   }
 
   // Check if quiz exists by trying to fetch its questions
@@ -468,18 +509,48 @@ export default function QuizeMaker() {
               helperText="Provide specific points to focus on (optional)"
             />
             
+            <Stack direction="row" spacing={2}>
+              <FormControl fullWidth>
+                <InputLabel id="question-difficulty-label">Difficulty Level</InputLabel>
+                <Select
+                  labelId="question-difficulty-label"
+                  value={aiQuestionDifficulty}
+                  label="Difficulty Level"
+                  onChange={(e) => setAiQuestionDifficulty(e.target.value)}
+                >
+                  <MenuItem value="easy">Easy</MenuItem>
+                  <MenuItem value="medium">Medium</MenuItem>
+                  <MenuItem value="hard">Hard</MenuItem>
+                  <MenuItem value="expert">Expert</MenuItem>
+                </Select>
+              </FormControl>
+              
+              <FormControl fullWidth>
+                <InputLabel id="question-type-label">Question Type</InputLabel>
+                <Select
+                  labelId="question-type-label"
+                  value={aiQuestionType}
+                  label="Question Type"
+                  onChange={(e) => setAiQuestionType(e.target.value)}
+                >
+                  <MenuItem value="mcq">Multiple Choice</MenuItem>
+                  <MenuItem value="true_false">True/False</MenuItem>
+                  <MenuItem value="short_answer">Short Answer</MenuItem>
+                </Select>
+              </FormControl>
+            </Stack>
+            
             <FormControl fullWidth>
-              <InputLabel id="question-difficulty-label">Difficulty Level</InputLabel>
+              <InputLabel id="question-count-label">Number of Questions</InputLabel>
               <Select
-                labelId="question-difficulty-label"
-                value={aiQuestionDifficulty}
-                label="Difficulty Level"
-                onChange={(e) => setAiQuestionDifficulty(e.target.value)}
+                labelId="question-count-label"
+                value={aiQuestionCount}
+                label="Number of Questions"
+                onChange={(e) => setAiQuestionCount(e.target.value)}
               >
-                <MenuItem value="easy">Easy</MenuItem>
-                <MenuItem value="medium">Medium</MenuItem>
-                <MenuItem value="hard">Hard</MenuItem>
-                <MenuItem value="expert">Expert</MenuItem>
+                {[1, 2, 3, 4, 5].map(num => (
+                  <MenuItem key={num} value={num}>{num}</MenuItem>
+                ))}
               </Select>
             </FormControl>
             

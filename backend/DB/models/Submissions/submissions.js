@@ -25,6 +25,12 @@ export const quizSubmissionModel = sequelize.define('QuizSubmission', {
     allowNull: true,
     defaultValue: 0
   },
+  totalMarks: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+    defaultValue: 0,
+    comment: 'Total possible marks for this quiz'
+  },
   feedback: {
     type: DataTypes.TEXT,
     allowNull: true
@@ -37,6 +43,12 @@ export const quizSubmissionModel = sequelize.define('QuizSubmission', {
   submittedAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
+  },
+  isTest: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+    comment: 'Indicates if this submission is a test by teacher or course owner'
   }
 }, {
   timestamps: true
