@@ -81,6 +81,9 @@ export const getAdminCourses = async (req, res) => {
                 "price",
                 "completionStatus",
                 "thumbnail",
+                "startDate",
+                "endDate",
+                "backImage"
               ],
               include: [
         {

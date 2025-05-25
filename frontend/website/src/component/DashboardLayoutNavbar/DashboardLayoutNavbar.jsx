@@ -1,6 +1,7 @@
 import {
   Badge,
   Box,
+  CircularProgress,
   Divider,
   Drawer,
   List,
@@ -9,8 +10,10 @@ import {
   ListItemIcon,
   ListItemText,
   Tooltip,
+  Typography
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
+import axios from "axios";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import LogoutIcon from '@mui/icons-material/Logout';
 import LocalLibraryRoundedIcon from "@mui/icons-material/LocalLibraryRounded";
@@ -21,12 +24,34 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import image from "../../../public/ac2.jpg";
+// Removed static image import
 import { toast } from "react-toastify";
 import { OrgNotificationsContext } from "../../Context/NotificationsOrgContext";
+import { UserContext } from "../../Context/UserContext";
 export default function DashboardLayoutNavbar() {
   const [dOpen, setdOpen] = useState(false);
+  const [orgData, setOrgData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const {notificationCount}=useContext(OrgNotificationsContext);
+  const { user } = useContext(UserContext);
+  
+  useEffect(() => {
+    const fetchOrgData = async () => {
+      if (!user?.orgId) return;
+      
+      try {
+        setLoading(true);
+        const { data } = await axios.get(`http://localhost:4545/org/getorg/${user.orgId}`);
+        setOrgData(data.org);
+      } catch (error) {
+        console.error('Failed to fetch organization data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchOrgData();
+  }, [user]);
 
   const navigate=useNavigate();
   const toggleDrawer = () => {
@@ -101,13 +126,49 @@ export default function DashboardLayoutNavbar() {
         height:"100%"
       }}>
       <List>
-        <Tooltip title={"Knowlege Acadimy"} placement="right">
-      
+        <Tooltip title={orgData?.name || "Academy"} placement="right">
           <Box sx={{margin:"auto",marginY:"5px",display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"center",gap:"4px"}}>
-            <img src={image} style={{marginRight:"6px",width:"60px",border:"3px solid #6366f180 ",borderRadius:"10px"}}  alt="" />
-           {dOpen?<h4 style={{textAlign:"center",fontSize:"18px",fontWeight:"500",textTransform:"capitalize"}}>osama</h4>:""} 
+            <Box 
+              sx={{
+                marginRight:"6px",
+                width:"60px",
+                height:"60px",
+                border:"3px solid #6366f180",
+                borderRadius:"10px",
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: loading ? "#f0f0f0" : "transparent"
+              }}
+            >
+              {loading ? (
+                <CircularProgress size={30} />
+              ) : (
+                <img 
+                  src={orgData?.profile || "https://via.placeholder.com/60x60?text=Academy"} 
+                  style={{width:"100%", height:"100%", objectFit:"cover"}}  
+                  alt={orgData?.name || "Academy"} 
+                />
+              )}
+            </Box>
+            {dOpen ? (
+              <Typography 
+                sx={{
+                  textAlign:"center",
+                  fontSize:"18px",
+                  fontWeight:"500",
+                  textTransform:"capitalize",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  maxWidth: "130px"
+                }}
+              >
+                {loading ? "Loading..." : (orgData?.name || "Academy")}
+              </Typography>
+            ) : ""} 
           </Box>
-        
         </Tooltip>
         <Divider />
 
