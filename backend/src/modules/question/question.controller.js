@@ -1,3 +1,4 @@
+import { quizModel } from "../../../DB/models/quizes/Quiz.js";
 import { questionModel } from "../../../DB/models/qusetions/Qustion.js";
 
 
@@ -40,7 +41,10 @@ export const getAllByQuizId=async(req,res)=>{
         const qustions=await questionModel.findAll({
             where:{quizId}
         })
-        if(!qustions){
+        const quiz=await quizModel.findByPk(quizId);
+        
+        console.log(qustions,"osama");
+        if(!qustions||!quiz){
             return res.status(400).json({message:"Not Found"})
         }
         return res.status(200).json({message:"success",qustions});

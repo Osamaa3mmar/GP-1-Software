@@ -3,8 +3,9 @@ import Tools from "../../component/Admin/StudentsAdmin/Tools";
 import { useContext, useEffect, useState } from "react";
 import UsersTable from "../../component/Admin/StudentsAdmin/UsersTable";
 import CourseSwipeCard from "../../component/Admin/StudentsAdmin/CourseSwipeCard";
+
 import axios from "axios";
-import { UserContext } from "../../Context/UserContext";
+import { UserContext } from "../../Context/userContext";
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SchoolIcon from '@mui/icons-material/School';
 import GroupIcon from '@mui/icons-material/Group';
@@ -930,10 +931,12 @@ export default function StudentsAdmin() {
           <UsersTable courseId={currentCourse}/>
         </Box>
       ) : (
-        <Box>
+        <Box sx={{ mb: 3 }}>
           <CourseSwipeCard search={search} openTable={open}/>
         </Box>
       )}
+      
+
     </Stack>
   )
 }

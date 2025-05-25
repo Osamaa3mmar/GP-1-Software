@@ -175,7 +175,7 @@ export default function QustionCardMaker({
     }
   };
   return (
-    <form onSubmit={handleSubmit(save)} style={{ width: "650px" }}>
+    <form onSubmit={handleSubmit(save)} style={{ margin:"auto", width: "650px" }}>
       <Box
         sx={{
           display: "flex",

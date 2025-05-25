@@ -124,10 +124,10 @@ export default function QuizeMaker() {
         // If we get a 404 or 500 status, the quiz doesn't exist in the database
         if (error.response.status === 404 || error.response.status === 500) {
           console.log("Quiz not found in database");
-          setQuizNotFound(true);
           return false;
         }
       }
+      setQuizNotFound(true);
       
       // For other errors, show a general error message
       setError("Failed to load quiz. Please try again.");
@@ -178,6 +178,7 @@ export default function QuizeMaker() {
   // Render 404 page when quiz is not found
   if (quizNotFound) {
     return (
+      
       <Container maxWidth="md" sx={{ py: 8 }}>
         <Paper 
           elevation={3} 
