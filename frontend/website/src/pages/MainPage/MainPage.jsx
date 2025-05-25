@@ -12,6 +12,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import { useEffect, useState } from "react";
 import { use } from "react";
 import axios from "axios";
+import TopStudents from "../../component/Home/TopStudents";
 
 const expectedCourses = [
   {
@@ -247,7 +248,8 @@ export default function MainPage() {
       <Container maxWidth="lg">
         <FeaturedCourses courses={featuredCourses} />
         <CategoriesGrid categories={sampleCategories} />
-        <TopCompanies companies={sampleCompanies} />
+        <TopStudents/>
+        <TopCompanies/>
         <LearningPaths paths={samplePaths} />
         <UpcomingSchedule schedule={sampleSchedule} />
       </Container>

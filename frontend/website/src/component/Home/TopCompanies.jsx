@@ -54,7 +54,7 @@ export default function TopCompanies() {
   return (
     <Box sx={{ py: 8, bgcolor: "background.default" }}>
       <Container maxWidth="lg">
-        <SpecialHeading>Top Training Organizations</SpecialHeading>{" "}
+        <SpecialHeading>Top Organizations</SpecialHeading>{" "}
         <Box
           sx={{
             mt: 4,
