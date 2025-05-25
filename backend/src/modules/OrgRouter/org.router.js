@@ -9,6 +9,7 @@ const router=Router();
 
 
 router.get("/getorg/:id",getByOrganizationID);
+router.get("/getorgbyid/:id",getByOrganizationID);
 router.get("/categories/:id", getOrgCategories);
 router.get('/getinstructors',auth(),getinstructors)
 router.post('/edit/name/:id',auth(),editOrgName);

@@ -28,7 +28,7 @@ export const saveQustion=async (req,res)=>{
         return res.status(200).json({message:"success!",newQustion});
 
     }catch(error){
-        return res.status(500).json({message:"Server error",error})
+        return res.status(500).json({message:"Server error ",error})
     }
 }
 

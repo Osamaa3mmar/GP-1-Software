@@ -50,32 +50,103 @@ export default function QustionCardMaker({
   const optionsWatch = watch("options");
   const typeOptions = ["mcq", "true_false", "fill_blank"];
   const theme = useTheme();
-  const save = async (qustion) => {
-    if (!qustion.correctAnswer) {
-      toast.info("Chose a correct answer !");
-      return;
-    }
+  const save = async (formData) => {
     try {
-      qustion.quizId = 1;
+      // Validate required fields
+      if (!formData.questionText || formData.questionText.trim() === '') {
+        toast.warning("Question text is required");
+        return;
+      }
+
+      if (!formData.marks || isNaN(parseInt(formData.marks))) {
+        toast.warning("Valid marks value is required");
+        return;
+      }
+
+      // Validate based on question type
+      if (formData.type === 'mcq') {
+        // For MCQ, validate options and correct answer
+        if (!formData.options || !Array.isArray(formData.options) || formData.options.length < 2) {
+          toast.warning("Multiple choice questions require at least 2 options");
+          return;
+        }
+
+        // Check if all options have text
+        const invalidOptions = formData.options.filter(opt => !opt.text || opt.text.trim() === '');
+        if (invalidOptions.length > 0) {
+          toast.warning("All options must have text");
+          return;
+        }
+
+        if (!formData.correctAnswer) {
+          toast.warning("Please select a correct answer");
+          return;
+        }
+      } else if (formData.type === 'true_false') {
+        // For true/false questions
+        if (!formData.correctAnswer || (formData.correctAnswer !== 'true' && formData.correctAnswer !== 'false')) {
+          toast.warning("Please select either True or False as the correct answer");
+          return;
+        }
+      }
+
+      // Prepare question data in the format expected by the backend
+      const questionData = {
+        id: formData.id || undefined, // Only include if editing existing question
+        quizId: 1, // Hardcoded for now
+        questionText: formData.questionText.trim(),
+        options: formData.type === 'mcq' ? formData.options : [],
+        correctAnswer: formData.correctAnswer,
+        marks: parseInt(formData.marks),
+        explanation: formData.explanation || '',
+        type: formData.type
+      };
+
       setLoading(true);
+      
+      // Log the exact data being sent
+      console.log("Sending question data to server:", {
+        qustion: questionData
+      });
+      
+      // Make the API call
       const { data } = await axios.post(
         "http://localhost:4545/qustion/save",
         {
-          qustion,
+          qustion: questionData
         },
         {
           headers: {
-            token: localStorage.getItem("token"),
-          },
+            token: localStorage.getItem("token")
+          }
         }
       );
       
-      toast.success(data.message,{
-        position:"bottom-left"
+      toast.success("Question saved successfully", {
+        position: "bottom-left"
       });
+      
+      // Reload questions after successful save
+      if (reload) {
+        reload();
+      }
     } catch (error) {
+      console.error("Error saving question:", error);
+      console.error("Error response:", error.response?.data);
       setError(error);
-      toast.error("");
+      
+      // Extract and display the error message
+      let errorMessage = "Failed to save question. Please try again.";
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorMessage, {
+        position: "bottom-left"
+      });
     } finally {
       setLoading(false);
     }

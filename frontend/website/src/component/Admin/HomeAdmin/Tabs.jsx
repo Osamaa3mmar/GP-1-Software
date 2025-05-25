@@ -128,7 +128,7 @@ export default function Tabs() {
                                     {courses.map((course, idx) => (
                                         <Box
                                             key={course.id || idx}
-                                            onClick={() => navigate(`/dashboard/courses/${course.id}`)}
+                                            onClick={() => navigate(`/main/course/${course.id}`)}
                                             sx={{
                                                 display: "flex",
                                                 alignItems: "center",
