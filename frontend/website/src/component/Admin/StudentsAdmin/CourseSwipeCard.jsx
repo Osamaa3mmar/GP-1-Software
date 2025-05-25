@@ -23,15 +23,18 @@ export default function CourseSwipeCard({openTable,search}) {
     }
     try{
       setLoading(true);
-      const {data}=await axios.get(`http://localhost:4545/enrollments/all/courses/${orgId}`,{
+      // Use the new statistics endpoint to get course data with completion rates
+      const {data} = await axios.get(`http://localhost:4545/enrollments/statistics/${orgId}`, {
         headers:{
           token:localStorage.getItem("token"),
         }
       })
-      setCourse(data.courses);
+      
+      // Use the courses array from the statistics response
+      setCourse(data.stats.courses || []);
     }catch(error){
       setError(error);
-      toast.error(error.response.data.message)
+      toast.error(error.response?.data?.message || "Error fetching courses")
     }finally{
       setTimeout(() => setLoading(false), 500);
     }
