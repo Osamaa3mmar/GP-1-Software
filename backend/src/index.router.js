@@ -7,7 +7,7 @@ import enrollRouter from './modules/EnrollmentsRouter/Enrollments.router.js';
 import aiRouter from './modules/Ai/ai.router.js';
 import applyeRouter from './modules/applyeRouter/applye.router.js';
 import notificationsRouter from './modules/Notification/Notification.router.js'
-import questionRouter from './modules/questionRouter/question.router.js';
+import questionRouter from './modules/question/question.router.js';
 import quizRouter from './modules/quizRouter/quiz.router.js';
 import lessonRouter from './modules/lessonRouter/lesson.router.js';
 import couponRouter from './modules/couponRouter/coupon.router.js';

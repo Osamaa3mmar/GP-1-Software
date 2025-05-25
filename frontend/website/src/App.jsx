@@ -38,6 +38,9 @@ import UserNotificationsContextProvider, { UserNotificationsContext } from "./Co
 import CoursesAdminTemp from "./pages/AdminPages/CoursesAdminTemp";
 import ForgetPassword from "./pages/ForgetPassword/ForgetPAssword";
 import ClassroomsListPage from "./pages/UserClassRooms/ClassroomsListPage";
+import ClassroomLayout from "./layouts/classroom/ClassroomLayout";
+import QuizeMaker from "./pages/QuizeMaker/QuizeMaker";
+import Quiz from "./pages/Quiz/Quiz";
 export default function App() {
  
 
@@ -179,7 +182,24 @@ export default function App() {
         { path: "reports", element: <ReportsAdmin /> },
         { path: "notifications", element: <Notifications type={"org"}/> },
       ],
-    },
+    },{
+      path:"classroom",
+      element:(<LoginCheck>
+         <UserContextProvider>
+          <ClassroomLayout/>
+          </UserContextProvider>
+          </LoginCheck>),
+      children:[
+        {
+          path:"quizmaker/:quizId",
+          element:<QuizeMaker/>
+        },
+        {
+          path:"quiz/:quizId",
+          element:<Quiz/>
+        }
+      ]
+    }
   ]);
   return (
     <ThemeProvider theme={theme}>
