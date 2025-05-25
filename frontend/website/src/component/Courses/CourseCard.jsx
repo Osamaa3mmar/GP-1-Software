@@ -67,20 +67,14 @@ export default function CourseCard({ course }) {
         <CardMedia
           component="img"
           height="194"
-          image={course.thumbnail}
-          alt={course.title}
+          image={course?.thumbnail}
+          alt={course?.title}
           sx={{ objectFit: "cover", maxHeight: 200 }}
         />
         <CourseCardContent course={course} />
         <AddToCart
-          product={{
-            id: course.id,
-            title: course.title,
-            price: course.price,
-            thumbnail: course.thumbnail,
-            teacher: course.teacher,
-          }}
-        />
+           product={course}
+         />
 
         {/* </CardContent> */}
 
@@ -155,7 +149,7 @@ export default function CourseCard({ course }) {
       >
         {/* <Arrow direction={popoverDirection} />  */}
         <Box>
-          { !course.schedule.length ? null :
+          { !course?.schedule?.length ? null :
           <Stack
             direction="row"
             spacing={1}
@@ -166,13 +160,13 @@ export default function CourseCard({ course }) {
               Course Schedule
             </Typography>
           </Stack>}
-          {!course.schedule.length ? null :<CourseSchedule schedule={course.schedule} />}
+          {!course?.schedule?.length ? null :<CourseSchedule schedule={course?.schedule} />}
           <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1, mt: 2 }}>
             Course Details
           </Typography>
 
           <Typography variant="body2" sx={{ mb: 2 }}>
-            {course.learningOutcomes}
+            {course?.learningOutcomes}
             {/* This comprehensive course will take you from zero to hero in web
             development fundamentals. You will learn HTML5, CSS3, and modern
             JavaScript (ES6+) through hands-on projects. */}
@@ -181,7 +175,7 @@ export default function CourseCard({ course }) {
             What You Will Learn:
           </Typography>
           <Typography component="ul" variant="body2" sx={{ pl: 2 }}>
-            {course.learningPath}
+            {course?.learningPath}
             {/* <li>Create responsive websites with HTML/CSS</li>
             <li>Implement interactive features with JavaScript</li>
             <li>Understand web development best practices</li>

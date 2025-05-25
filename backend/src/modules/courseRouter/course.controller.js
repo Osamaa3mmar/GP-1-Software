@@ -1,4 +1,4 @@
-import { Model, Op, where } from "sequelize";
+import { Model, Op, or, where } from "sequelize";
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { organizationModel } from "../../../DB/models/organaization/organaization.js";
 import cloudinary from "../../utils/Claoudinary.js";
@@ -160,7 +160,7 @@ export const deleteCourse=async(req,res)=>{
 export const getAllCourses = async (req, res) => {
     try {
         const courses = await courseModel.findAll({
-            attributes: ["id", "title","thumbnail","tags","learningOutcomes","learningPath","duration","price","enrollmentNumber"],
+            attributes: ["id", "title","thumbnail","tags","learningOutcomes","learningPath","duration","price","rating","enrollmentNumber"],
             where: {
                 completionStatus: {
                     [Op.ne]: "notStarted"
@@ -238,5 +238,29 @@ export const getallnotassigninorg=async (req,res)=>{
     return res.status(200).json({message:"success",courses });
   }catch(error){
    return res.status(500).json({ message: "Server Error", error });
+  }
+}
+
+export const getFeaturedCourses=async(req,res)=>{
+   try {
+    const courses = await courseModel.findAll({
+      order: [['rating', 'DESC']],
+      limit: 6,
+      include: [
+        {
+          model: userModel,
+          as: 'teacher',
+          attributes: ['id', 'username', 'profilePic', 'specialization']
+        },
+        {
+          model: organizationModel,
+          as: 'organization',
+          attributes: ['id', 'name', 'profile']
+        }
+      ]
+    });
+    return res.status(200).json({ message: "Courses retrieved successfully!", courses });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 }

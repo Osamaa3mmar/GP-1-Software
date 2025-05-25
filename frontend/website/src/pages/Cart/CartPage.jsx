@@ -2,6 +2,7 @@ import { Container, Box } from "@mui/material";
 import CartItems from "../../component/Cart/CartItems";
 import SuggestedCourses from "../../component/Cart/SuggestedCourses";
 import CardSchedule from "../../component/Cart/CardSchedule";
+import CartSchedule from "../../component/Cart/CartSchedule";
 import { useCart } from "../../contexts/CartContext";
 import { useEffect, useState } from "react";
 
@@ -47,12 +48,15 @@ const CartPage = () => {
         },
       }}
     >
-      <Box sx={{ mb: 4 }}>
+      {/* <Box sx={{ mb: 4 }}>
+        <CartSchedule/>
+      </Box> */}
+      {/* <Box sx={{ mb: 4 }}>
         <CardSchedule
           cartItems={cartItems}
           onConflictsDetected={setConflicts}
         />
-      </Box>
+      </Box> */}
 
       <Box sx={{ mb: 4 }}>
         <CartItems />

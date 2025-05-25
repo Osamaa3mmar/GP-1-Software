@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CourseCard from "../../component/Courses/CourseCard";
 import axios from "axios";
+import { useCourses } from '../../Context/CourseContext';
 
 const staticCourses = [
   {
@@ -226,22 +227,23 @@ const expectedCourses = [
 ];
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState([]);
+  // const [courses, setCourses] = useState([]);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        // const response = await axios.get("http://localhost:4545/course/getall");
-        const response = await axios.get("");
-        setCourses(response.data.courses || []);
-      } catch (error) {
-        console.error("Failed to fetch courses:", error);
-        setCourses(expectedCourses); // Fallback to static data
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCourses = async () => {
+  //     try {
+  //       const response = await axios.get("http://localhost:4545/course/getall");
+  //       // const response = await axios.get("");
+  //       setCourses(response.data.courses || []);
+  //     } catch (error) {
+  //       console.error("Failed to fetch courses:", error);
+  //       setCourses(expectedCourses); // Fallback to static data
+  //     }
+  //   };
 
-    fetchCourses();
-  }, []);
+  //   fetchCourses();
+  // }, []);
+  const { courses } = useCourses();
 
   const displayCourses = courses.length > 0 ? courses : expectedCourses;
 

@@ -1,3 +1,4 @@
+import { sequelize } from "../../../DB/Connection.js";
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { enrollmentModel } from "../../../DB/models/Enrollment/Enrollments.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
@@ -121,6 +122,44 @@ export const editSpecialization=async(req,res)=>{
         res.status(500).json({
             message: "Server Error",
             error: error.message || error,
+        });
+    }
+}
+
+export const getTopStudents = async (req, res) => {
+    try {
+        const topStudents = await enrollmentModel.findAll({
+            attributes: [
+                'studentId',
+                [sequelize.fn('SUM', sequelize.col('points')), 'totalPoints']
+            ],
+            group: ['studentId', 'student.id', 'student.username', 'student.profilePic', 'student.bio'],
+            order: [[sequelize.literal('totalPoints'), 'DESC']],
+            limit: 5,
+            include: {
+                model: userModel,
+                as: 'student',
+                attributes: ['id', 'username', 'profilePic', 'bio'],
+                where: { role: 'user' }
+            }
+        });
+
+        if (!topStudents.length) {
+            return res.status(200).json({ 
+                message: "No students found", 
+                students: [] 
+            });
+        }
+
+        return res.status(200).json({
+            message: "Successfully retrieved top students",
+            students: topStudents
+        });
+    } catch (error) {
+        console.error('Error in getTopStudents:', error);
+        return res.status(500).json({ 
+            message: "Error retrieving top students",
+            error: error.message 
         });
     }
 }

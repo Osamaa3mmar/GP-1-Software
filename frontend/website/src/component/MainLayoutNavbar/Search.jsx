@@ -7,164 +7,166 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import Rating from "@mui/material/Rating";
 import { red } from "@mui/material/colors";
+import { useCourses } from '../../Context/CourseContext';
 
-const expectedCourses = [
-  {
-    id: 1,
-    title: "Web Development Fundamentals",
-    thumbnail:
-      "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
-    tags: {
-      topics: ["HTML", "CSS", "JavaScript"],
-      category: "Web Development",
-      level: "Beginner",
-      prerequisites: ["Basic Computer Skills"],
-    },
-    learningOutcomes:
-      "By the end of this course, you will be able to create responsive websites using HTML5, CSS3, and JavaScript. You will also understand web development best practices and be able to build real-world projects.",
-    learningPath:
-      "This course is part of the Web Development Bootcamp. After completing this course, you can proceed to the Advanced CSS Techniques course.",
-    duration: 8,
-    price: 99.99,
-    enrollmentNumber: 156,
-    teacher: { name: "John Doe", position: "Senior Web Developer" },
-    isSchedulized: true,
-    schedule: [
-      { day: "Mon", startTime: "10:00 AM", endTime: "12:00 PM" },
-      { day: "Wed", startTime: "10:00 AM", endTime: "12:00 PM" },
-    ],
-    rating: { value: 4.5, count: 1200 },
-  },
-  {
-    id: 2,
-    title: "Data Science with Python",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
-    tags: {
-      topics: ["Pandas", "NumPy", "Machine Learning"],
-      category: "Data Science",
-      level: "Intermediate",
-      prerequisites: ["Python Basics", "Statistics"],
-    },
-    learningOutcomes:
-      "Gain the skills to analyze data, build machine learning models, and interpret results using Python libraries.",
-    learningPath:
-      "Follow this course with Deep Learning with TensorFlow for advanced AI topics.",
-    duration: 12,
-    price: 149.99,
-    enrollmentNumber: 98,
-    teacher: { name: "Sara Chen", position: "Data Scientist" },
-    isSchedulized: true,
-    schedule: [
-      { day: "Tue", startTime: "2:00 PM", endTime: "4:00 PM" },
-      { day: "Thu", startTime: "2:00 PM", endTime: "4:00 PM" },
-    ],
-    rating: { value: 4.7, count: 87 },
-  },
-  {
-    id: 3,
-    title: "UI/UX Design Principles",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
-    tags: {
-      topics: ["User Research", "Prototyping", "Figma"],
-      category: "Design",
-      level: "Beginner",
-      prerequisites: ["None"],
-    },
-    learningOutcomes:
-      "Understand user-centric design, wireframing, and prototyping using modern tools like Figma.",
-    learningPath:
-      "Leads into UX Research Methods or Advanced Figma for Designers courses.",
-    duration: 6,
-    price: 89.99,
-    enrollmentNumber: 210,
-    teacher: { name: "Alex Morgan", position: "UI/UX Designer" },
-    isSchedulized: false,
-    schedule: [],
-    rating: { value: 4.3, count: 200 },
-  },
-  {
-    id: 4,
-    title: "Mobile App Development with Flutter",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
-    tags: {
-      topics: ["Flutter", "Dart", "Mobile UI"],
-      category: "Mobile Development",
-      level: "Intermediate",
-      prerequisites: ["OOP Concepts", "Basic UI Design"],
-    },
-    learningOutcomes:
-      "Build native mobile apps for Android and iOS using a single codebase with Flutter.",
-    learningPath:
-      "Prepare for the Advanced Flutter Animations course after completion.",
-    duration: 10,
-    price: 129.99,
-    enrollmentNumber: 134,
-    teacher: { name: "Emily Nguyen", position: "Mobile Developer" },
-    isSchedulized: true,
-    schedule: [
-      { day: "Sat", startTime: "9:00 AM", endTime: "12:00 PM" },
-    ],
-    rating: { value: 4.6, count: 110 },
-  },
-  {
-    id: 5,
-    title: "DevOps and Continuous Integration",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
-    tags: {
-      topics: ["Docker", "CI/CD", "Jenkins"],
-      category: "DevOps",
-      level: "Advanced",
-      prerequisites: ["Software Development Experience"],
-    },
-    learningOutcomes:
-      "Learn how to implement CI/CD pipelines and automate deployments with Docker and Jenkins.",
-    learningPath:
-      "Next steps include Kubernetes and Infrastructure as Code.",
-    duration: 14,
-    price: 199.99,
-    enrollmentNumber: 76,
-    teacher: { name: "David Lee", position: "DevOps Engineer" },
-    isSchedulized: true,
-    schedule: [
-      { day: "Mon", startTime: "6:00 PM", endTime: "8:00 PM" },
-      { day: "Wed", startTime: "6:00 PM", endTime: "8:00 PM" },
-    ],
-    rating: { value: 4.8, count: 65 },
-  },
-  {
-    id: 6,
-    title: "Cybersecurity Essentials",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
-    tags: {
-      topics: ["Network Security", "Encryption", "Risk Management"],
-      category: "Cybersecurity",
-      level: "Beginner",
-      prerequisites: ["Basic Networking Knowledge"],
-    },
-    learningOutcomes:
-      "Understand the fundamentals of cybersecurity, threats, vulnerabilities, and how to protect systems.",
-    learningPath:
-      "After this course, consider Ethical Hacking and Penetration Testing.",
-    duration: 9,
-    price: 109.99,
-    enrollmentNumber: 182,
-    teacher: { name: "Fatima Al-Hassan", position: "Cybersecurity Analyst" },
-    isSchedulized: false,
-    schedule: [],
-    rating: { value: 4.4, count: 95 },
-  },
-];
+// const expectedCourses = [
+//   {
+//     id: 1,
+//     title: "Web Development Fundamentals",
+//     thumbnail:
+//       "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+//     tags: {
+//       topics: ["HTML", "CSS", "JavaScript"],
+//       category: "Web Development",
+//       level: "Beginner",
+//       prerequisites: ["Basic Computer Skills"],
+//     },
+//     learningOutcomes:
+//       "By the end of this course, you will be able to create responsive websites using HTML5, CSS3, and JavaScript. You will also understand web development best practices and be able to build real-world projects.",
+//     learningPath:
+//       "This course is part of the Web Development Bootcamp. After completing this course, you can proceed to the Advanced CSS Techniques course.",
+//     duration: 8,
+//     price: 99.99,
+//     enrollmentNumber: 156,
+//     teacher: { name: "John Doe", position: "Senior Web Developer" },
+//     isSchedulized: true,
+//     schedule: [
+//       { day: "Mon", startTime: "10:00 AM", endTime: "12:00 PM" },
+//       { day: "Wed", startTime: "10:00 AM", endTime: "12:00 PM" },
+//     ],
+//     rating: { value: 4.5, count: 1200 },
+//   },
+//   {
+//     id: 2,
+//     title: "Data Science with Python",
+//     thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+//     tags: {
+//       topics: ["Pandas", "NumPy", "Machine Learning"],
+//       category: "Data Science",
+//       level: "Intermediate",
+//       prerequisites: ["Python Basics", "Statistics"],
+//     },
+//     learningOutcomes:
+//       "Gain the skills to analyze data, build machine learning models, and interpret results using Python libraries.",
+//     learningPath:
+//       "Follow this course with Deep Learning with TensorFlow for advanced AI topics.",
+//     duration: 12,
+//     price: 149.99,
+//     enrollmentNumber: 98,
+//     teacher: { name: "Sara Chen", position: "Data Scientist" },
+//     isSchedulized: true,
+//     schedule: [
+//       { day: "Tue", startTime: "2:00 PM", endTime: "4:00 PM" },
+//       { day: "Thu", startTime: "2:00 PM", endTime: "4:00 PM" },
+//     ],
+//     rating: { value: 4.7, count: 87 },
+//   },
+//   {
+//     id: 3,
+//     title: "UI/UX Design Principles",
+//     thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+//     tags: {
+//       topics: ["User Research", "Prototyping", "Figma"],
+//       category: "Design",
+//       level: "Beginner",
+//       prerequisites: ["None"],
+//     },
+//     learningOutcomes:
+//       "Understand user-centric design, wireframing, and prototyping using modern tools like Figma.",
+//     learningPath:
+//       "Leads into UX Research Methods or Advanced Figma for Designers courses.",
+//     duration: 6,
+//     price: 89.99,
+//     enrollmentNumber: 210,
+//     teacher: { name: "Alex Morgan", position: "UI/UX Designer" },
+//     isSchedulized: false,
+//     schedule: [],
+//     rating: { value: 4.3, count: 200 },
+//   },
+//   {
+//     id: 4,
+//     title: "Mobile App Development with Flutter",
+//     thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+//     tags: {
+//       topics: ["Flutter", "Dart", "Mobile UI"],
+//       category: "Mobile Development",
+//       level: "Intermediate",
+//       prerequisites: ["OOP Concepts", "Basic UI Design"],
+//     },
+//     learningOutcomes:
+//       "Build native mobile apps for Android and iOS using a single codebase with Flutter.",
+//     learningPath:
+//       "Prepare for the Advanced Flutter Animations course after completion.",
+//     duration: 10,
+//     price: 129.99,
+//     enrollmentNumber: 134,
+//     teacher: { name: "Emily Nguyen", position: "Mobile Developer" },
+//     isSchedulized: true,
+//     schedule: [
+//       { day: "Sat", startTime: "9:00 AM", endTime: "12:00 PM" },
+//     ],
+//     rating: { value: 4.6, count: 110 },
+//   },
+//   {
+//     id: 5,
+//     title: "DevOps and Continuous Integration",
+//     thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+//     tags: {
+//       topics: ["Docker", "CI/CD", "Jenkins"],
+//       category: "DevOps",
+//       level: "Advanced",
+//       prerequisites: ["Software Development Experience"],
+//     },
+//     learningOutcomes:
+//       "Learn how to implement CI/CD pipelines and automate deployments with Docker and Jenkins.",
+//     learningPath:
+//       "Next steps include Kubernetes and Infrastructure as Code.",
+//     duration: 14,
+//     price: 199.99,
+//     enrollmentNumber: 76,
+//     teacher: { name: "David Lee", position: "DevOps Engineer" },
+//     isSchedulized: true,
+//     schedule: [
+//       { day: "Mon", startTime: "6:00 PM", endTime: "8:00 PM" },
+//       { day: "Wed", startTime: "6:00 PM", endTime: "8:00 PM" },
+//     ],
+//     rating: { value: 4.8, count: 65 },
+//   },
+//   {
+//     id: 6,
+//     title: "Cybersecurity Essentials",
+//     thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+//     tags: {
+//       topics: ["Network Security", "Encryption", "Risk Management"],
+//       category: "Cybersecurity",
+//       level: "Beginner",
+//       prerequisites: ["Basic Networking Knowledge"],
+//     },
+//     learningOutcomes:
+//       "Understand the fundamentals of cybersecurity, threats, vulnerabilities, and how to protect systems.",
+//     learningPath:
+//       "After this course, consider Ethical Hacking and Penetration Testing.",
+//     duration: 9,
+//     price: 109.99,
+//     enrollmentNumber: 182,
+//     teacher: { name: "Fatima Al-Hassan", position: "Cybersecurity Analyst" },
+//     isSchedulized: false,
+//     schedule: [],
+//     rating: { value: 4.4, count: 95 },
+//   },
+// ];
 
 export default function CourseSearch() {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const navigate = useNavigate();
+  const { courses } = useCourses();
 
-  const filteredCourses = expectedCourses.filter(course => {
+  const filteredCourses = courses.filter(course => {
     const searchLower = query.toLowerCase();
     return (
-      course.title.toLowerCase().includes(searchLower) ||
-      course.tags.topics.some(topic => 
+      course?.title.toLowerCase().includes(searchLower) ||
+      course?.tags.topics.some(topic => 
         topic.toLowerCase().includes(searchLower)
       )
     );
@@ -238,8 +240,8 @@ export default function CourseSearch() {
             {filteredCourses.map((course) => (
               <ListItem
                 button
-                key={course.id}
-                onMouseDown={() => handleCourseClick(course.id)}
+                key={course?.id}
+                onMouseDown={() => handleCourseClick(course?.id)}
                 sx={{
                   '&:hover': { backgroundColor: 'action.hover' },
                   py: 1.5,
@@ -256,8 +258,8 @@ export default function CourseSearch() {
                     alignSelf: 'center' // Center vertically
                   }}>
                     <img
-                      src={course.thumbnail}
-                      alt={course.title}
+                      src={course?.thumbnail}
+                      alt={course?.title}
                       style={{
                         width: '100%',
                         height: '100%',
@@ -289,18 +291,18 @@ export default function CourseSearch() {
                           textOverflow: 'ellipsis'
                         }}
                       >
-                        {course.title}
+                        {course?.title}
                       </Typography>
                       
                       <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
                         <Chip
-                          label={course.tags.category}
+                          label={course?.tags.category}
                           variant="outlined"
                           color="primary"
                           size="small"
                           sx={{ mb: 0.5 }}
                         />
-                        {course.tags.topics.slice(0, 2).map((topic, index) => (
+                        {course?.tags.topics.slice(0, 2).map((topic, index) => (
                           <Chip
                             key={index}
                             label={topic}
@@ -332,7 +334,7 @@ export default function CourseSearch() {
                           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
                         }}
                       >
-                        {getInitials(course.teacher?.name)}
+                        {getInitials(course?.teacher?.name)}
                       </Avatar>
                       <Typography 
                         variant="body2"
@@ -343,7 +345,7 @@ export default function CourseSearch() {
                           textOverflow: 'ellipsis'
                         }}
                       >
-                        {course.teacher?.name}
+                        {course?.teacher?.name}
                       </Typography>
                     </Stack>
                   </Grid>
@@ -367,7 +369,7 @@ export default function CourseSearch() {
                         fontWeight={700}
                         sx={{ color: 'primary.main' }}
                       >
-                        ${course.price.toFixed(2)}
+                        ${course?.price.toFixed(2)}
                       </Typography>
                       
                       <Stack 
@@ -376,7 +378,7 @@ export default function CourseSearch() {
                         sx={{ mb: 'auto' }} // Push to bottom
                       >
                         <Rating
-                          value={course.rating.value}
+                          value={course?.rating?.value}
                           precision={0.5}
                           readOnly
                           size="medium"
@@ -389,7 +391,7 @@ export default function CourseSearch() {
                             lineHeight: 1.2
                           }}
                         >
-                          ({course.rating.count.toLocaleString()})
+                          ({course?.rating?.count.toLocaleString()})
                         </Typography>
                       </Stack>
                     </Stack>

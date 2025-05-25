@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { ExpandMore, PlayCircle, Check, Share, Favorite } from '@mui/icons-material';
 import { useParams, Link } from 'react-router-dom';
+import AddToCart from "../../component/Courses/AddToCart";
 import CourseSchedule from '../../component/Courses/CourseSchedule';
 import { useEffect, useState } from 'react';
 import axios from "axios";
@@ -29,13 +30,12 @@ const CourseDetails = () => {
       const fetchCourse = async () => {
         try {
           console.log(id);
-          const response = await axios.get(`http://localhost:4545/getdetailedinfo/${id}`,{
-      headers:{
-        token:localStorage.getItem("token")
-      }
-    });
-          setCourse(response.data);
-          console.log(response.data);
+          console.log(localStorage.getItem("token"));
+          const {data}=await axios.get(`http://localhost:4545/course/getdetailedinfo/${id}`,{headers:{
+        token:localStorage.getItem('token')
+      }})
+          setCourse(data.course);
+          console.log(data.course);
         } catch (error) {
             console.error("Failed to fetch courses:", error);
           }
@@ -96,7 +96,7 @@ const CourseDetails = () => {
         <Typography variant="h3" gutterBottom>{course?.title}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Rating value={course?.rating} precision={0.1} readOnly />
-          <Typography variant="subtitle1">4,567 students enrolled</Typography>
+          <Typography variant="subtitle1">{course?.enrollmentNumber} students enrolled</Typography>
           <Chip label="Bestseller" color="primary" />
         </Box>
       </Box>
@@ -110,7 +110,7 @@ const CourseDetails = () => {
             borderRadius: 2,
             overflow: 'hidden',
             boxShadow: 3,
-            mb: 4
+            mb: 4,
           }}>
             <img
               width="100%"
@@ -118,6 +118,7 @@ const CourseDetails = () => {
               src={course?.thumbnail}
               frameBorder="0"
               title="Course thumbnail"
+              style={{ height: 450 }}
             />
           </Box>
           {/* <CourseSchedule schedule={course?.schedule} /> */}
@@ -128,13 +129,13 @@ const CourseDetails = () => {
               <Typography variant="h5">Curriculum</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {course?.topics.map((module, index) => (
+              {course?.tags.topics.map((module, index) => (
                 <Accordion key={index} sx={{ mb: 1 }}>
                   <AccordionSummary expandIcon={<ExpandMore />}>
                     <Typography variant="h6">{module.module}</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
-                    {module.lessons.map((lesson, idx) => (
+                    {module?.lessons?.map((lesson, idx) => (
                       <Box key={idx} sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
                         <PlayCircle sx={{ mr: 2, color: 'text.secondary' }} />
                         <Typography>{lesson}</Typography>
@@ -153,7 +154,7 @@ const CourseDetails = () => {
             
             <Typography variant="h5" gutterBottom>Requirements</Typography>
             <ul style={{ paddingLeft: 24 }}>
-              {course?.requirements.map((req, i) => (
+              {course?.requirements?.map((req, i) => (
                 <li key={i}>
                   <Typography variant="body1">{req}</Typography>
                 </li>
@@ -164,14 +165,14 @@ const CourseDetails = () => {
           {/* Reviews Section */}
           <Box sx={{ my: 4 }}>
             <Typography variant="h4" gutterBottom>Student Reviews</Typography>
-            {course?.reviews.map((review, index) => (
+            {course?.reviews?.map((review, index) => (
               <Box key={index} sx={{ mb: 3, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <Avatar sx={{ mr: 2 }} />
                   <Rating value={review.rating} readOnly />
-                  <Typography variant="subtitle2" sx={{ ml: 2 }}>{review.date}</Typography>
+                  <Typography variant="subtitle2" sx={{ ml: 2 }}>{review?.date}</Typography>
                 </Box>
-                <Typography>{review.comment}</Typography>
+                <Typography>{review?.comment}</Typography>
               </Box>
             ))}
           </Box>
@@ -195,14 +196,15 @@ const CourseDetails = () => {
               </Typography> */}
             </Typography>
             
-            <Button 
-              variant="contained" 
-              fullWidth 
-              size="large"
-              // sx={{ mb: 2 }}
-            >
-              Add to Cart
-            </Button>
+            <AddToCart
+                      product={{
+                        id: course?.id,
+                        title: course?.title,
+                        price: course?.price,
+                        thumbnail: course?.thumbnail,
+                        teacher: course?.teacher,
+                      }}
+                    />
             
             {/* <Button 
               variant="outlined" 
@@ -215,7 +217,7 @@ const CourseDetails = () => {
 
             {/* Course Stats */}
             <Box sx={{ my: 3 }}>
-              {course?.tags.stats.map((stat, i) => (
+              {course?.tags?.stats?.map((stat, i) => (
                 <Chip
                   key={i}
                   label={`${stat.icon} ${stat.label}`}
@@ -228,11 +230,11 @@ const CourseDetails = () => {
             <Box sx={{ mt: 3, cursor: 'pointer' }} component={Link} to="/instructor-profile">
               <Typography variant="h6" gutterBottom>Instructor</Typography>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar src={course?.instructor.avatar} sx={{ width: 56, height: 56, mr: 2 }} />
+                <Avatar src={course?.instructor?.avatar} sx={{ width: 56, height: 56, mr: 2 }} />
                 <Box>
-                  <Typography variant="h6">{course?.instructor.name}</Typography>
+                  <Typography variant="h6">{course?.instructor?.name}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {course?.instructor.coursesCount} courses
+                    {course?.instructor?.coursesCount} courses
                   </Typography>
                 </Box>
               </Box>
@@ -261,7 +263,7 @@ const CourseDetails = () => {
       <Box sx={{ mt: 6, p: 4, bgcolor: 'background.paper', borderRadius: 2 }}>
         <Typography variant="h4" gutterBottom>What You will Learn</Typography>
         <Grid container spacing={3}>
-          {course?.goals.map((goal, i) => (
+          {course?.goals?.map((goal, i) => (
             <Grid item xs={12} sm={6} key={i}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Check sx={{ color: 'primary.main', mr: 2 }} />

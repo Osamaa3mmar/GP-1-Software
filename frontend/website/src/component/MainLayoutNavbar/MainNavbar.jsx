@@ -18,6 +18,7 @@ import Tabs from "./Tabs";
 
 export default function MainNavbar() {
   const [collapse, setCollapse] = useState(false);
+  
   const isSmallScreen = useMediaQuery("(max-width:900px)");
   const changeCollapse = () => {
     setCollapse(!collapse);
@@ -59,7 +60,7 @@ position:"sticky"
           >
             <Cart />
             <Notification  />
-            <Chat/>
+            {/* {<Chat/>} */}
             <ProfileMenu />
           </Box>
         </Stack>

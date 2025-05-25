@@ -1,14 +1,17 @@
-import { Container } from '@mui/material';
-import HeroSection from '../../component/Home/HeroSection';
-import FeaturedCourses from '../../component/Home/FeaturedCourses';
-import CategoriesGrid from '../../component/Home/CategoriesGrid';
-import TopCompanies from '../../component/Home/TopCompanies';
-import LearningPaths from '../../component/Home/LearningPaths';
-import UpcomingSchedule from '../../component/Home/UpcomingSchedule';
-import CodeIcon from '@mui/icons-material/Code';
-import DesignServicesIcon from '@mui/icons-material/DesignServices';
-import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import { Container } from "@mui/material";
+import HeroSection from "../../component/Home/HeroSection";
+import FeaturedCourses from "../../component/Home/FeaturedCourses";
+import CategoriesGrid from "../../component/Home/CategoriesGrid";
+import TopCompanies from "../../component/Home/TopCompanies";
+import LearningPaths from "../../component/Home/LearningPaths";
+import UpcomingSchedule from "../../component/Home/UpcomingSchedule";
+import CodeIcon from "@mui/icons-material/Code";
+import DesignServicesIcon from "@mui/icons-material/DesignServices";
+import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import { useEffect, useState } from "react";
+import { use } from "react";
+import axios from "axios";
 
 const expectedCourses = [
   {
@@ -40,7 +43,8 @@ const expectedCourses = [
   {
     id: 2,
     title: "Data Science with Python",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+    thumbnail:
+      "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
     tags: {
       topics: ["Pandas", "NumPy", "Machine Learning"],
       category: "Data Science",
@@ -65,7 +69,8 @@ const expectedCourses = [
   {
     id: 3,
     title: "UI/UX Design Principles",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+    thumbnail:
+      "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
     tags: {
       topics: ["User Research", "Prototyping", "Figma"],
       category: "Design",
@@ -87,7 +92,8 @@ const expectedCourses = [
   {
     id: 4,
     title: "Mobile App Development with Flutter",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+    thumbnail:
+      "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
     tags: {
       topics: ["Flutter", "Dart", "Mobile UI"],
       category: "Mobile Development",
@@ -103,15 +109,14 @@ const expectedCourses = [
     enrollmentNumber: 134,
     teacher: { name: "Emily Nguyen", position: "Mobile Developer" },
     isSchedulized: true,
-    schedule: [
-      { day: "Sat", startTime: "9:00 AM", endTime: "12:00 PM" },
-    ],
+    schedule: [{ day: "Sat", startTime: "9:00 AM", endTime: "12:00 PM" }],
     rating: { value: 4.6, count: 110 },
   },
   {
     id: 5,
     title: "DevOps and Continuous Integration",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+    thumbnail:
+      "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
     tags: {
       topics: ["Docker", "CI/CD", "Jenkins"],
       category: "DevOps",
@@ -120,8 +125,7 @@ const expectedCourses = [
     },
     learningOutcomes:
       "Learn how to implement CI/CD pipelines and automate deployments with Docker and Jenkins.",
-    learningPath:
-      "Next steps include Kubernetes and Infrastructure as Code.",
+    learningPath: "Next steps include Kubernetes and Infrastructure as Code.",
     duration: 14,
     price: 199.99,
     enrollmentNumber: 76,
@@ -136,7 +140,8 @@ const expectedCourses = [
   {
     id: 6,
     title: "Cybersecurity Essentials",
-    thumbnail: "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
+    thumbnail:
+      "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
     tags: {
       topics: ["Network Security", "Encryption", "Risk Management"],
       category: "Cybersecurity",
@@ -165,9 +170,21 @@ const sampleCategories = [
 ];
 
 const sampleCompanies = [
-  { id: 1, name: "Tech Corp", logo: "https://source.unsplash.com/random/100x100?tech" },
-  { id: 2, name: "Design Hub", logo: "https://source.unsplash.com/random/100x100?design" },
-  { id: 3, name: "Business Pro", logo: "https://source.unsplash.com/random/100x100?business" },
+  {
+    id: 1,
+    name: "Tech Corp",
+    logo: "https://source.unsplash.com/random/100x100?tech",
+  },
+  {
+    id: 2,
+    name: "Design Hub",
+    logo: "https://source.unsplash.com/random/100x100?design",
+  },
+  {
+    id: 3,
+    name: "Business Pro",
+    logo: "https://source.unsplash.com/random/100x100?business",
+  },
 ];
 
 const samplePaths = [
@@ -176,14 +193,14 @@ const samplePaths = [
     title: "Frontend Developer Track",
     description: "Master modern frontend development technologies",
     courses: 6,
-    progress: 35
+    progress: 35,
   },
   {
     id: 2,
     title: "UX Designer Track",
     description: "Become a professional UI/UX designer",
     courses: 5,
-    progress: 15
+    progress: 15,
   },
 ];
 
@@ -194,7 +211,7 @@ const sampleSchedule = [
     date: "2023-08-20",
     instructor: "Emma Wilson",
     company: "React Experts",
-    duration: "2 weeks"
+    duration: "2 weeks",
   },
   {
     id: 2,
@@ -202,22 +219,38 @@ const sampleSchedule = [
     date: "2023-08-22",
     instructor: "James Smith",
     company: "Marketing Pro",
-    duration: "1 week"
+    duration: "1 week",
   },
 ];
 
 export default function MainPage() {
+  const [featuredCourses, setfeaturedCourses] = useState([]);
+  useEffect(() => {
+    const fetchFeaturedCourses = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4545/course/featuredcourses"
+        );
+        setfeaturedCourses(response.data.courses);
+      } catch (error) {
+        console.error("Error fetching featured courses:", error);
+        throw error;
+      }
+    };
+
+    fetchFeaturedCourses();
+  }, []);
   return (
     <main>
       <HeroSection />
-      
+
       <Container maxWidth="lg">
-        <FeaturedCourses courses={expectedCourses} />
+        <FeaturedCourses courses={featuredCourses} />
         <CategoriesGrid categories={sampleCategories} />
         <TopCompanies companies={sampleCompanies} />
         <LearningPaths paths={samplePaths} />
         <UpcomingSchedule schedule={sampleSchedule} />
       </Container>
     </main>
-  )
+  );
 }

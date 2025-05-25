@@ -7,6 +7,7 @@ import CardImage from "./CardImage";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 export default function CourseCardAdmin({ course,setCourses,openModal,setCurrentCourse }) {
   const deleteCourse = async (id) => {
@@ -83,7 +84,7 @@ export default function CourseCardAdmin({ course,setCourses,openModal,setCurrent
               {course.title}
             </h2>
             
-            <Button sx={{ color: "#6366F1", bgcolor: "#6366F110" }}>
+            <Button component={Link} to={`/main/course/${course.id}`} sx={{ color: "#6366F1", bgcolor: "#6366F110" }}>
               View
             </Button>
           </Box>

@@ -1,7 +1,10 @@
+import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { organizationModel } from "../../../DB/models/organaization/organaization.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import cloudinary from "../../utils/Claoudinary.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
+import { sequelize } from "../../../DB/Connection.js";
+import { Op } from "sequelize";
 
 
 
@@ -123,3 +126,65 @@ export const editOrgImages=async(req,res)=>{
     }
 }
 
+export const getTopOrganizations = async (req, res) => {
+    try {
+        const orgs = await organizationModel.findAll({            attributes: [
+                'id',
+                'name',
+                'profile',
+                'description',
+                'isVerified',
+                [sequelize.fn('COUNT', sequelize.col('courses.id')), 'courseCount'],
+                [sequelize.fn('COALESCE', sequelize.fn('AVG', sequelize.col('courses.rating')), 0), 'avgRating']
+            ],
+            subQuery: false,            include: [{
+                model: courseModel,
+                as: 'courses',
+                attributes: [],
+                required: false,
+                where: {
+                    completionStatus: {
+                        [Op.in]: ['inProgress', 'completed']
+                    }
+                }
+            }],            group: [
+                'id',
+                'name',
+                'profile',
+                'description',
+                'isVerified'
+            ],
+            having: sequelize.literal('COUNT(courses.id) > 0'),
+            order: [
+                [sequelize.fn('AVG', sequelize.col('courses.rating')), 'DESC'],
+                [sequelize.fn('COUNT', sequelize.col('courses.id')), 'DESC']
+            ],
+            limit: 5
+        });
+
+        if (!orgs.length) {
+            return res.status(200).json({
+                message: "No organizations found with active courses",
+                orgs: []
+            });
+        }
+
+        // Format the response data
+        const formattedOrgs = orgs.map(org => ({
+            ...org.toJSON(),
+            avgRating: Number(org.getDataValue('avgRating') || 0).toFixed(1),
+            courseCount: Number(org.getDataValue('courseCount') || 0)
+        }));
+
+        return res.status(200).json({
+            message: "Successfully retrieved top organizations",
+            orgs: formattedOrgs
+        });
+    } catch (error) {
+        console.error('Error in getTopOrganizations:', error);
+        return res.status(500).json({
+            message: "Error retrieving top organizations",
+            error: error.message
+        });
+    }
+};

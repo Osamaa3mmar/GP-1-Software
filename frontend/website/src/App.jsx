@@ -38,6 +38,8 @@ import UserNotificationsContextProvider, { UserNotificationsContext } from "./Co
 import CoursesAdminTemp from "./pages/AdminPages/CoursesAdminTemp";
 import ForgetPassword from "./pages/ForgetPassword/ForgetPAssword";
 import ClassroomsListPage from "./pages/UserClassRooms/ClassroomsListPage";
+import Checkout from "./pages/Cart/Checkout";
+import { CourseProvider } from './Context/CourseContext';
 export default function App() {
  
 
@@ -139,6 +141,15 @@ export default function App() {
           path:"courses",
           element:<CoursesPage/>
         },{
+          path:"cart",
+          element:<CartPage/>,
+          children:[
+            {
+              path:"checkout",
+              element:<Checkout/>
+            }
+          ]
+        },{
           path:'course/:id',
           element:<CourseDetails/>
         },{
@@ -185,6 +196,7 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <CartProvider>
         <UserContextProvider>
+          <CourseProvider>
           <ToastContainer
             position="bottom-right"
             autoClose={2500}
@@ -200,7 +212,7 @@ export default function App() {
           />
           
           <RouterProvider router={router} />
-          
+          </CourseProvider>
         </UserContextProvider>
       </CartProvider>
     </ThemeProvider>

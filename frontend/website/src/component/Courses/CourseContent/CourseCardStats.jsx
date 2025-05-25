@@ -9,7 +9,7 @@ export default function CourseCardStats({ duration, enrollmentNumber , schedule 
     { days: ["Sun", "Tue", "Thu"], time: "2:00 PM - 4:00 PM" },
     // Add more schedule entries as needed
   ];
-  const groupedSchedules = schedule.reduce((acc, session) => {
+  const groupedSchedules = schedule?.reduce((acc, session) => {
   const timeKey = `${session.startTime}-${session.endTime}`;
   if (!acc[timeKey]) {
     acc[timeKey] = { 

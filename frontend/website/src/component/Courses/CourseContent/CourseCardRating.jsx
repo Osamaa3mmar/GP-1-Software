@@ -10,15 +10,15 @@ export default function CourseCardRating({ price , rating}) {
       <Stack direction="row" alignItems="center" spacing={1}>
         <Rating
           name="course-rating"
-          value={rating.value}
+          value={rating}
           precision={0.5}
           readOnly
           size="medium"
         />
         <Typography variant="body2" color="text.secondary">
-          ({rating.count >= 1000
-            ? `${(rating.count / 1000).toFixed(1)}k`
-            : rating.count})
+          ({rating?.count >= 1000
+            ? `${(rating?.count / 1000).toFixed(1)}k`
+            : rating?.count})
         </Typography>
       </Stack>
     </Stack>

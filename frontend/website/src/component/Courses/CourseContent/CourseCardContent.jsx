@@ -16,11 +16,11 @@ export default function CourseCardContent({ course }) {
       <CourseCardTags tags={course.tags} />
       <CourseCardTitle title={course.title} />
       <CourseCardHeader teacher={course.teacher} />
-      <CourseCardStats
+      {/* <CourseCardStats
         duration={course.duration}
         enrollmentNumber={course.enrollmentNumber}
         schedule={course.schedule}
-      />
+      /> */}
       {/* Push rating to bottom */}
       <Box sx={{ mt: 'auto' }}>
         <CourseCardRating price={course.price} rating={course.rating}/>

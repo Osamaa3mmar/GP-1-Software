@@ -1,6 +1,7 @@
 
 import { Button, CardActions } from "@mui/material";
 import { useCart } from '../../contexts/CartContext';
+import axios from "axios";
 
 export default function AddToCart({ product }) {
   const { addToCart } = useCart();
@@ -16,7 +17,11 @@ export default function AddToCart({ product }) {
           "&:hover": { bgcolor: "primary.dark" },
         }}
         onClick={(e) => {
-          addToCart(product)
+          console.log("product", product);
+          addToCart(product);
+          // axios.post("http://localhost:4545/cart/create", {
+          //   productId: product._id,
+          // });
           e.stopPropagation();
         }}
       >
