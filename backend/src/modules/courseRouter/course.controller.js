@@ -243,3 +243,38 @@ export const getallnotassigninorg=async (req,res)=>{
    return res.status(500).json({ message: "Server Error", error });
   }
 }
+
+
+
+export const getTeacherCourses=async(req,res)=>{
+  try{
+  const {user}=req.body;
+ if(user.role=='user'){
+  return res.status(403).json({message:"You are not authorized to view courses"});
+ } 
+ if(user.role=='owner'){
+  const org=await organizationModel.findOne({where:{ownerId:user.id},attributes:['id']});
+  const courses=await courseModel.findAll({
+    where:{
+      orgId:org.id
+    }
+   })
+   if(!courses){
+    return res.status(200).json({message:"no Courses"})
+   }
+   return res.status(200).json({message:"success",courses });
+ }
+ const courses=await courseModel.findAll({
+  where:{
+    teacherId:user.id
+  }
+ })
+ if(!courses){
+  return res.status(200).json({message:"no Courses"})
+ }
+ return res.status(200).json({message:"success",courses });
+
+  }catch(error){
+     return res.status(500).json({ message: "Server Error", error });
+  }
+}
