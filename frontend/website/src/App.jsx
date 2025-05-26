@@ -41,6 +41,8 @@ import ClassroomsListPage from "./pages/UserClassRooms/ClassroomsListPage";
 import ClassroomLayout from "./layouts/classroom/ClassroomLayout";
 import QuizeMaker from "./pages/QuizeMaker/QuizeMaker";
 import Quiz from "./pages/Quiz/Quiz";
+import Lessons from "./pages/Lessons/Lessons";
+import Lesson from "./pages/Lesson/Lesson";
 export default function App() {
  
 
@@ -144,11 +146,26 @@ export default function App() {
         },{
           path:'course/:id',
           element:<CourseDetails/>
-        },{
-          path:"classrooms",
-          element:<ClassroomsListPage/>,
-          children:[
-            {path:":id",element:<ClassRoomsUser/>}
+        }, {
+          path: "classrooms",
+          children: [
+            {
+              index: true,
+              element: <ClassroomsListPage />
+            },
+            {
+              path: ":courseId/lessons",
+              children: [
+                {
+                  index: true,
+                  element: <Lessons />
+                },
+                {
+                  path: "lesson/:lessonId",
+                  element: <Lesson />
+                }
+              ]
+            }
           ]
         },
         {

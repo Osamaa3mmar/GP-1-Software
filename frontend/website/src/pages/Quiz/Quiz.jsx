@@ -20,7 +20,8 @@ import {
   Alert,
   Fade,
   Chip,
-  useTheme
+  useTheme,
+  TextField
 } from "@mui/material";
 import QuizIcon from "@mui/icons-material/Quiz";
 import TimerIcon from "@mui/icons-material/Timer";
@@ -59,7 +60,27 @@ export default function Quiz() {
   const [quizResult, setQuizResult] = useState(null);
   const [previousSubmission, setPreviousSubmission] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-
+  const [isTaken,setIsTaken]=useState(false);
+  const checkTaken=async()=>{
+  try{
+    const {data}=await axios.get("http://localhost:4545/submissions/isTaken/"+quizId,{
+      headers:{
+        token: localStorage.getItem("token")
+      }
+    });
+    if(data.taken){
+      setIsTaken(true);
+    }
+    else{
+      setIsTaken(false);
+    }
+  }catch(error){
+    console.log(error);
+  }
+  }
+  useEffect(()=>{
+    checkTaken();
+  },[])
   // Check if quiz exists by trying to fetch its questions
   const checkQuizExists = async () => {
     try {
@@ -123,7 +144,6 @@ export default function Quiz() {
           return false;
         }
       }
-      
       // For other errors, show a general error message
       setError("Failed to load quiz. Please try again.");
       return false;
@@ -269,13 +289,26 @@ export default function Quiz() {
       setSubmitting(false);
     }
   };
-
+  const [isSubmited, setIsSubmited] = useState(false);
   // Format time (seconds) to MM:SS
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
+  // const checkIfSubmited = async () => {
+  //   try {
+  //     const response = await axios.get(`http://localhost:4545/submissions/isSubmitedUser/${quizId}`, {
+  //       headers: {
+  //         token: localStorage.getItem("token")
+  //       }
+  //     });
+  //     const isSubmited = response.data.isSubmited;
+  //     setIsSubmited(isSubmited);
+  //   } catch (error) {
+  //     console.error("Error checking if quiz is submited:", error);
+  //   }
+  // };
 
   // Timer effect
   useEffect(() => {
@@ -290,7 +323,7 @@ export default function Quiz() {
           return prev - 1;
         });
       }, 1000);
-
+      // checkIfSubmited();
       return () => clearInterval(timer);
     }
   }, [loading, quizSubmitted, timeRemaining]);
@@ -308,6 +341,11 @@ export default function Quiz() {
     ? (Object.keys(answers).length / questions.length) * 100 
     : 0;
     
+
+
+if(isTaken){
+  return <>You Take the quiz before</>
+}    
   // Render 404 page when quiz is not found
   if (quizNotFound) {
     return (
@@ -710,7 +748,7 @@ export default function Quiz() {
                             </Paper>
                           </Grid>
                         </Grid>
-                      ) : (
+                      ) :currentQuestion?.type === 'mcq'? (
                         <Grid container spacing={2}>
                           {currentQuestion?.options?.map((option, index) => (
                             <Grid item xs={12} key={option.id || index}>
@@ -735,7 +773,34 @@ export default function Quiz() {
                             </Grid>
                           ))}
                         </Grid>
-                      )}
+                      ):(
+                        <TextField
+                          fullWidth
+                          variant="outlined"
+                          placeholder="Type your answer here..."
+                          multiline
+                          rows={4}
+                          value={answers[currentQuestionIndex] || ''}
+                          onChange={(e) => {
+                            const newAnswers = { ...answers };
+                            newAnswers[currentQuestionIndex] = e.target.value;
+                            setAnswers(newAnswers);
+                          }}
+                          sx={{
+                            mt: 2,
+                            '& .MuiOutlinedInput-root': {
+                              '&:hover fieldset': {
+                                borderColor: theme.palette.primary.main,
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: theme.palette.primary.main,
+                              },
+                            },
+                          }}
+                        />
+                      )
+                      
+                      }
                     </RadioGroup>
                   </FormControl>
                 </Paper>

@@ -11,7 +11,7 @@ import questionRouter from './modules/question/question.router.js';
 import quizRouter from './modules/quizRouter/quiz.router.js';
 import lessonRouter from './modules/lessonRouter/lesson.router.js';
 import couponRouter from './modules/couponRouter/coupon.router.js';
-import quizSubmissionRouter from './modules/quizSubmissionRouter/quizSubmission.router.js';
+import quizSubmissionRouter from './modules/quiz-submission/quiz-submission.router.js';
 import lessonSectionRouter from './modules/lessonSectionRouter/lessonSection.router.js';
 import categoryRouter from './modules/categoryRouter/category.router.js';
 import cartRouter from './modules/cartRouter/cart.router.js';

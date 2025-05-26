@@ -14,7 +14,6 @@ export default function ClassroomCard({course}) {
     <Box
       sx={{
         m: 3,
-        width: "fit-content",
         position: "relative",
         transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
         "&:hover": {
@@ -24,7 +23,7 @@ export default function ClassroomCard({course}) {
       }}>
       <Card
         sx={{
-          width: 350,
+          
           boxShadow: 3,
           height: 400,
           display: "flex",

@@ -4,13 +4,14 @@ import { quizModel } from "../../../DB/models/quizes/Quiz.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { organizationModel } from "../../../DB/models/organaization/organaization.js";
+import { where } from "sequelize";
 
 // Submit a quiz
 export const submitQuiz = async (req, res) => {
-  try {
+  // try {
     const { quizId, answers, timeSpent } = req.body;
-    const userId = req.user.id;
-    const userRole = req.user.role;
+    const userId = req.body.user.id;
+    const userRole = req.body.user.role;
 
     // Validate required fields
     if (!quizId || !answers || !Array.isArray(answers)) {
@@ -99,10 +100,9 @@ export const submitQuiz = async (req, res) => {
         quizId,
         answers: answers,
         score,
-        totalMarks, // Include total marks in the submission
+         // Include total marks in the submission
         status: 'graded',
         submittedAt: new Date(),
-        isTest: isSpecialUser // Mark as test if user is teacher, org owner or admin
       });
       submissionCreated = true;
     } catch (createError) {
@@ -117,7 +117,6 @@ export const submitQuiz = async (req, res) => {
           score,
           status: 'graded',
           submittedAt: new Date(),
-          isTest: isSpecialUser // Mark as test if user is teacher, org owner or admin
         });
         submissionCreated = true;
       } catch (fallbackError) {
@@ -146,10 +145,10 @@ export const submitQuiz = async (req, res) => {
       }
     });
 
-  } catch (error) {
-    console.error("Error submitting quiz:", error);
-    return res.status(500).json({ message: "Server error", error: error.message });
-  }
+  // } catch (error) {
+  //   console.error("Error submitting quiz:", error);
+  //   return res.status(500).json({ message: "Server error", error: error.message });
+  // }
 };
 
 // Get quiz submissions for a user
@@ -255,3 +254,48 @@ export const getSubmission = async (req, res) => {
     return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
+
+export const isSubmitedUser=async(req,res)=>{
+
+
+
+
+  try{
+const {quizId}=req.params;
+const {user}=req.body;
+const submission=await quizSubmissionModel.findOne({
+  where:{quizId,userId:user.id}
+})
+if(!submission){
+  return res.status(200).json({message:"Submission not found"})
+}
+return res.status(404).json({message:"success",submission})
+  }catch(error){
+    return res.status(500).json({message:"Server error",error:error.message})
+  }
+}
+
+
+
+
+export const isTaken=async (req,res)=>{
+  try{
+    const{quizId}=req.params;
+    const {user}=req.body;
+    const taken=await quizSubmissionModel.findOne({
+      where:{
+      quizId,
+      userId:user.id
+      }
+    })
+    if(!taken){
+
+      return res.status(200).json({message:"Not taken",taken:false});
+    }
+    return res.status(200).json({message:"Taken",taken:true});
+  }catch(error){
+    return res.status(500).json({message:"Server error",error:error.message})
+  }
+}

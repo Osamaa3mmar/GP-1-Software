@@ -30,7 +30,7 @@ export const getFullProfile=async (req,res)=>{
         const {id}=req.body;
         console.log(id);
         const fullUser=await userModel.findByPk(id,{
-            attributes:['bio','links','files','specialization','username','profilePic'],
+            
             include:[{
                 model:enrollmentModel,
                 as:"enrollments",
@@ -39,7 +39,10 @@ export const getFullProfile=async (req,res)=>{
                     {
                         model:courseModel,
                         as:"course",
-                        attributes:['title','duration','thumbnail'],
+                        include:[{
+                            model:userModel,
+                            as:"teacher"
+                        }]
 
                     }
                 ]
