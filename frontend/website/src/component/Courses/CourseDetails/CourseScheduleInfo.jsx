@@ -1,4 +1,3 @@
-import React from 'react';
 import { Paper, Typography, Grid, Box } from '@mui/material';
 import { Event, AccessTime, EmojiEvents } from '@mui/icons-material';
 

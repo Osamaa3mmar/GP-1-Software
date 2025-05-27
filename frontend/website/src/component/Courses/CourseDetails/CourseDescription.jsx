@@ -1,4 +1,3 @@
-import React from 'react';
 import { Paper, Typography, Divider, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { Check } from '@mui/icons-material';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Box } from '@mui/material';
 import { ExpandMore, PlayCircle } from '@mui/icons-material';
 

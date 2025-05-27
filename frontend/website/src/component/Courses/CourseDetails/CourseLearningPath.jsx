@@ -1,4 +1,3 @@
-import React from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { ExpandMore, School } from '@mui/icons-material';
 
