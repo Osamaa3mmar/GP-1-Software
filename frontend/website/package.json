@@ -26,6 +26,7 @@
     "@tailwindcss/vite": "^4.0.13",
     "@toolpad/core": "^0.13.0",
     "axios": "^1.8.3",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "framer-motion": "^12.7.4",
     "material-ui-popup-state": "^5.3.5",
