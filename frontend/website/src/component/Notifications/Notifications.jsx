@@ -11,7 +11,16 @@ const [notifications,setNotifications]=useState([]);
 
 const getNotification=async()=>{
     try{
-        const {data}=await axios.get(type=="org"?orgNotificationUrl+`/${user?.orgId}`:userNotificationUrl+`/${user?.id}`);
+        let url;
+        if (type === "org") {
+            // For organization notifications, include role and userId as query parameters
+            url = `${orgNotificationUrl}/${user?.orgId}?role=${user?.role}&userId=${user?.id}`;
+        } else {
+            // For user notifications, use the existing URL structure
+            url = `${userNotificationUrl}/${user?.id}`;
+        }
+        
+        const {data} = await axios.get(url);
         setNotifications(data.notifications);
     }catch(error){
         console.log(error);

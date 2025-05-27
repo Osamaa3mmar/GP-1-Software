@@ -5,107 +5,59 @@ const client = new GPT({
   "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"
 });
 
+// Define common JSON structures to avoid repetition in prompts
+const questionStructures = {
+  mcq: '{"questionText":"Q","options":["A","B","C","D"],"correctAnswer":"A","explanation":"E","marks":5,"type":"mcq"}',
+  true_false: '{"questionText":"Q","options":["True","False"],"correctAnswer":"True/False","explanation":"E","marks":5,"type":"true_false"}',
+  short_answer: '{"questionText":"Q","options":[],"correctAnswer":"A","explanation":"E","marks":5,"type":"short_answer"}'
+};
+
 export const generateQuizQuestion = async (topic, details, difficulty, questionType = 'mcq', count = 1) => {
   try {
     console.log(`Generating ${count} ${questionType} question(s) about ${topic}...`);
-    // Create a prompt based on the input parameters and question type
-    let promptTemplate = '';
     
-    // Different prompt templates based on question type
-    if (questionType === 'mcq') {
-      promptTemplate = `
-      Generate ${count > 1 ? count + ' different' : 'a'} multiple-choice question${count > 1 ? 's' : ''} (MCQ) about the topic: '${topic}'.
-      
-      ${details ? `Additional details about the topic: ${details}` : ''}
-      
-      Difficulty level: ${difficulty}
-      
-      The response should be in JSON format with the following structure:
-      ${count > 1 ? '[' : ''}
-      {
-        "questionText": "The question text here",
-        "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
-        "correctAnswer": "The correct option here (exactly matching one of the options)",
-        "explanation": "A brief explanation of why this answer is correct",
-        "marks": 5,
-        "type": "mcq"
-      }${count > 1 ? ',' : ''}
-      ${count > 1 ? '...' : ''}
-      ${count > 1 ? ']' : ''}
-      
-      IMPORTANT: Make sure that the correctAnswer value EXACTLY matches one of the option strings in the options array. This is critical for proper processing.
-      
-      Make sure the question${count > 1 ? 's are' : ' is'} appropriate for the specified difficulty level. The question${count > 1 ? 's' : ''} should be clear, concise, and educational.
-      `;
-    } else if (questionType === 'true_false') {
-      promptTemplate = `
-      Generate ${count > 1 ? count + ' different' : 'a'} true/false question${count > 1 ? 's' : ''} about the topic: '${topic}'.
-      
-      ${details ? `Additional details about the topic: ${details}` : ''}
-      
-      Difficulty level: ${difficulty}
-      
-      The response should be in JSON format with the following structure:
-      ${count > 1 ? '[' : ''}
-      {
-        "questionText": "The true/false statement here",
-        "options": ["True", "False"],
-        "correctAnswer": "True or False (matching exactly one of the options)",
-        "explanation": "A brief explanation of why this answer is correct",
-        "marks": 5,
-        "type": "true_false"
-      }${count > 1 ? ',' : ''}
-      ${count > 1 ? '...' : ''}
-      ${count > 1 ? ']' : ''}
-      
-      IMPORTANT: Make sure that the correctAnswer value is EXACTLY either "True" or "False" matching one of the options. This is critical for proper processing.
-      
-      Make sure the question${count > 1 ? 's are' : ' is'} appropriate for the specified difficulty level. The statement${count > 1 ? 's' : ''} should be clear, concise, and educational.
-      `;
-    } else if (questionType === 'short_answer') {
-      promptTemplate = `
-      Generate ${count > 1 ? count + ' different' : 'a'} short answer question${count > 1 ? 's' : ''} about the topic: '${topic}'.
-      
-      ${details ? `Additional details about the topic: ${details}` : ''}
-      
-      Difficulty level: ${difficulty}
-      
-      The response should be in JSON format with the following structure:
-      ${count > 1 ? '[' : ''}
-      {
-        "questionText": "The question text here",
-        "options": [],
-        "correctAnswer": "The correct short answer here",
-        "explanation": "A brief explanation of the correct answer",
-        "marks": 5,
-        "type": "short_answer"
-      }${count > 1 ? ',' : ''}
-      ${count > 1 ? '...' : ''}
-      ${count > 1 ? ']' : ''}
-      
-      For short answer questions, the options array should be empty, and the correctAnswer should be a concise answer.
-      
-      Make sure the question${count > 1 ? 's are' : ' is'} appropriate for the specified difficulty level. The question${count > 1 ? 's' : ''} should be clear, concise, and educational.
-      `;
+    // Create a concise prompt to minimize token usage
+    const structure = questionStructures[questionType];
+    const arrayFormat = count > 1 ? `[${structure}]` : structure;
+    
+    // Build a compact prompt that includes all necessary information but uses fewer tokens
+    let prompt = `Create ${count} ${difficulty} ${questionType} question${count > 1 ? 's' : ''} about "${topic}"`;    
+    if (details) {
+      prompt += ` with context: "${details}"`;
     }
     
-    const prompt = promptTemplate;
+    // Add specific instructions based on question type
+    if (questionType === 'mcq') {
+      prompt += `. Each question must have 4 options with exactly one correct answer.`;
+    } else if (questionType === 'true_false') {
+      prompt += `. Each answer must be exactly "True" or "False".`;
+    } else if (questionType === 'short_answer') {
+      prompt += `. Keep answers concise.`;
+    }
+    
+    // Add format instructions
+    prompt += ` Format: ${arrayFormat}`;
+    
+    // Add critical instruction for correctAnswer
+    if (questionType === 'mcq' || questionType === 'true_false') {
+      prompt += ` The correctAnswer MUST exactly match one of the options.`;
+    }
 
-    // Call the OpenAI API
+    // Call the OpenAI API with optimized parameters to minimize costs
     const response = await client.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo", // Using the standard model for reliability
       messages: [
         {
           role: "system",
-          content: "You are an educational quiz generator that creates high-quality multiple-choice questions. Your responses should be in valid JSON format only."
+          content: "Generate educational quiz questions in valid JSON format. Be concise."
         },
         {
           role: "user",
           content: prompt
         }
       ],
-      temperature: 0.7,
-      max_tokens: 800,
+      temperature: 0.5, // Lower temperature for more predictable outputs
+      max_tokens: 500,  // Reduced from 800 to save costs
       response_format: { type: "json_object" }
     });
 

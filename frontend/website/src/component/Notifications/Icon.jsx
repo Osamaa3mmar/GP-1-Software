@@ -10,6 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
+import TaskIcon from '@mui/icons-material/Task';
 export default function Icon({ icon ,isRead}) {
   const iconMaps = {
     user: <PersonIcon sx={{ fontSize: 28, color: '#1976d2' }} />,
@@ -21,7 +22,8 @@ export default function Icon({ icon ,isRead}) {
     add:<AddIcon sx={{ fontSize: 28, color:"#6a1b9a" }}/>,
     unassign:<PersonOffIcon sx={{ fontSize: 28, color:"#d32f2f" }}/>,
     assign:<BusinessCenterIcon sx={{ fontSize: 28, color:"#388e3c" }}/>,
-    kick:<WorkOffIcon sx={{ fontSize: 28, color:"red" }}/>
+    kick:<WorkOffIcon sx={{ fontSize: 28, color:"red" }}/>,
+    accept:<TaskIcon sx={{ fontSize: 28, color:"#28a745" }}/>,
   };
   console.log(isRead)
   return (

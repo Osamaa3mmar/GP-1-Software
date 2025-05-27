@@ -22,7 +22,8 @@ const iconColores = {
     add:"#6a1b9a",
     unassign:"#d32f2f",
     assign:"#388e3c",
-    kick:"#ff0000"
+    kick:"#ff0000",
+    accept:"#28a745"
   };
  
 

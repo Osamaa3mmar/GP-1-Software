@@ -111,7 +111,7 @@ export default function QustionCardMaker({
       
       // Make the API call
       const { data } = await axios.post(
-        "http://localhost:4545/qustion/save",
+        "http://localhost:4545/question/save",
         {
           qustion: questionData
         },
@@ -155,7 +155,7 @@ export default function QustionCardMaker({
     try {
       setLoading(true);
       const { data } = await axios.delete(
-        "http://localhost:4545/qustion/delete",
+        "http://localhost:4545/question/delete",
         {
           headers: {
             token: localStorage.getItem("token"),

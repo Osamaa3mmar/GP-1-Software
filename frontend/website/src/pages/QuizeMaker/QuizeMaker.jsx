@@ -110,7 +110,7 @@ export default function QuizeMaker() {
       
       // Call backend API to generate question
       const response = await axios.post(
-        "http://localhost:4545/qustion/generate-ai",
+        "http://localhost:4545/question/generate-ai",
         {
           topic: aiQuestionTopic,
           details: aiQuestionDetails,
@@ -167,7 +167,7 @@ export default function QuizeMaker() {
       }
       
       // Use the questions endpoint to check if the quiz exists
-      const { data } = await axios.get(`http://localhost:4545/qustion/getall/${quizId}`, {
+      const { data } = await axios.get(`http://localhost:4545/question/getall/${quizId}`, {
         headers: {
           token: localStorage.getItem("token")
         }

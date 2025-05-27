@@ -20,12 +20,34 @@ export const getUserNotifications=async(req,res)=>{
 export const getOrgNotifications=async(req,res)=>{
     try{
         const {orgId}=req.params;
-        const notifications=await notificationModel.findAll({
-            where:{organizationId: orgId},
+        const userRole = req.query.role;
+        const userId = req.query.userId;
+        
+        // Build the where clause based on user role
+        const whereClause = {
+            organizationId: orgId
+        };
+        
+        // If the user is a teacher, only show notifications that are relevant to them
+        // This prevents teachers from seeing all company notifications
+        if (userRole === 'teacher') {
+            // Only show notifications that are either:
+            // 1. Marked specifically for this teacher (using userId)
+            // 2. Marked as public for all organization members (using a type field)
+            whereClause['$or'] = [
+                { userId: userId },
+                { type: 'public' }  // Notifications marked as public for all org members
+            ];
+        }
+        
+        const notifications = await notificationModel.findAll({
+            where: whereClause,
             order: [['createdAt', 'DESC']],
-        })
+        });
+        
         return res.status(200).json({message:"nice!",notifications});
     }catch(error){
+        console.error("Error in getOrgNotifications:", error);
         return res.status(500).json({message:"Server Error",error});
     }
 }

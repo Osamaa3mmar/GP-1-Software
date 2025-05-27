@@ -106,7 +106,7 @@ export default function Quiz() {
       // This avoids making an extra API call that might fail
       
       // Use the questions endpoint to check if the quiz exists
-      const { data } = await axios.get(`http://localhost:4545/qustion/getall/${quizId}`, {
+      const { data } = await axios.get(`http://localhost:4545/question/getall/${quizId}`, {
         headers: {
           token: localStorage.getItem("token")
         }

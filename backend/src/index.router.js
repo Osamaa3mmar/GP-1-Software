@@ -28,7 +28,7 @@ export const initApp=(app,express)=>{
     app.use("/enrollments",enrollRouter);
     app.use("/ai",aiRouter);
     app.use("/notifications",notificationsRouter);
-    app.use("/qustion",questionRouter);
+    app.use("/question",questionRouter);
     app.use("/quiz",quizRouter);
     app.use("/lesson",lessonRouter);
     app.use("/copun",couponRouter);
