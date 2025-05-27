@@ -83,46 +83,90 @@ export default function Lessons() {
         }
     };
     
-    // Empty function for adding a new lesson (to be implemented later)
+    // Function to add a new lesson
     const handleAddLesson = async () => {
-        // Close the dialog
         setOpenAddDialog(false);
         
-        // Reset the form
-        setNewLessonTitle('');
-        
-        // TODO: Implement the actual API call to add a lesson
-        console.log('Add lesson:', newLessonTitle);
-        
-        // Refresh the lessons list
-        getallLessons();
+        try {
+            // Make API call to add a new lesson
+            await axios.post('http://localhost:4545/lesson/add', {
+                courseId,
+                title: newLessonTitle,
+                description: '', // Default empty description
+                order: lessons.length + 1 // Set order to be after existing lessons
+            }, {
+                headers: {
+                    token: localStorage.getItem('token')
+                }
+            });
+            
+            // Show success message (you could add a toast notification here)
+            console.log('Lesson added successfully');
+            
+            // Reset the form
+            setNewLessonTitle('');
+            
+            // Refresh the lessons list
+            getallLessons();
+        } catch (error) {
+            console.error('Error adding lesson:', error);
+            setError(error.response?.data?.message || 'Failed to add lesson. Please try again.');
+        }
     };
     
-    // Empty function for editing a lesson (to be implemented later)
+    // Function to edit an existing lesson
     const handleEditLesson = async () => {
-        // Close the dialog
         setOpenEditDialog(false);
         
-        // TODO: Implement the actual API call to edit a lesson
-        console.log('Edit lesson:', currentLesson?.id, newLessonTitle);
-        
-        // Refresh the lessons list
-        getallLessons();
+        try {
+            // Make API call to update the lesson
+            await axios.put('http://localhost:4545/lesson/update', {
+                id: currentLesson.id,
+                title: newLessonTitle,
+                // Keep other properties the same
+                description: currentLesson.description,
+                order: currentLesson.order
+            }, {
+                headers: {
+                    token: localStorage.getItem('token')
+                }
+            });
+            
+            // Show success message (you could add a toast notification here)
+            console.log('Lesson updated successfully');
+            
+            // Refresh the lessons list
+            getallLessons();
+        } catch (error) {
+            console.error('Error updating lesson:', error);
+            setError(error.response?.data?.message || 'Failed to update lesson. Please try again.');
+        }
     };
     
-    // Empty function for deleting a lesson (to be implemented later)
+    // Function to delete a lesson
     const handleDeleteLesson = async () => {
-        // Close the dialog
         setOpenDeleteDialog(false);
         
-        // TODO: Implement the actual API call to delete a lesson
-        console.log('Delete lesson:', currentLesson?.id);
-        
-        // Refresh the lessons list
-        getallLessons();
+        try {
+            // Make API call to delete the lesson
+            await axios.delete('http://localhost:4545/lesson/delete', {
+                headers: {
+                    token: localStorage.getItem('token')
+                },
+                data: { id: currentLesson.id } // Send data in the request body for DELETE
+            });
+            
+            // Show success message (you could add a toast notification here)
+            console.log('Lesson deleted successfully');
+            
+            // Refresh the lessons list
+            getallLessons();
+        } catch (error) {
+            console.error('Error deleting lesson:', error);
+            setError(error.response?.data?.message || 'Failed to delete lesson. Please try again.');
+        }
     };
     
-    // Handle opening the menu
     const handleMenuOpen = (event, lessonId) => {
         setMenuAnchorEl(event.currentTarget);
         setSelectedLessonId(lessonId);
