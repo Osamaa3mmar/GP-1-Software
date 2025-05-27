@@ -1,4 +1,4 @@
-import React from 'react';
+// React is imported for JSX transformation
 import { 
   Container, 
   Grid, 
@@ -6,44 +6,54 @@ import {
   Chip, 
   Rating, 
   Button, 
-  Accordion, 
-  AccordionSummary, 
-  AccordionDetails, 
-  Avatar,
   Box,
-  Divider,
-  IconButton
+  CircularProgress,
+  Alert
 } from '@mui/material';
-import { ExpandMore, PlayCircle, Check, Share, Favorite } from '@mui/icons-material';
+import { Check } from '@mui/icons-material';
 import { useParams, Link } from 'react-router-dom';
-import AddToCart from "../../component/Courses/AddToCart";
-import CourseSchedule from '../../component/Courses/CourseSchedule';
 import { useEffect, useState } from 'react';
 import axios from "axios";
-// import CourseCarousel from '../components/CourseCarousel';
+
+// Import the components we created
+import CourseBanner from '../../component/Courses/CourseDetails/CourseBanner';
+import CourseScheduleInfo from '../../component/Courses/CourseDetails/CourseScheduleInfo';
+import CourseLearningOutcomes from '../../component/Courses/CourseDetails/CourseLearningOutcomes';
+import CourseLearningPath from '../../component/Courses/CourseDetails/CourseLearningPath';
+import CourseCurriculum from '../../component/Courses/CourseDetails/CourseCurriculum';
+import CourseDescription from '../../component/Courses/CourseDetails/CourseDescription';
+import CourseInstructor from '../../component/Courses/CourseDetails/CourseInstructor';
+import CourseOrganization from '../../component/Courses/CourseDetails/CourseOrganization';
+import CourseReviews from '../../component/Courses/CourseDetails/CourseReviews';
+import CourseSidebar from '../../component/Courses/CourseDetails/CourseSidebar';
 
 const CourseDetails = () => {
   const { id } = useParams();
-    const [course, setCourse] = useState(null);
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
-    useEffect(() => {
-      const fetchCourse = async () => {
-        try {
-          console.log(id);
-          console.log(localStorage.getItem("token"));
-          const {data}=await axios.get(`http://localhost:4545/course/getdetailedinfo/${id}`,{headers:{
-        token:localStorage.getItem('token')
-      }})
-          setCourse(data.course);
-          console.log(data.course);
-        } catch (error) {
-            console.error("Failed to fetch courses:", error);
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const { data } = await axios.get(`http://localhost:4545/course/getdetailedinfo/${id}`, {
+          headers: {
+            token: localStorage.getItem('token')
           }
-      };
+        });
+        setCourse(data.course);
+      } catch (error) {
+        console.error("Failed to fetch course details:", error);
+        setError(error.response?.data?.message || "Failed to load course details");
+      } finally {
+        setLoading(false);
+      }
+    };
   
-      fetchCourse();
-    }, [id]);
-    console.log(course);
+    fetchCourse();
+  }, [id]);
     
   // Mock data - replace with API calls
   // const course = {
@@ -89,15 +99,59 @@ const CourseDetails = () => {
   //   }
   // };
 
+  // Format date helper function
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  if (loading) {
+    return (
+      <Container sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <CircularProgress />
+        <Typography variant="h6" sx={{ ml: 2 }}>Loading course details...</Typography>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container sx={{ py: 4 }}>
+        <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>
+        <Button component={Link} to="/courses" variant="contained">Back to Courses</Button>
+      </Container>
+    );
+  }
+
+  if (!course) {
+    return (
+      <Container sx={{ py: 4 }}>
+        <Alert severity="info">Course not found</Alert>
+        <Button component={Link} to="/courses" variant="contained" sx={{ mt: 2 }}>Browse Courses</Button>
+      </Container>
+    );
+  }
+
+  // Parse tags if they exist
+  const courseTags = course.tags && typeof course.tags === 'string' 
+    ? JSON.parse(course.tags) 
+    : (course.tags || {});
+
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       {/* Header Section */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h3" gutterBottom>{course?.title}</Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Rating value={course?.rating} precision={0.1} readOnly />
-          <Typography variant="subtitle1">{course?.enrollmentNumber} students enrolled</Typography>
-          <Chip label="Bestseller" color="primary" />
+        <Typography variant="h3" gutterBottom>{course.title}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+          <Rating value={course.rating || 0} precision={0.1} readOnly />
+          <Typography variant="subtitle1">{course.enrollmentNumber || 0} students enrolled</Typography>
+          {course.completionStatus === 'completed' && (
+            <Chip label="Completed" color="success" />
+          )}
+          {course.completionStatus === 'inProgress' && (
+            <Chip label="In Progress" color="primary" />
+          )}
         </Box>
       </Box>
 
@@ -105,151 +159,49 @@ const CourseDetails = () => {
       <Grid container spacing={4}>
         {/* Left Column */}
         <Grid item xs={12} md={8}>
-          {/* Promo Video */}
-          <Box sx={{ 
-            borderRadius: 2,
-            overflow: 'hidden',
-            boxShadow: 3,
-            mb: 4,
-          }}>
-            <img
-              width="100%"
-              height="450"
-              src={course?.thumbnail}
-              frameBorder="0"
-              title="Course thumbnail"
-              style={{ height: 450 }}
-            />
-          </Box>
-          {/* <CourseSchedule schedule={course?.schedule} /> */}
+          {/* Course Banner */}
+          <CourseBanner course={course} />
+          
+          {/* Course Schedule */}
+          <CourseScheduleInfo course={course} formatDate={formatDate} />
 
-          {/* Course Content Accordion */}
-          <Accordion defaultExpanded>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography variant="h5">Curriculum</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {course?.tags.topics.map((module, index) => (
-                <Accordion key={index} sx={{ mb: 1 }}>
-                  <AccordionSummary expandIcon={<ExpandMore />}>
-                    <Typography variant="h6">{module.module}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {module?.lessons?.map((lesson, idx) => (
-                      <Box key={idx} sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
-                        <PlayCircle sx={{ mr: 2, color: 'text.secondary' }} />
-                        <Typography>{lesson}</Typography>
-                      </Box>
-                    ))}
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-            </AccordionDetails>
-          </Accordion>
+          {/* Learning Outcomes */}
+          <CourseLearningOutcomes learningOutcomes={course.learningOutcomes} />
 
-          {/* Description & Requirements */}
-          <Box sx={{ my: 4 }}>
-            <Typography variant="h5" gutterBottom>Description</Typography>
-            <Typography paragraph>{course?.description}</Typography>
-            
-            <Typography variant="h5" gutterBottom>Requirements</Typography>
-            <ul style={{ paddingLeft: 24 }}>
-              {course?.requirements?.map((req, i) => (
-                <li key={i}>
-                  <Typography variant="body1">{req}</Typography>
-                </li>
-              ))}
-            </ul>
-          </Box>
+          {/* Learning Path */}
+          <CourseLearningPath learningPath={course.learningPath} />
+          
+          {/* Course Curriculum */}
+          {courseTags.topics && Array.isArray(courseTags.topics) && courseTags.topics.length > 0 && (
+            <CourseCurriculum topics={courseTags.topics} />
+          )}
 
+          {/* Course Description */}
+          <CourseDescription course={course} courseTags={courseTags} />
+
+          {/* Instructor Information */}
+          {course.teacherId && course.teacher && (
+            <CourseInstructor teacher={course.teacher} />
+          )}
+          
+          {/* Organization Information */}
+          {course.orgId && course.organization && (
+            <CourseOrganization organization={course.organization} formatDate={formatDate} />
+          )}
+          
           {/* Reviews Section */}
-          <Box sx={{ my: 4 }}>
-            <Typography variant="h4" gutterBottom>Student Reviews</Typography>
-            {course?.reviews?.map((review, index) => (
-              <Box key={index} sx={{ mb: 3, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <Avatar sx={{ mr: 2 }} />
-                  <Rating value={review.rating} readOnly />
-                  <Typography variant="subtitle2" sx={{ ml: 2 }}>{review?.date}</Typography>
-                </Box>
-                <Typography>{review?.comment}</Typography>
-              </Box>
-            ))}
-          </Box>
+          {courseTags.reviews && Array.isArray(courseTags.reviews) && courseTags.reviews.length > 0 && (
+            <CourseReviews reviews={courseTags.reviews} />
+          )}
         </Grid>
 
         {/* Right Sidebar */}
         <Grid item xs={12} md={4}>
-          <Box sx={{ 
-            position: 'sticky',
-            top: 20,
-            p: 3,
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 2
-          }}>
-            {/* Pricing Section */}
-            <Typography variant="h4" gutterBottom>
-              ${course?.price}
-              {/* <Typography variant="body2" color="text.secondary" component="span" sx={{ ml: 1 }}>
-                84% off
-              </Typography> */}
-            </Typography>
-            
-            <AddToCart
-                      product={{
-                        id: course?.id,
-                        title: course?.title,
-                        price: course?.price,
-                        thumbnail: course?.thumbnail,
-                        teacher: course?.teacher,
-                      }}
-                    />
-            
-            {/* <Button 
-              variant="outlined" 
-              fullWidth 
-              size="large"
-              sx={{ mb: 2 }}
-            >
-              Buy Now
-            </Button> */}
-
-            {/* Course Stats */}
-            <Box sx={{ my: 3 }}>
-              {course?.tags?.stats?.map((stat, i) => (
-                <Chip
-                  key={i}
-                  label={`${stat.icon} ${stat.label}`}
-                  sx={{ m: 0.5, borderRadius: 1 }}
-                />
-              ))}
-            </Box>
-
-            {/* Instructor Section */}
-            <Box sx={{ mt: 3, cursor: 'pointer' }} component={Link} to="/instructor-profile">
-              <Typography variant="h6" gutterBottom>Instructor</Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Avatar src={course?.instructor?.avatar} sx={{ width: 56, height: 56, mr: 2 }} />
-                <Box>
-                  <Typography variant="h6">{course?.instructor?.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {course?.instructor?.coursesCount} courses
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-
-            {/* Course Features */}
-            <Box sx={{ mt: 3 }}>
-              {['Certificate of Completion', '30-Day Money-Back Guarantee'].map((feature, i) => (
-                <Box key={i} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <Check sx={{ color: 'success.main', mr: 1 }} />
-                  <Typography>{feature}</Typography>
-                </Box>
-              ))}
-            </Box>
-          </Box>
+          <CourseSidebar 
+            course={course} 
+            courseTags={courseTags} 
+            formatDate={formatDate} 
+          />
         </Grid>
       </Grid>
 
@@ -266,30 +218,14 @@ const CourseDetails = () => {
           {course?.goals?.map((goal, i) => (
             <Grid item xs={12} sm={6} key={i}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Check sx={{ color: 'primary.main', mr: 2 }} />
+                <Box sx={{ color: 'primary.main', mr: 2 }}>
+                  <Check />
+                </Box>
                 <Typography variant="h6">{goal}</Typography>
               </Box>
             </Grid>
           ))}
         </Grid>
-      </Box>
-
-      {/* FAQ Section */}
-      <Box sx={{ mt: 6 }}>
-        <Typography variant="h4" gutterBottom>Frequently Asked Questions</Typography>
-        {[
-          "Can I take this course with no experience?",
-          "How long do I have access to the course?"
-        ].map((question, i) => (
-          <Accordion key={i}>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography variant="h6">{question}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>Answer to the question...</Typography>
-            </AccordionDetails>
-          </Accordion>
-        ))}
       </Box>
     </Container>
   );

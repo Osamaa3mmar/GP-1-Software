@@ -179,13 +179,46 @@ export const getAllCourses = async (req, res) => {
 export const getDetailedCourseInfo=async(req,res)=>{
     try{
         const {id}=req.params;
-        const course=await courseModel.findByPk(id);
+        const course = await courseModel.findByPk(id, {
+            include: [
+                {
+                    model: userModel,
+                    as: 'teacher',
+                    attributes: ['id', 'username', 'email', 'profilePic', 'bio', 'specialization', 'links', 'interests']
+                },
+                {
+                    model: organizationModel,
+                    as: 'organization',
+                    attributes: ['id', 'name', 'description', 'profile', 'backGroundImage', 'location', 'website', 'contactEmail', 'phoneNumber', 'foundedDate', 'isVerified']
+                }
+            ]
+        });
+        
         if(!course){
             return res.status(404).json({message:"Invalid Course ID"});
         }
-        return res.status(200).json({message: "Course retrieved successfully",course});
-    }catch(error){
-        return res.status(500).json({ message: "Server Error", error });
+        
+        // Parse JSON fields if needed
+        if (course.learningOutcomes && typeof course.learningOutcomes === 'string') {
+            try {
+                course.learningOutcomes = JSON.parse(course.learningOutcomes);
+            } catch (e) {
+                // Keep as string if parsing fails
+            }
+        }
+        
+        if (course.learningPath && typeof course.learningPath === 'string') {
+            try {
+                course.learningPath = JSON.parse(course.learningPath);
+            } catch (e) {
+                // Keep as string if parsing fails
+            }
+        }
+        
+        return res.status(200).json({message: "Course retrieved successfully", course});
+    } catch(error){
+        console.error("Error in getDetailedCourseInfo:", error);
+        return res.status(500).json({ message: "Server Error", error: error.message });
     }
 }
 
