@@ -188,3 +188,46 @@ export const getTopOrganizations = async (req, res) => {
         });
     }
 };
+
+export const getOrganizations=async(req,res)=>{
+    try {
+        const organizations = await organizationModel.findAll({
+            attributes: [
+                'id', 
+                'name', 
+                'description', 
+                'profile', 
+                'backGroundImage',
+                'location',
+                'website',
+                'contactEmail',
+                'isVerified',
+                'status',
+                'tags'
+            ],
+            include: [{
+                model: userModel,
+                as: "owner",
+                attributes: ['id', 'username', 'profilePic']
+            }]
+        });
+
+        if (!organizations.length) {
+            return res.status(200).json({ 
+                message: "No organizations found", 
+                organizations: [] 
+            });
+        }
+
+        return res.status(200).json({
+            message: "Successfully retrieved organizations",
+            organizations: organizations
+        });
+    } catch (error) {
+        console.error('Error in getOrganizations:', error);
+        return res.status(500).json({ 
+            message: "Error retrieving organizations",
+            error: error.message 
+        });
+    }
+}
