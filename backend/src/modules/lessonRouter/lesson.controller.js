@@ -84,7 +84,35 @@ export const addLesson = async (req, res) => {
         if (course.orgId) {
             const message = `A new lesson "${title}" was added to course "${course.title}"`;
             const actionUrl = `/main/classrooms/${courseId}/lessons`;
-            await makeNotification("add", "add", message, actionUrl, course.orgId, false, null);
+            await makeNotification("add", "lesson", message, actionUrl, course.orgId, false, null);
+            
+            // Also notify all enrolled users about the new lesson
+            try {
+                // Get all enrollments for this course
+                const enrollments = await courseModel.sequelize.models.Enrollment.findAll({
+                    where: { courseId }
+                });
+                
+                if (enrollments && enrollments.length > 0) {
+                    // Send notification to each enrolled user
+                    const notificationPromises = enrollments.map(enrollment => 
+                        makeNotification(
+                            "add", 
+                            "lesson", 
+                            message, 
+                            actionUrl, 
+                            null, 
+                            true, 
+                            enrollment.userId
+                        )
+                    );
+                    
+                    await Promise.all(notificationPromises);
+                    console.log(`Notifications sent to ${enrollments.length} enrolled users about new lesson`);
+                }
+            } catch (error) {
+                console.error("Error sending notifications to enrolled users:", error);
+            }
         }
         
         return res.status(201).json({ message: "Lesson added successfully", lesson: newLesson });

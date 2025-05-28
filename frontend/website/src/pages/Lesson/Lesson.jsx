@@ -32,7 +32,9 @@ import {
   Breadcrumbs,
   Fab,
   Tooltip,
-  useTheme
+  useTheme,
+  Avatar,
+  Chip
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -45,7 +47,10 @@ import {
   VideoLibrary as VideoLibraryIcon,
   Image as ImageIcon,
   Code as CodeIcon,
-  Quiz as QuizIcon
+  Quiz as QuizIcon,
+  ContentCopy as ContentCopyIcon,
+  Check as CheckIcon,
+  AutoFixHigh as AutoFixHighIcon
 } from '@mui/icons-material';
 import { UserContext } from '../../Context/userContext';
 
@@ -81,6 +86,9 @@ export default function Lesson() {
   const [allowEdit, setAllowEdit] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
   const [operationLoading, setOperationLoading] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(null);
+  const [generatingQuiz, setGeneratingQuiz] = useState(false);
+  const [quizId, setQuizId] = useState(null);
 
   // Dialog states
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -113,6 +121,24 @@ export default function Lesson() {
       setLesson(data.lesson);
       setSections(data.sections || []);
       setAllowEdit(data.control);
+      
+      // Check if there's a quiz for this lesson
+      try {
+        const quizResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/quiz/lesson/${lessonId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (quizResponse.data && quizResponse.data.quizId) {
+          setQuizId(quizResponse.data.quizId);
+          console.log('Found quiz ID:', quizResponse.data.quizId);
+        }
+      } catch (quizError) {
+        // No quiz found or error, which is fine - we'll just not set the quiz ID
+        console.log('No quiz found for this lesson or error:', quizError);
+      }
+      
       setLoading(false);
     } catch (error) {
       console.error('Error fetching lesson data:', error);
@@ -316,16 +342,56 @@ export default function Lesson() {
     switch (section.type) {
       case 'text':
         return (
-          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-            {section.content}
-          </Typography>
+          <Box sx={{ 
+            p: 2, 
+            borderLeft: '4px solid #e0e0e0',
+            backgroundColor: 'rgba(245, 245, 245, 0.5)',
+            borderRadius: '0 8px 8px 0',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              borderLeftColor: theme.palette.primary.main,
+              backgroundColor: 'rgba(245, 245, 245, 0.8)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            }
+          }}>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                whiteSpace: 'pre-wrap',
+                lineHeight: 1.7,
+                color: 'text.primary',
+                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif'
+              }}
+            >
+              {section.content}
+            </Typography>
+          </Box>
         );
       case 'video':
         return (
-          <Box sx={{ position: 'relative', paddingTop: '56.25%', width: '100%', mb: 2 }}>
+          <Box sx={{ 
+            position: 'relative', 
+            paddingTop: '56.25%', 
+            width: '100%', 
+            mb: 2,
+            borderRadius: '12px',
+            overflow: 'hidden',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            transition: 'box-shadow 0.3s ease',
+            '&:hover': {
+              boxShadow: '0 6px 25px rgba(0,0,0,0.15)'
+            }
+          }}>
             <iframe
               src={section.mediaUrl}
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: '8px' }}
+              style={{ 
+                position: 'absolute', 
+                top: 0, 
+                left: 0, 
+                width: '100%', 
+                height: '100%', 
+                border: 'none'
+              }}
               title={section.title}
               allowFullScreen
             />
@@ -333,11 +399,37 @@ export default function Lesson() {
         );
       case 'image':
         return (
-          <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <Box sx={{ 
+            textAlign: 'center', 
+            mb: 2,
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            transition: 'box-shadow 0.3s ease',
+            '&:hover': {
+              boxShadow: '0 10px 25px rgba(0,0,0,0.15)'
+            },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0) 80%, rgba(0,0,0,0.05))',
+              pointerEvents: 'none'
+            }
+          }}>
             <img
               src={section.mediaUrl}
               alt={section.title}
-              style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '8px' }}
+              style={{ 
+                maxWidth: '100%', 
+                maxHeight: '500px', 
+                display: 'block',
+                margin: '0 auto'
+              }}
             />
           </Box>
         );
@@ -346,29 +438,190 @@ export default function Lesson() {
           <Paper
             elevation={0}
             sx={{
-              p: 2,
+              p: 3,
               mb: 2,
-              bgcolor: '#f5f5f5',
-              fontFamily: 'monospace',
+              bgcolor: '#1e1e2e',
+              color: '#f8f8f2',
+              fontFamily: '"Fira Code", "Roboto Mono", monospace',
+              fontSize: '0.9rem',
               whiteSpace: 'pre-wrap',
               overflowX: 'auto',
-              borderRadius: '8px'
+              borderRadius: '8px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+              position: 'relative',
+              '&::before': {
+                content: '"Code"',
+                position: 'absolute',
+                top: '8px',
+                right: '12px',
+                fontSize: '0.7rem',
+                color: 'rgba(248, 248, 242, 0.5)',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }
             }}
           >
-            {section.content}
+            <Box sx={{ position: 'relative' }}>
+              {section.content}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                <Tooltip title={copiedCode === section.id ? "Copied!" : "Copy code"}>
+                  <IconButton
+                    onClick={() => {
+                      navigator.clipboard.writeText(section.content)
+                        .then(() => {
+                          setCopiedCode(section.id);
+                          setTimeout(() => setCopiedCode(null), 2000);
+                          toast.success('Code copied to clipboard!');
+                        })
+                        .catch(err => {
+                          console.error('Failed to copy code:', err);
+                          toast.error('Failed to copy code');
+                        });
+                    }}
+                    sx={{
+                      bgcolor: 'rgba(255, 255, 255, 0.1)',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      '&:hover': {
+                        bgcolor: 'rgba(255, 255, 255, 0.2)',
+                      },
+                      width: 36,
+                      height: 36
+                    }}
+                  >
+                    {copiedCode === section.id ? <CheckIcon fontSize="small" /> : <ContentCopyIcon fontSize="small" />}
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
           </Paper>
         );
       case 'quiz':
         return (
-          <Box sx={{ mb: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<QuizIcon />}
-              sx={{ borderRadius: '8px' }}
-            >
-              Start Quiz
-            </Button>
+          <Box sx={{ 
+            mb: 2, 
+            p: 3, 
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center'
+          }}>
+            <QuizIcon sx={{ fontSize: 48, color: theme.palette.primary.main, mb: 2 }} />
+            <Typography variant="h6" gutterBottom>Test Your Knowledge</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              Take this quiz to check your understanding of the lesson content.
+            </Typography>
+            
+            {allowEdit ? (
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={generatingQuiz ? <CircularProgress size={20} /> : <AutoFixHighIcon />}
+                disabled={generatingQuiz}
+                onClick={async () => {
+                  try {
+                    setGeneratingQuiz(true);
+                    // Generate quiz using AI
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/quiz/generate`, {
+                      lessonId,
+                      title: `Quiz for ${lesson.title}`,
+                      description: `Test your knowledge of ${lesson.title}`,
+                      // Pass lesson content for context
+                      content: sections.map(s => s.content).join('\n')
+                    }, {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                      }
+                    });
+                    
+                    if (response.data && response.data.quizId) {
+                      setQuizId(response.data.quizId);
+                      toast.success('Quiz generated successfully!');
+                      
+                      // Create notification for enrolled users
+                      const courseId = lesson.courseId;
+                      await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/quiz/course-enrollees`, {
+                        courseId,
+                        message: `A new quiz has been added to lesson "${lesson.title}"`,
+                        actionUrl: `/main/classrooms/${courseId}/lessons/lesson/${lessonId}`,
+                        type: 'add',
+                        entityType: 'quiz'
+                      }, {
+                        headers: {
+                          Authorization: `Bearer ${localStorage.getItem('token')}`
+                        }
+                      });
+                      
+                      // Navigate to quiz maker to edit the generated quiz
+                      navigate(`/classroom/quizmaker/${response.data.quizId}`);
+                    }
+                  } catch (error) {
+                    console.error('Error generating quiz:', error);
+                    toast.error('Failed to generate quiz');
+                  } finally {
+                    setGeneratingQuiz(false);
+                  }
+                }}
+                sx={{ 
+                  borderRadius: '8px', 
+                  px: 3, 
+                  py: 1,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  transition: 'box-shadow 0.3s ease',
+                  '&:hover': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                  }
+                }}
+              >
+                {generatingQuiz ? 'Generating Quiz...' : 'Create Quiz'}
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<QuizIcon />}
+                onClick={() => {
+                  // Check if there's a quiz for this lesson
+                  if (quizId) {
+                    // Navigate to take the quiz using the correct path from App.jsx
+                    navigate(`/classroom/quiz/${quizId}`);
+                  } else {
+                    // Try to find a quiz for this lesson
+                    axios.get(`${import.meta.env.VITE_API_URL}/api/v1/quiz/lesson/${lessonId}`, {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                      }
+                    })
+                    .then(response => {
+                      if (response.data && response.data.quizId) {
+                        setQuizId(response.data.quizId);
+                        navigate(`/classroom/quiz/${response.data.quizId}`);
+                      } else {
+                        toast.info('No quiz available for this lesson yet');
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Error checking for quiz:', error);
+                      toast.info('No quiz available for this lesson yet');
+                    });
+                  }
+                }}
+                sx={{ 
+                  borderRadius: '8px', 
+                  px: 3, 
+                  py: 1,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  transition: 'box-shadow 0.3s ease',
+                  '&:hover': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                  }
+                }}
+              >
+                Start Quiz
+              </Button>
+            )}
           </Box>
         );
       default:
@@ -419,14 +672,55 @@ export default function Lesson() {
       ) : (
         <>
           {/* Lesson header */}
-          <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              p: 4, 
+              mb: 5, 
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%)',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '5px',
+                background: (theme) => `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+              }
+            }}
+          >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <Box>
-                <Typography variant="h4" component="h1" gutterBottom>
+                <Typography 
+                  variant="h4" 
+                  component="h1" 
+                  gutterBottom
+                  sx={{ 
+                    fontWeight: 700,
+                    fontSize: { xs: '1.8rem', md: '2.2rem' },
+                    background: (theme) => `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    mb: 2
+                  }}
+                >
                   {lesson?.title}
                 </Typography>
                 {lesson?.description && (
-                  <Typography variant="body1" color="text.secondary">
+                  <Typography 
+                    variant="body1" 
+                    color="text.secondary"
+                    sx={{ 
+                      fontSize: '1.05rem',
+                      lineHeight: 1.6,
+                      maxWidth: '800px',
+                      opacity: 0.85
+                    }}
+                  >
                     {lesson.description}
                   </Typography>
                 )}
@@ -438,6 +732,16 @@ export default function Lesson() {
                   color="primary"
                   startIcon={<AddIcon />}
                   onClick={handleOpenAddDialog}
+                  sx={{ 
+                    borderRadius: '30px',
+                    px: 3,
+                    py: 1.2,
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+                    transition: 'box-shadow 0.3s ease',
+                    '&:hover': {
+                      boxShadow: '0 6px 15px rgba(0,0,0,0.2)'
+                    }
+                  }}
                 >
                   Add Section
                 </Button>
@@ -475,44 +779,126 @@ export default function Lesson() {
               {sections.map((section, index) => (
                 <Paper
                   key={section.id}
-                  elevation={1}
+                  elevation={2}
                   sx={{
-                    p: 3,
-                    mb: 3,
-                    borderRadius: 2,
-                    position: 'relative'
+                    p: 0,
+                    mb: 4,
+                    borderRadius: '12px',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'box-shadow 0.3s ease',
+                    '&:hover': {
+                      boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
+                    },
+                    border: '1px solid rgba(0,0,0,0.05)'
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <ListItemIcon sx={{ minWidth: 40 }}>
-                      {sectionTypeIcons[section.type]}
-                    </ListItemIcon>
-                    <Typography variant="h6">
-                      {section.title}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ ml: 1, bgcolor: 'background.default', px: 1, py: 0.5, borderRadius: 1 }}
+                  {/* Section header with gradient background based on type */}
+                  <Box 
+                    sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      p: 2.5,
+                      background: (theme) => {
+                        const color = {
+                          text: theme.palette.primary.light,
+                          video: '#ff7043',
+                          image: '#26a69a',
+                          code: '#5c6bc0',
+                          quiz: '#7e57c2'
+                        }[section.type] || theme.palette.primary.light;
+                        
+                        return `linear-gradient(135deg, ${color}15 0%, ${color}30 100%)`;
+                      },
+                      borderBottom: '1px solid rgba(0,0,0,0.05)'
+                    }}
+                  >
+                    <Avatar 
+                      sx={{ 
+                        bgcolor: (theme) => {
+                          const color = {
+                            text: theme.palette.primary.main,
+                            video: '#ff7043',
+                            image: '#26a69a',
+                            code: '#5c6bc0',
+                            quiz: '#7e57c2'
+                          }[section.type] || theme.palette.primary.main;
+                          return color;
+                        },
+                        width: 40,
+                        height: 40,
+                        mr: 2,
+                        boxShadow: '0 3px 5px rgba(0,0,0,0.1)'
+                      }}
                     >
-                      {sectionTypeLabels[section.type]}
-                    </Typography>
+                      {sectionTypeIcons[section.type]}
+                    </Avatar>
+                    
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography 
+                        variant="h6" 
+                        sx={{ 
+                          fontWeight: 600, 
+                          fontSize: '1.1rem',
+                          mb: 0.5
+                        }}
+                      >
+                        {section.title}
+                      </Typography>
+                      
+                      <Chip
+                        label={sectionTypeLabels[section.type]}
+                        size="small"
+                        sx={{ 
+                          borderRadius: '4px',
+                          bgcolor: (theme) => {
+                            const color = {
+                              text: theme.palette.primary.main,
+                              video: '#ff7043',
+                              image: '#26a69a',
+                              code: '#5c6bc0',
+                              quiz: '#7e57c2'
+                            }[section.type] || theme.palette.primary.main;
+                            return `${color}30`;
+                          },
+                          color: (theme) => {
+                            const color = {
+                              text: theme.palette.primary.main,
+                              video: '#ff7043',
+                              image: '#26a69a',
+                              code: '#5c6bc0',
+                              quiz: '#7e57c2'
+                            }[section.type] || theme.palette.primary.main;
+                            return color;
+                          },
+                          fontWeight: 500,
+                          fontSize: '0.7rem'
+                        }}
+                      />
+                    </Box>
 
                     {allowEdit && (
                       <IconButton
                         edge="end"
                         aria-label="more"
                         onClick={(e) => handleMenuOpen(e, section.id)}
-                        sx={{ ml: 'auto' }}
+                        sx={{ 
+                          ml: 'auto',
+                          color: 'text.secondary',
+                          '&:hover': {
+                            bgcolor: 'rgba(0,0,0,0.05)'
+                          }
+                        }}
                       >
                         <MoreVertIcon />
                       </IconButton>
                     )}
                   </Box>
 
-                  <Divider sx={{ mb: 2 }} />
-
-                  {renderSectionContent(section)}
+                  {/* Section content with padding */}
+                  <Box sx={{ p: 3 }}>
+                    {renderSectionContent(section)}
+                  </Box>
                 </Paper>
               ))}
             </Box>
