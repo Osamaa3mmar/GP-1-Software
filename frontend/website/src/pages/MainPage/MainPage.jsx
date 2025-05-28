@@ -3,14 +3,13 @@ import HeroSection from "../../component/Home/HeroSection";
 import FeaturedCourses from "../../component/Home/FeaturedCourses";
 import CategoriesGrid from "../../component/Home/CategoriesGrid";
 import TopCompanies from "../../component/Home/TopCompanies";
-import LearningPaths from "../../component/Home/LearningPaths";
-import UpcomingSchedule from "../../component/Home/UpcomingSchedule";
+import LearningStats from "../../component/Home/LearningStats";
+import ContinueLearning from "../../component/Home/ContinueLearning";
 import CodeIcon from "@mui/icons-material/Code";
 import DesignServicesIcon from "@mui/icons-material/DesignServices";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import { useEffect, useState } from "react";
-import { use } from "react";
 import axios from "axios";
 import TopStudents from "../../component/Home/TopStudents";
 
@@ -246,12 +245,14 @@ export default function MainPage() {
       <HeroSection />
 
       <Container maxWidth="lg">
+        <LearningStats/>
+        <ContinueLearning/>
         <FeaturedCourses courses={featuredCourses} />
         <CategoriesGrid categories={sampleCategories} />
         <TopStudents/>
         <TopCompanies/>
-        <LearningPaths paths={samplePaths} />
-        <UpcomingSchedule schedule={sampleSchedule} />
+        {/* <LearningPaths paths={samplePaths} />
+        <UpcomingSchedule schedule={sampleSchedule} /> */}
       </Container>
     </main>
   );
