@@ -109,7 +109,7 @@ const iconColores = {
         {/* Left side with icon and content */}
         <Box
           component={Link} 
-          to={actionUrl}
+          to={actionUrl && actionUrl.includes('user/') ? `/main/profile/${actionUrl.split('user/')[1]}` : actionUrl}
           sx={{
             display: 'flex',
             gap: 2,

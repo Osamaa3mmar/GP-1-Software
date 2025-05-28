@@ -64,9 +64,9 @@ finally{
             renderCell: (params) => (
               
               <div style={{ height:"100%",display: 'flex', alignItems: 'center',justifyContent:"center"}}>
-              <IconButton component={"a"} href={`http://localhost:8081/profile/${localStorage.getItem("token")}?id=${params.row.id}&isMe=false&isMobile=false`} >
-             <Avatar src={params.formattedValue}  sx={{width:"32px",height:"32px"}}/>
-             </IconButton>
+              <IconButton onClick={() => window.location.href = `/main/profile/${params.row.id}`}>
+                <Avatar src={params.formattedValue} sx={{width:"32px",height:"32px"}}/>
+              </IconButton>
             </div>
             )
           },

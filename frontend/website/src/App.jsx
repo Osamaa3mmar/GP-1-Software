@@ -139,7 +139,11 @@ export default function App() {
           element: <MainPage />,
         },{
           path:"profile",
-          element:<Profile/>,
+          element:<Profile/>
+        },
+        {
+          path:"profile/:id",
+          element:<Profile/>
         },{
           path:"courses",
           element:<CoursesPage/>
@@ -171,6 +175,14 @@ export default function App() {
         {
           path:"academy/profile/:id",
           element:<AcademyProfile />
+        },
+        {
+          path:"profile",
+          element:<Profile/>
+        },
+        {
+          path:"profile/:id",
+          element:<Profile/>
         }
       ]
     },
