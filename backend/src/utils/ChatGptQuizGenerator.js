@@ -1,8 +1,7 @@
 import GPT from "openai";
 
 const client = new GPT({
-  apiKey:
-  "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"
+  apiKey: "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"
 });
 
 // Define common JSON structures to avoid repetition in prompts
@@ -45,7 +44,7 @@ export const generateQuizQuestion = async (topic, details, difficulty, questionT
 
     // Call the OpenAI API with optimized parameters to minimize costs
     const response = await client.chat.completions.create({
-      model: "gpt-3.5-turbo", // Using the standard model for reliability
+      model: "o4-mini", // Using o4-mini model for better performance
       messages: [
         {
           role: "system",
@@ -61,6 +60,20 @@ export const generateQuizQuestion = async (topic, details, difficulty, questionT
       response_format: { type: "json_object" }
     });
 
+    if (response.usage) {
+  const inputTokens = response.usage.prompt_tokens;
+  const outputTokens = response.usage.completion_tokens;
+  const totalTokens = response.usage.total_tokens;
+  
+  const inputCost = (inputTokens / 1000) * 0.0005;
+  const outputCost = (outputTokens / 1000) * 0.0015;
+  const totalCost = inputCost + outputCost;
+
+  console.log(`🧠 Input tokens: ${inputTokens}`);
+  console.log(`📝 Output tokens: ${outputTokens}`);
+  console.log(`🔢 Total tokens: ${totalTokens}`);
+  console.log(`💲 Estimated cost: $${totalCost.toFixed(6)}`);
+}
     // Parse the JSON response
     const content = response.choices[0].message.content;
     console.log('Raw API response:', content);

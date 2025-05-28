@@ -80,11 +80,11 @@ export const addLesson = async (req, res) => {
             order: order || 0
         });
         
-        // Create notification for course owner if the lesson was added by organization
-        if (user.orgId === course.orgId && user.id !== course.teacherId) {
-            const message = `A new lesson "${title}" was added to your course "${course.title}"`;
-            const actionUrl = `/classroom/lessons/${courseId}`;
-            await makeNotification("add", "add", message, actionUrl, null, false, course.teacherId);
+        // Create notification for the academy (organization) when a new lesson is added
+        if (course.orgId) {
+            const message = `A new lesson "${title}" was added to course "${course.title}"`;
+            const actionUrl = `/main/classrooms/${courseId}/lessons`;
+            await makeNotification("add", "add", message, actionUrl, course.orgId, false, null);
         }
         
         return res.status(201).json({ message: "Lesson added successfully", lesson: newLesson });
@@ -123,11 +123,11 @@ export const updateLesson = async (req, res) => {
             order: order !== undefined ? order : lesson.order
         });
         
-        // Create notification for course owner if the lesson was updated by organization
-        if (user.orgId === course.orgId && user.id !== course.teacherId) {
-            const message = `Your lesson "${lesson.title}" was updated in course "${course.title}"`;
-            const actionUrl = `/classroom/lessons/${course.id}`;
-            await makeNotification("update", "edit", message, actionUrl, null, false, course.teacherId);
+        // Create notification for the academy (organization) when a lesson is updated
+        if (course.orgId) {
+            const message = `Lesson "${lesson.title}" was updated in course "${course.title}"`;
+            const actionUrl = `/main/classrooms/${course.id}/lessons`;
+            await makeNotification("update", "edit", message, actionUrl, course.orgId, false, null);
         }
         
         return res.status(200).json({ message: "Lesson updated successfully", lesson });
@@ -166,11 +166,11 @@ export const deleteLesson = async (req, res) => {
         // Delete the lesson
         await lesson.destroy();
         
-        // Create notification for course owner if the lesson was deleted by organization
-        if (user.orgId === course.orgId && user.id !== course.teacherId) {
-            const message = `Your lesson "${lessonTitle}" was deleted from course "${course.title}"`;
-            const actionUrl = `/classroom/lessons/${courseId}`;
-            await makeNotification("delete", "delete", message, actionUrl, null, false, course.teacherId);
+        // Create notification for the academy (organization) when a lesson is deleted
+        if (course.orgId) {
+            const message = `Lesson "${lessonTitle}" was deleted from course "${course.title}"`;
+            const actionUrl = `/main/classrooms/${courseId}/lessons`;
+            await makeNotification("delete", "delete", message, actionUrl, course.orgId, false, null);
         }
         
         return res.status(200).json({ message: "Lesson deleted successfully" });

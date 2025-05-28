@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   Container,
   Typography,
@@ -77,6 +79,8 @@ export default function Lesson() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [allowEdit, setAllowEdit] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [operationLoading, setOperationLoading] = useState(false);
 
   // Dialog states
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -164,6 +168,7 @@ export default function Lesson() {
   const handleAddSection = async () => {
     // Close the dialog
     setOpenAddDialog(false);
+    setOperationLoading(true);
 
     try {
       // Create FormData for file upload
@@ -183,6 +188,7 @@ export default function Lesson() {
           // Append the image file for upload to Cloudinary
           formData.append('sectionImage', newSectionImage);
           console.log('Image file added to form data for Cloudinary upload');
+          setImageUploading(true);
         } else if (newSectionMediaUrl) {
           // If no file but URL is provided
           formData.append('mediaUrl', newSectionMediaUrl);
@@ -197,8 +203,8 @@ export default function Lesson() {
         }
       });
 
-      // Show success message (you could add a toast notification here)
-      console.log('Section added successfully');
+      // Show success message with toast
+      toast.success('Section added successfully');
 
       // Reset form
       setNewSectionTitle('');
@@ -212,7 +218,11 @@ export default function Lesson() {
       fetchLessonData();
     } catch (error) {
       console.error('Error adding section:', error);
+      toast.error(error.response?.data?.message || 'Failed to add section. Please try again.');
       setError(error.response?.data?.message || 'Failed to add section. Please try again.');
+    } finally {
+      setOperationLoading(false);
+      setImageUploading(false);
     }
   };
 
@@ -220,6 +230,7 @@ export default function Lesson() {
   const handleEditSection = async () => {
     // Close the dialog
     setOpenEditDialog(false);
+    setOperationLoading(true);
 
     try {
       // Create FormData for file upload
@@ -238,6 +249,7 @@ export default function Lesson() {
           // Append the new image file for upload to Cloudinary
           formData.append('sectionImage', newSectionImage);
           console.log('Image file added to form data for Cloudinary upload');
+          setImageUploading(true);
         } else if (newSectionMediaUrl) {
           // Keep the existing image URL if no new image is selected
           formData.append('mediaUrl', newSectionMediaUrl);
@@ -252,14 +264,18 @@ export default function Lesson() {
         }
       });
 
-      // Show success message (you could add a toast notification here)
-      console.log('Section updated successfully');
+      // Show success message with toast
+      toast.success('Section updated successfully');
 
       // Refresh the sections list
       fetchLessonData();
     } catch (error) {
       console.error('Error updating section:', error);
+      toast.error(error.response?.data?.message || 'Failed to update section. Please try again.');
       setError(error.response?.data?.message || 'Failed to update section. Please try again.');
+    } finally {
+      setOperationLoading(false);
+      setImageUploading(false);
     }
   };
 
@@ -267,6 +283,7 @@ export default function Lesson() {
   const handleDeleteSection = async () => {
     // Close the dialog
     setOpenDeleteDialog(false);
+    setOperationLoading(true);
 
     try {
       // Make API call to delete the section
@@ -275,14 +292,17 @@ export default function Lesson() {
         data: { id: currentSection.id } // Send data in the request body for DELETE
       });
 
-      // Show success message (you could add a toast notification here)
-      console.log('Section deleted successfully');
+      // Show success message with toast
+      toast.success('Section deleted successfully');
 
       // Refresh the sections list
       fetchLessonData();
     } catch (error) {
       console.error('Error deleting section:', error);
+      toast.error(error.response?.data?.message || 'Failed to delete section. Please try again.');
       setError(error.response?.data?.message || 'Failed to delete section. Please try again.');
+    } finally {
+      setOperationLoading(false);
     }
   };
 
@@ -504,7 +524,7 @@ export default function Lesson() {
               <Fab
                 color="primary"
                 aria-label="add section"
-                sx={{ position: 'fixed', bottom: 20, right: 20 }}
+                sx={{ position: 'fixed', bottom: 20, left: 20 }}
                 onClick={handleOpenAddDialog}
               >
                 <AddIcon />
@@ -616,9 +636,10 @@ export default function Lesson() {
                       <Button
                         variant="contained"
                         component="span"
-                        startIcon={<ImageIcon />}
+                        startIcon={imageUploading ? <CircularProgress size={20} color="inherit" /> : <ImageIcon />}
+                        disabled={imageUploading}
                       >
-                        Upload Image
+                        {imageUploading ? 'Uploading...' : 'Upload Image'}
                       </Button>
                     </label>
                   </Box>
@@ -647,9 +668,10 @@ export default function Lesson() {
               <Button
                 onClick={handleAddSection}
                 variant="contained"
-                disabled={!newSectionTitle.trim()}
+                disabled={!newSectionTitle.trim() || operationLoading}
+                startIcon={operationLoading ? <CircularProgress size={20} color="inherit" /> : <AddIcon />}
               >
-                Add Section
+                {operationLoading ? 'Adding...' : 'Add Section'}
               </Button>
             </DialogActions>
           </Dialog>
@@ -754,9 +776,10 @@ export default function Lesson() {
                       <Button
                         variant="contained"
                         component="span"
-                        startIcon={<ImageIcon />}
+                        startIcon={imageUploading ? <CircularProgress size={20} color="inherit" /> : <ImageIcon />}
+                        disabled={imageUploading}
                       >
-                        Upload New Image
+                        {imageUploading ? 'Uploading...' : 'Upload New Image'}
                       </Button>
                     </label>
                   </Box>
@@ -779,9 +802,10 @@ export default function Lesson() {
               <Button
                 onClick={handleEditSection}
                 variant="contained"
-                disabled={!newSectionTitle.trim()}
+                disabled={!newSectionTitle.trim() || operationLoading}
+                startIcon={operationLoading ? <CircularProgress size={20} color="inherit" /> : <EditIcon />}
               >
-                Save Changes
+                {operationLoading ? 'Saving...' : 'Save Changes'}
               </Button>
             </DialogActions>
           </Dialog>
@@ -796,8 +820,14 @@ export default function Lesson() {
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setOpenDeleteDialog(false)}>Cancel</Button>
-              <Button onClick={handleDeleteSection} color="error" variant="contained">
-                Delete
+              <Button 
+                onClick={handleDeleteSection} 
+                color="error" 
+                variant="contained"
+                disabled={operationLoading}
+                startIcon={operationLoading ? <CircularProgress size={20} color="inherit" /> : <DeleteIcon />}
+              >
+                {operationLoading ? 'Deleting...' : 'Delete'}
               </Button>
             </DialogActions>
           </Dialog>

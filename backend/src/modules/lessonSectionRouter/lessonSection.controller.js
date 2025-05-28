@@ -100,11 +100,11 @@ export const addSection = async (req, res) => {
       quizId: quizId || null
     });
     
-    // Create notification for course owner if the section was added by organization
-    if (user.orgId === lesson.course.orgId && user.id !== lesson.course.teacherId) {
-      const message = `A new section "${title}" was added to your lesson "${lesson.title}" in course "${lesson.course.title}"`;
-      const actionUrl = `/classroom/lessons/${lesson.courseId}/lesson/${lessonId}`;
-      await makeNotification("add", "add", message, actionUrl, null, false, lesson.course.teacherId);
+    // Create notification for the academy (organization) when a section is added
+    if (lesson.course.orgId) {
+      const message = `A new section "${title}" was added to lesson "${lesson.title}" in course "${lesson.course.title}"`;
+      const actionUrl = `/main/classrooms/${lesson.courseId}/lessons/lesson/${lessonId}`;
+      await makeNotification("add", "add", message, actionUrl, lesson.course.orgId, false, null);
     }
     
     return res.status(201).json({ message: "Section added successfully", section: newSection });
@@ -172,11 +172,11 @@ export const updateSection = async (req, res) => {
     
     await section.save();
     
-    // Create notification for course owner if the section was updated by organization
-    if (user.orgId === section.lesson.course.orgId && user.id !== section.lesson.course.teacherId) {
-      const message = `Section "${section.title}" in your lesson "${section.lesson.title}" was updated`;
-      const actionUrl = `/classroom/lessons/${section.lesson.courseId}/lesson/${section.lesson.id}`;
-      await makeNotification("update", "update", message, actionUrl, null, false, section.lesson.course.teacherId);
+    // Create notification for the academy (organization) when a section is updated
+    if (section.lesson.course.orgId) {
+      const message = `Section "${section.title}" in lesson "${section.lesson.title}" was updated`;
+      const actionUrl = `/main/classrooms/${section.lesson.courseId}/lessons/lesson/${section.lesson.id}`;
+      await makeNotification("update", "update", message, actionUrl, section.lesson.course.orgId, false, null);
     }
     
     return res.status(200).json({ message: "Section updated successfully", section });
@@ -223,11 +223,11 @@ export const deleteSection = async (req, res) => {
     // Delete the section
     await section.destroy();
     
-    // Create notification for course owner if the section was deleted by organization
-    if (user.orgId === lesson.course.orgId && user.id !== lesson.course.teacherId) {
-      const message = `Your section "${sectionTitle}" was deleted from lesson "${lesson.title}"`;
-      const actionUrl = `/classroom/lessons/${lesson.courseId}/lesson/${lesson.id}`;
-      await makeNotification("delete", "delete", message, actionUrl, null, false, lesson.course.teacherId);
+    // Create notification for the academy (organization) when a section is deleted
+    if (lesson.course.orgId) {
+      const message = `Section "${sectionTitle}" was deleted from lesson "${lesson.title}"`;
+      const actionUrl = `/main/classrooms/${lesson.courseId}/lessons/lesson/${lesson.id}`;
+      await makeNotification("delete", "delete", message, actionUrl, lesson.course.orgId, false, null);
     }
     
     return res.status(200).json({ message: "Section deleted successfully" });

@@ -25,7 +25,7 @@ const UserNotificationsContextProvider=({children})=>{
             const {data}=await axios.get(`http://localhost:4545/notifications/user/${user?.id}`);
             setNotifications(data.notifications);
             getUnseen(data.notifications);
-            
+            console.log(data,"here");
         }catch(error){
         console.error(error);
         }

@@ -18,12 +18,17 @@ const iconColores = {
     create: "#388e3c",
     edit: "#f57c00",
     warning: "#d32f2f",
-    applay:"#00007c",
-    add:"#6a1b9a",
-    unassign:"#d32f2f",
-    assign:"#388e3c",
-    kick:"#ff0000",
-    accept:"#28a745"
+    applay: "#00007c",
+    add: "#6a1b9a",
+    unassign: "#d32f2f",
+    assign: "#388e3c",
+    kick: "#ff0000",
+    accept: "#28a745",
+    delete: "#d32f2f",
+    update: "#0288d1",
+    course: "#6a1b9a",
+    lesson: "#388e3c",
+    quiz: "#f57c00"
   };
  
 
