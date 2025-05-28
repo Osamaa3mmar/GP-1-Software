@@ -68,8 +68,14 @@ export default function Quiz() {
         token: localStorage.getItem("token")
       }
     });
+    
     if(data.taken){
       setIsTaken(true);
+      
+      // If there's submission data available, store it
+      if(data.submission){
+        setPreviousSubmission(data.submission);
+      }
     }
     else{
       setIsTaken(false);
@@ -343,9 +349,189 @@ export default function Quiz() {
     
 
 
-if(isTaken){
-  return <>You Take the quiz before</>
-}    
+if (isTaken) {
+  return (
+    <Container maxWidth="md" sx={{ py: 6 }}>
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 4, 
+          borderRadius: 2,
+          background: 'linear-gradient(to right, #f5f7ff, #ffffff)',
+          textAlign: 'center',
+          overflow: 'hidden',
+          position: 'relative'
+        }}
+      >
+        {/* Decorative elements */}
+        <Box 
+          sx={{ 
+            position: 'absolute',
+            top: -30,
+            right: -30,
+            width: 150,
+            height: 150,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(63,81,181,0.1) 0%, rgba(63,81,181,0.05) 70%, rgba(63,81,181,0) 100%)',
+            zIndex: 0
+          }} 
+        />
+        <Box 
+          sx={{ 
+            position: 'absolute',
+            bottom: -20,
+            left: -20,
+            width: 120,
+            height: 120,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(63,81,181,0.1) 0%, rgba(63,81,181,0.05) 70%, rgba(63,81,181,0) 100%)',
+            zIndex: 0
+          }} 
+        />
+        
+        {/* Content */}
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
+          <CheckCircleIcon sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
+          
+          <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
+            Quiz Already Completed
+          </Typography>
+          
+          <Typography variant="body1" color="text.secondary" paragraph>
+            You have already taken this quiz. Here are your results:
+          </Typography>
+          
+          {previousSubmission ? (
+            <Box sx={{ mt: 4, mb: 4 }}>
+              <Grid container spacing={3} justifyContent="center">
+                <Grid item xs={12} sm={4}>
+                  <Card 
+                    elevation={2} 
+                    sx={{ 
+                      height: '100%', 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: 'primary.light',
+                      color: 'white'
+                    }}
+                  >
+                    <Typography variant="h6" gutterBottom>Score</Typography>
+                    <Typography variant="h3" fontWeight="bold">
+                      {previousSubmission.score || 0}
+                    </Typography>
+                    <Typography variant="body2">
+                      out of {previousSubmission.totalMarks || 100}
+                    </Typography>
+                  </Card>
+                </Grid>
+                
+                <Grid item xs={12} sm={4}>
+                  <Card 
+                    elevation={2} 
+                    sx={{ 
+                      height: '100%', 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: 'success.light',
+                      color: 'white'
+                    }}
+                  >
+                    <Typography variant="h6" gutterBottom>Percentage</Typography>
+                    <Typography variant="h3" fontWeight="bold">
+                      {previousSubmission.percentage || Math.round((previousSubmission.score / previousSubmission.totalMarks) * 100) || 0}%
+                    </Typography>
+                    <Typography variant="body2">
+                      overall performance
+                    </Typography>
+                  </Card>
+                </Grid>
+                
+                <Grid item xs={12} sm={4}>
+                  <Card 
+                    elevation={2} 
+                    sx={{ 
+                      height: '100%', 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: 'info.light',
+                      color: 'white'
+                    }}
+                  >
+                    <Typography variant="h6" gutterBottom>Correct Answers</Typography>
+                    <Typography variant="h3" fontWeight="bold">
+                      {previousSubmission.correctAnswers || 0}
+                    </Typography>
+                    <Typography variant="body2">
+                      out of {previousSubmission.totalQuestions || questions.length || 0}
+                    </Typography>
+                  </Card>
+                </Grid>
+              </Grid>
+              
+              <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
+                <Button 
+                  variant="outlined" 
+                  color="primary"
+                  onClick={() => navigate(-1)}
+                  sx={{ borderRadius: 2, px: 3 }}
+                >
+                  Go Back
+                </Button>
+                
+                <Button 
+                  variant="contained" 
+                  color="primary"
+                  onClick={() => navigate('/dashboard')}
+                  sx={{ borderRadius: 2, px: 3 }}
+                >
+                  Dashboard
+                </Button>
+              </Box>
+            </Box>
+          ) : (
+            <Box sx={{ mt: 4, mb: 4, textAlign: 'center' }}>
+              <Typography variant="h5" color="primary.main" gutterBottom>
+                You've already completed this quiz
+              </Typography>
+              
+              <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
+                <Button 
+                  variant="outlined" 
+                  color="primary"
+                  onClick={() => navigate(-1)}
+                  sx={{ borderRadius: 2, px: 3 }}
+                >
+                  Go Back
+                </Button>
+                
+                <Button 
+                  variant="contained" 
+                  color="primary"
+                  onClick={() => navigate('/dashboard')}
+                  sx={{ borderRadius: 2, px: 3 }}
+                >
+                  Dashboard
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </Box>
+      </Paper>
+    </Container>
+  );
+}
   // Render 404 page when quiz is not found
   if (quizNotFound) {
     return (

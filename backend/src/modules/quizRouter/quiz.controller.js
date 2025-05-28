@@ -146,6 +146,132 @@ export const getQuizByLessonId = async (req, res) => {
   }
 };
 
+// Add questions to an existing quiz (useful for empty quizzes created automatically)
+export const addQuestionsToQuiz = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const { questions } = req.body;
+    const userId = req.user.id;
+    
+    // Find the quiz
+    const quiz = await quizModel.findByPk(quizId, {
+      include: [
+        {
+          model: lessonModel,
+          as: 'lesson',
+          include: [{ 
+            model: courseModel, 
+            as: 'course',
+            include: [{ association: 'organization' }]
+          }]
+        }
+      ]
+    });
+    
+    if (!quiz) {
+      return res.status(404).json({ message: 'Quiz not found' });
+    }
+    
+    // Check if user is authorized (teacher or organization owner)
+    const isTeacher = quiz.lesson?.course?.teacherId === userId;
+    const isOrgOwner = quiz.lesson?.course?.organization?.userId === userId;
+    
+    if (!isTeacher && !isOrgOwner) {
+      return res.status(403).json({ message: 'Not authorized to add questions to this quiz' });
+    }
+    
+    // Add the questions to the quiz
+    const addedQuestions = [];
+    for (const question of questions) {
+      const newQuestion = await questionModel.create({
+        quizId,
+        questionText: question.questionText,
+        explanation: question.explanation || '',
+        marks: question.marks || 5,
+        type: question.type || 'mcq',
+        options: question.options || [],
+        correctAnswer: question.correctAnswer || ''
+      });
+      
+      addedQuestions.push(newQuestion);
+    }
+    
+    // Update quiz total marks
+    const allQuestions = await questionModel.findAll({ where: { quizId } });
+    const totalMarks = allQuestions.reduce((sum, q) => sum + (q.marks || 0), 0);
+    const passMarks = Math.ceil(totalMarks * 0.6); // 60% passing grade
+    
+    await quiz.update({
+      totalMarks,
+      passMarks
+    });
+    
+    // Create notification for the teacher/owner
+    await makeNotification({
+      userId,
+      title: 'Questions Added',
+      message: `${addedQuestions.length} questions have been added to the quiz "${quiz.title}".`,
+      type: 'info'
+    });
+    
+    return res.status(200).json({
+      message: 'Questions added successfully',
+      addedQuestions,
+      quiz: {
+        id: quiz.id,
+        title: quiz.title,
+        totalMarks,
+        passMarks
+      }
+    });
+  } catch (error) {
+    console.error('Error adding questions to quiz:', error);
+    return res.status(500).json({ message: 'Error adding questions', error: error.message });
+  }
+};
+
+// Get quiz by section ID
+export const getQuizBySectionId = async (req, res) => {
+  try {
+    const { sectionId } = req.params;
+    
+    if (!sectionId) {
+      return res.status(400).json({ message: 'Section ID is required' });
+    }
+    
+    // Find quiz for this section
+    const quiz = await quizModel.findOne({
+      where: { sectionId },
+      include: [
+        {
+          model: questionModel,
+          as: 'questions'
+        }
+      ]
+    });
+    
+    if (!quiz) {
+      return res.status(404).json({ message: 'No quiz found for this section' });
+    }
+    
+    return res.status(200).json({
+      message: 'Quiz found',
+      quiz: {
+        id: quiz.id,
+        title: quiz.title,
+        description: quiz.description,
+        totalMarks: quiz.totalMarks,
+        passMarks: quiz.passMarks,
+        difficulty: quiz.difficulty,
+        questions: quiz.questions || []
+      }
+    });
+  } catch (error) {
+    console.error('Error getting quiz by section ID:', error);
+    return res.status(500).json({ message: 'Error getting quiz', error: error.message });
+  }
+};
+
 export const notifyEnrollees = async (req, res) => {
   try {
     const { courseId, message, actionUrl, type, entityType } = req.body;

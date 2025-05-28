@@ -214,6 +214,202 @@ export const getQuizSubmissions = async (req, res) => {
   }
 };
 
+// Start a quiz - creates an initial submission record with 'started' status
+export const startQuiz = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    // Check if quiz exists
+    const quiz = await quizModel.findByPk(quizId, {
+      include: [{
+        model: courseModel,
+        as: "course",
+        include: [{
+          model: organizationModel,
+          as: "organization"
+        }]
+      }]
+    });
+
+    if (!quiz) {
+      return res.status(404).json({ message: "Quiz not found" });
+    }
+
+    // Check if user is a teacher or course owner (organization owner)
+    const isTeacher = quiz.course?.teacherId === userId;
+    const isOrgOwner = quiz.course?.organization?.userId === userId;
+    const isSpecialUser = isTeacher || isOrgOwner || userRole === 'admin';
+    
+    // If user is not a special user, check if they've already submitted or started
+    if (!isSpecialUser) {
+      // Check if user has already submitted or started this quiz
+      const existingSubmission = await quizSubmissionModel.findOne({
+        where: { userId, quizId }
+      });
+
+      if (existingSubmission) {
+        // If submission is already completed, return error
+        if (existingSubmission.status === 'graded') {
+          return res.status(400).json({ 
+            message: "You have already completed this quiz",
+            submission: existingSubmission
+          });
+        }
+        
+        // If submission is started but not completed, check if it's still valid (within time limit)
+        const startTime = new Date(existingSubmission.startedAt);
+        const currentTime = new Date();
+        const timeElapsedMinutes = Math.floor((currentTime - startTime) / (1000 * 60));
+        
+        // Get quiz time limit (default to 30 minutes if not specified)
+        const timeLimit = quiz.timeLimit || 30;
+        
+        if (timeElapsedMinutes < timeLimit) {
+          // Quiz is still valid, return the existing submission
+          return res.status(200).json({
+            message: "Quiz already in progress",
+            submission: existingSubmission,
+            timeRemaining: (timeLimit - timeElapsedMinutes) * 60 // in seconds
+          });
+        } else {
+          // Time expired, update the submission to 'expired'
+          await existingSubmission.update({
+            status: 'expired',
+            submittedAt: new Date()
+          });
+          
+          // Create a new submission if it's a regular user (not a special user)
+          if (!isSpecialUser) {
+            return res.status(400).json({
+              message: "Your previous attempt has expired. You cannot retake this quiz.",
+              submission: existingSubmission
+            });
+          }
+        }
+      }
+    }
+    
+    // For special users (teachers, admins) or first-time regular users, create a new submission
+    let submission;
+    try {
+      submission = await quizSubmissionModel.create({
+        userId,
+        quizId,
+        answers: [],
+        score: 0,
+        status: isSpecialUser ? 'test' : 'started',
+        startedAt: new Date(),
+        timeSpent: 0
+      });
+    } catch (error) {
+      console.error('Error creating initial submission:', error);
+      return res.status(500).json({ message: "Failed to start quiz", error: error.message });
+    }
+    
+    // Get questions for the quiz (without correct answers for security)
+    const questions = await questionModel.findAll({
+      where: { quizId },
+      attributes: ['id', 'questionText', 'options', 'type', 'marks']
+    });
+    
+    return res.status(200).json({
+      message: isSpecialUser ? "Test mode started" : "Quiz started",
+      submission: {
+        id: submission.id,
+        startedAt: submission.startedAt,
+        status: submission.status,
+        timeLimit: quiz.timeLimit || 30 // in minutes
+      },
+      quiz: {
+        id: quiz.id,
+        title: quiz.title,
+        description: quiz.description,
+        totalMarks: quiz.totalMarks || questions.reduce((sum, q) => sum + (q.marks || 0), 0),
+        timeLimit: quiz.timeLimit || 30 // in minutes
+      },
+      questions
+    });
+  } catch (error) {
+    console.error("Error starting quiz:", error);
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Save an answer for a quiz in progress
+export const saveAnswer = async (req, res) => {
+  try {
+    const { submissionId, questionId, selectedAnswer } = req.body;
+    const userId = req.user.id;
+    
+    // Find the submission
+    const submission = await quizSubmissionModel.findOne({
+      where: { id: submissionId, userId }
+    });
+    
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found" });
+    }
+    
+    // Check if submission is still in progress
+    if (submission.status !== 'started' && submission.status !== 'test') {
+      return res.status(400).json({ message: `Cannot update answers for a ${submission.status} submission` });
+    }
+    
+    // Check if time limit has expired (except for test submissions)
+    if (submission.status === 'started') {
+      const startTime = new Date(submission.startedAt);
+      const currentTime = new Date();
+      const timeElapsedMinutes = Math.floor((currentTime - startTime) / (1000 * 60));
+      
+      // Get the quiz to check time limit
+      const quiz = await quizModel.findByPk(submission.quizId);
+      const timeLimit = quiz?.timeLimit || 30;
+      
+      if (timeElapsedMinutes >= timeLimit) {
+        // Time expired, update the submission to 'expired'
+        await submission.update({
+          status: 'expired',
+          submittedAt: new Date()
+        });
+        
+        return res.status(400).json({
+          message: "Time limit expired. Your quiz has been automatically submitted.",
+          submission: submission
+        });
+      }
+    }
+    
+    // Update the answers array
+    let answers = submission.answers || [];
+    
+    // Check if this question has already been answered
+    const existingAnswerIndex = answers.findIndex(a => a.questionId === questionId);
+    
+    if (existingAnswerIndex >= 0) {
+      // Update existing answer
+      answers[existingAnswerIndex].selectedAnswer = selectedAnswer;
+    } else {
+      // Add new answer
+      answers.push({ questionId, selectedAnswer });
+    }
+    
+    // Update the submission
+    await submission.update({ answers });
+    
+    return res.status(200).json({
+      message: "Answer saved successfully",
+      submissionId: submission.id,
+      questionId,
+      selectedAnswer
+    });
+  } catch (error) {
+    console.error("Error saving answer:", error);
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 // Get a specific submission
 export const getSubmission = async (req, res) => {
   try {
@@ -280,22 +476,48 @@ return res.status(404).json({message:"success",submission})
 
 
 
-export const isTaken=async (req,res)=>{
-  try{
-    const{quizId}=req.params;
-    const {user}=req.body;
-    const taken=await quizSubmissionModel.findOne({
-      where:{
-      quizId,
-      userId:user.id
-      }
-    })
-    if(!taken){
-
-      return res.status(200).json({message:"Not taken",taken:false});
+export const isTaken = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const userId = req.user.id;
+    
+    // Find the submission with related quiz data
+    const submission = await quizSubmissionModel.findOne({
+      where: {
+        quizId,
+        userId
+      },
+      include: [
+        {
+          model: quizModel,
+          as: "quiz",
+          attributes: ["id", "title", "description", "totalMarks"]
+        }
+      ]
+    });
+    
+    if (!submission) {
+      return res.status(200).json({ message: "Not taken", taken: false });
     }
-    return res.status(200).json({message:"Taken",taken:true});
-  }catch(error){
-    return res.status(500).json({message:"Server error",error:error.message})
+    
+    // Return the submission data along with taken status
+    return res.status(200).json({
+      message: "Taken", 
+      taken: true,
+      submission: {
+        id: submission.id,
+        score: submission.score,
+        totalMarks: submission.quiz?.totalMarks || 0,
+        correctAnswers: submission.answers.filter(a => a.isCorrect).length,
+        totalQuestions: submission.answers.length,
+        percentage: submission.quiz?.totalMarks ? 
+          Math.round((submission.score / submission.quiz.totalMarks) * 100) : 0,
+        submittedAt: submission.submittedAt,
+        timeSpent: submission.timeSpent
+      }
+    });
+  } catch (error) {
+    console.error("Error checking if quiz is taken:", error);
+    return res.status(500).json({ message: "Server error", error: error.message })
   }
 }

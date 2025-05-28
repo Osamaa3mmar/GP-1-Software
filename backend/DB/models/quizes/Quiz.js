@@ -26,6 +26,14 @@ export const quizModel = sequelize.define('Quiz', {
     type: DataTypes.INTEGER,
     allowNull: true
   },
+  sectionId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'LessonSections',
+      key: 'id'
+    }
+  },
   duration: {
     type: DataTypes.INTEGER, // in minutes
     allowNull: true
@@ -68,15 +76,14 @@ quizModel.belongsTo(lessonModel, {
 });
 
 // Define relationship with Section model
-
-// Quiz can have one section (if it appears in only one place)
-quizModel.hasOne(lessonSectionModel, {
-  as: "section",
-  foreignKey: "quizId"
+// A section can have many quizzes
+lessonSectionModel.hasMany(quizModel, {
+  as: "quizzes",
+  foreignKey: "sectionId"
 });
 
-// Section can belong to a quiz
-lessonSectionModel.belongsTo(quizModel, {
-  as: "quiz",
-  foreignKey: "quizId"
+// A quiz belongs to a section
+quizModel.belongsTo(lessonSectionModel, {
+  as: "section",
+  foreignKey: "sectionId"
 });

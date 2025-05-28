@@ -1,6 +1,7 @@
 import { lessonModel } from "../../../DB/models/Lessons/Lesson.js";
 import { lessonSectionModel } from "../../../DB/models/Section/Section.modal.js";
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
+import { quizModel } from "../../../DB/models/quizes/Quiz.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
 import cloudinary from "../../utils/Claoudinary.js";
 
@@ -89,6 +90,39 @@ export const addSection = async (req, res) => {
       }
     }
     
+    // If the section type is quiz and no quizId is provided, create a new empty quiz
+    let sectionQuizId = quizId;
+    
+    if (type === 'quiz' && !quizId) {
+      try {
+        // Create a new empty quiz
+        const newQuiz = await quizModel.create({
+          title: `${title} Quiz`,
+          description: `Quiz for ${title}`,
+          courseId: lesson.courseId,
+          lessonId,
+          sectionId: null, // Will be updated after section creation
+          difficulty: 'medium',
+          totalMarks: 0,
+          passMarks: 0
+        });
+        
+        sectionQuizId = newQuiz.id;
+        
+        // Notify the teacher/owner that a new quiz has been created
+        await makeNotification({
+          userId: user.id,
+          title: 'New Quiz Created',
+          message: `An empty quiz has been created for section "${title}". You can now add questions to it.`,
+          type: 'info'
+        });
+        
+      } catch (quizError) {
+        console.error("Error creating empty quiz:", quizError);
+        // Continue with section creation even if quiz creation fails
+      }
+    }
+    
     // Create the new section
     const newSection = await lessonSectionModel.create({
       lessonId,
@@ -97,8 +131,16 @@ export const addSection = async (req, res) => {
       content: content || null,
       mediaUrl: secureMediaUrl || null,
       order: order || 0,
-      quizId: quizId || null
+      quizId: sectionQuizId || null
     });
+    
+    // If we created a new quiz, update it with the section ID
+    if (type === 'quiz' && sectionQuizId && !quizId) {
+      await quizModel.update(
+        { sectionId: newSection.id },
+        { where: { id: sectionQuizId } }
+      );
+    }
     
     // Create notification for the academy (organization) when a section is added
     if (lesson.course.orgId) {

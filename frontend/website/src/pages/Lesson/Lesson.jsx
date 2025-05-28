@@ -518,51 +518,61 @@ export default function Lesson() {
               <Button
                 variant="contained"
                 color="primary"
-                startIcon={generatingQuiz ? <CircularProgress size={20} /> : <AutoFixHighIcon />}
-                disabled={generatingQuiz}
-                onClick={async () => {
-                  try {
-                    setGeneratingQuiz(true);
-                    // Generate quiz using AI
-                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/quiz/generate`, {
-                      lessonId,
-                      title: `Quiz for ${lesson.title}`,
-                      description: `Test your knowledge of ${lesson.title}`,
-                      // Pass lesson content for context
-                      content: sections.map(s => s.content).join('\n')
-                    }, {
-                      headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                      }
-                    });
-                    
-                    if (response.data && response.data.quizId) {
-                      setQuizId(response.data.quizId);
-                      toast.success('Quiz generated successfully!');
-                      
-                      // Create notification for enrolled users
-                      const courseId = lesson.courseId;
-                      await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/quiz/course-enrollees`, {
-                        courseId,
-                        message: `A new quiz has been added to lesson "${lesson.title}"`,
-                        actionUrl: `/main/classrooms/${courseId}/lessons/lesson/${lessonId}`,
-                        type: 'add',
-                        entityType: 'quiz'
-                      }, {
+                startIcon={<AutoFixHighIcon />}
+                onClick={() => {
+                  // Check if a quiz already exists for this lesson
+                  const checkQuiz = async () => {
+                    try {
+                      // First check if there's an existing quiz for this lesson
+                      const response = await axios.get(`http://localhost:4545/quiz/lesson/${lessonId}`, {
                         headers: {
-                          Authorization: `Bearer ${localStorage.getItem('token')}`
+                          token: localStorage.getItem('token')
                         }
                       });
                       
-                      // Navigate to quiz maker to edit the generated quiz
-                      navigate(`/classroom/quizmaker/${response.data.quizId}`);
+                      if (response.data && response.data.quizId) {
+                        // Quiz exists, navigate to the appropriate page based on user role
+                        const quizId = response.data.quizId;
+                        
+                        // If user is teacher or admin, go to quiz maker, otherwise go to quiz page
+                        if (allowEdit) {
+                          navigate(`/classroom/quizmaker/${quizId}`);
+                        } else {
+                          navigate(`/classroom/quiz/${quizId}`);
+                        }
+                      } else {
+                        // No quiz exists yet, create a basic quiz
+                        const createResponse = await axios.post(`http://localhost:4545/quiz/generate`, {
+                          lessonId,
+                          title: `Quiz for ${lesson.title}`,
+                          description: `Test your knowledge of ${lesson.title}`
+                        }, {
+                          headers: {
+                            token: localStorage.getItem('token')
+                          }
+                        });
+                        
+                        if (createResponse.data && createResponse.data.quizId) {
+                          const newQuizId = createResponse.data.quizId;
+                          toast.success('Quiz created successfully!');
+                          
+                          // Navigate to quiz maker for teachers/admins
+                          if (allowEdit) {
+                            navigate(`/classroom/quizmaker/${newQuizId}`);
+                          } else {
+                            navigate(`/classroom/quiz/${newQuizId}`);
+                          }
+                        } else {
+                          toast.error('Failed to create quiz');
+                        }
+                      }
+                    } catch (error) {
+                      console.error('Error checking/creating quiz:', error);
+                      toast.error('Error accessing quiz');
                     }
-                  } catch (error) {
-                    console.error('Error generating quiz:', error);
-                    toast.error('Failed to generate quiz');
-                  } finally {
-                    setGeneratingQuiz(false);
-                  }
+                  };
+                  
+                  checkQuiz();
                 }}
                 sx={{ 
                   borderRadius: '8px', 
@@ -583,30 +593,32 @@ export default function Lesson() {
                 color="primary"
                 startIcon={<QuizIcon />}
                 onClick={() => {
-                  // Check if there's a quiz for this lesson
-                  if (quizId) {
-                    // Navigate to take the quiz using the correct path from App.jsx
-                    navigate(`/classroom/quiz/${quizId}`);
-                  } else {
-                    // Try to find a quiz for this lesson
-                    axios.get(`${import.meta.env.VITE_API_URL}/api/v1/quiz/lesson/${lessonId}`, {
-                      headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                      }
-                    })
-                    .then(response => {
+                  // Check if a quiz already exists for this lesson
+                  const checkQuiz = async () => {
+                    try {
+                      // First check if there's an existing quiz for this lesson
+                      const response = await axios.get(`http://localhost:4545/quiz/lesson/${lessonId}`, {
+                        headers: {
+                          token: localStorage.getItem('token')
+                        }
+                      });
+                      
                       if (response.data && response.data.quizId) {
-                        setQuizId(response.data.quizId);
-                        navigate(`/classroom/quiz/${response.data.quizId}`);
+                        // Quiz exists, navigate to the quiz page
+                        const quizId = response.data.quizId;
+                        navigate(`/classroom/quiz/${quizId}`);
                       } else {
+                        // No quiz exists yet, show message
                         toast.info('No quiz available for this lesson yet');
                       }
-                    })
-                    .catch(error => {
+                    } catch (error) {
                       console.error('Error checking for quiz:', error);
                       toast.info('No quiz available for this lesson yet');
-                    });
-                  }
+                    }
+                  };
+                  
+                  // Execute the function
+                  checkQuiz();
                 }}
                 sx={{ 
                   borderRadius: '8px', 

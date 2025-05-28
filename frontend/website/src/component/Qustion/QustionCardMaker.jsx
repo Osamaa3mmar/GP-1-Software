@@ -90,10 +90,15 @@ export default function QustionCardMaker({
         }
       }
 
+      // Get the quiz ID from the URL or props
+      const urlParams = new URLSearchParams(window.location.search);
+      const sectionId = urlParams.get('sectionId');
+      const quizId = window.location.pathname.split('/').pop();
+      
       // Prepare question data in the format expected by the backend
       const questionData = {
         id: formData.id || undefined, // Only include if editing existing question
-        quizId: 1, // Hardcoded for now
+        quizId: quizId,
         questionText: formData.questionText.trim(),
         options: formData.type === 'mcq' ? formData.options : [],
         correctAnswer: formData.correctAnswer,
@@ -109,12 +114,18 @@ export default function QustionCardMaker({
         qustion: questionData
       });
       
-      // Make the API call
+      // Make the API call - use the new endpoint if this is from a section
+      const endpoint = sectionId ? 
+        `http://localhost:4545/quiz/questions/${quizId}` : 
+        "http://localhost:4545/question/save";
+        
+      const payload = sectionId ? 
+        { questions: [questionData] } : 
+        { qustion: questionData };
+        
       const { data } = await axios.post(
-        "http://localhost:4545/question/save",
-        {
-          qustion: questionData
-        },
+        endpoint,
+        payload,
         {
           headers: {
             token: localStorage.getItem("token")

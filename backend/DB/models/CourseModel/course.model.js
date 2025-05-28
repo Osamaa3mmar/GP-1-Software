@@ -30,6 +30,11 @@ export const courseModel = sequelize.define('Course', {
     },
     defaultValue:0,
   },
+  numberRating:{
+    type:DataTypes.INTEGER,
+    allowNull:true,
+    defaultValue:0,
+  },
   price: {
     type: DataTypes.FLOAT,
     allowNull: true,

@@ -17,6 +17,7 @@ import categoryRouter from './modules/categoryRouter/category.router.js';
 import cartRouter from './modules/cartRouter/cart.router.js';
 import cartCourseRouter from './modules/cartCourseRouter/cartCourse.router.js';
 import topicRouter from './modules/topicRouter/topic.router.js';
+import messagingRouter from './modules/messaging/messaging.router.js';
 
 export const initApp=(app,express)=>{
     //here put use statment
@@ -39,4 +40,5 @@ export const initApp=(app,express)=>{
     app.use("/cartcourse",cartCourseRouter);
     app.use("/topics",topicRouter);
     app.use("/applye",applyeRouter);
+    app.use("/messaging", messagingRouter);
 }
