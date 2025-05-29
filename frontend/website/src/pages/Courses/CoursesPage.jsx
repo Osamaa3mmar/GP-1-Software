@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import CourseCard from "../../component/Courses/CourseCard";
 import axios from "axios";
 import { useCourses } from '../../Context/CourseContext';
+import { CourseHeader, CourseSearchFilter, CourseList } from '../../component/CoursesPage';
+import { Container, Box } from '@mui/material';
 
 const staticCourses = [
   {
@@ -60,31 +61,7 @@ const staticCourses = [
     enrollmentNumber: 140,
   },
 ];
-// const expectedCourses = [
-//   {
-//     id: 1,
-//     title: "Web Development Fundamentals",
-//     thumbnail:
-//       "https://d2opxh93rbxzdn.cloudfront.net/original/2X/4/40cfa8ca1f24ac29cfebcb1460b5cafb213b6105.png",
-//     tags:{
-//       topics : ["HTML", "CSS", "JavaScript"],
-//       category: "Web Development",
-//       level: "Beginner",
-//       prerequisites: ["Basic Computer Skills"],
-//     },
-//     learningOutcomes: "By the end of this course, you will be able to create responsive websites using HTML5, CSS3, and JavaScript. You will also understand web development best practices and be able to build real-world projects.",
-//     learningPath: "This course is part of the Web Development Bootcamp. After completing this course, you can proceed to the Advanced CSS Techniques course.",
-//     duration: 8,
-//     price: 99.99,
-//     enrollmentNumber: 156,
-//     teacher: { name: "John Doe" , position : "Senior Web Developer" },
-//     schedule: [
-//       { day: "Mon", startTime: "10:00 AM", endTime: "12:00 PM" },
-//       { day: "Wed", startTime: "10:00 AM", endTime: "12:00 PM" },
-//     ],
-//     rating:{value : 4.5, count: 120},
-//   }
-// ]
+
 const expectedCourses = [
   {
     id: 1,
@@ -227,34 +204,113 @@ const expectedCourses = [
 ];
 
 export default function CoursesPage() {
-  // const [courses, setCourses] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchCourses = async () => {
-  //     try {
-  //       const response = await axios.get("http://localhost:4545/course/getall");
-  //       // const response = await axios.get("");
-  //       setCourses(response.data.courses || []);
-  //     } catch (error) {
-  //       console.error("Failed to fetch courses:", error);
-  //       setCourses(expectedCourses); // Fallback to static data
-  //     }
-  //   };
-
-  //   fetchCourses();
-  // }, []);
   const { courses } = useCourses();
+  const [categories, setCategories] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const displayCourses = courses.length > 0 ? courses : expectedCourses;
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get("http://localhost:4545/category");
+        // Ensure categories is an array before setting state
+        const categoriesData = response.data || [];
+        // Check if categoriesData is an array, if not, try to extract it from the response
+        if (Array.isArray(categoriesData)) {
+          setCategories(categoriesData);
+        } else if (categoriesData.categories && Array.isArray(categoriesData.categories)) {
+          // If the API returns an object with a categories property that is an array
+          setCategories(categoriesData.categories);
+        } else if (typeof categoriesData === 'object') {
+          // If it's an object, convert object values to array
+          const categoriesArray = Object.values(categoriesData).filter(item => item !== null && typeof item === 'object');
+          setCategories(categoriesArray);
+        } else {
+          // Fallback to empty array if nothing works
+          setCategories([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+        // Fallback categories in case the API fails
+        setCategories([
+          { id: 1, name: "Web Development" },
+          { id: 2, name: "Data Science" },
+          { id: 3, name: "Design" },
+          { id: 4, name: "Mobile Development" },
+          { id: 5, name: "DevOps" },
+          { id: 6, name: "Cybersecurity" },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Filter courses based on category and search query
+  useEffect(() => {
+    const displayCourses = courses.length > 0 ? courses : expectedCourses;
+    
+    let filtered = displayCourses;
+    
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(course => 
+        course.tags?.category?.toLowerCase() === selectedCategory.toLowerCase()
+      );
+    }
+    
+    // Filter by search query
+    if (searchQuery.trim() !== '') {
+      filtered = filtered.filter(course =>
+        course.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    
+    setFilteredCourses(filtered);
+  }, [courses, selectedCategory, searchQuery]);
+
+  // Handle category change
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
-    <div
-      style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
-    >
-      {displayCourses.map((course) => (
-        <CourseCard key={course.id} course={course} />
-      ))}
-    </div>
+    <Container maxWidth="lg">
+      <Box 
+        sx={{ 
+          padding: { xs: '1rem', md: '2rem' }, 
+          backgroundColor: 'white' 
+        }}
+      >
+        <CourseHeader 
+          title="Explore Our Courses" 
+          subtitle="Discover a wide range of courses designed to help you achieve your learning goals" 
+        />
+        
+        <CourseSearchFilter 
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+          categories={categories}
+        />
+        
+        <CourseList 
+          courses={filteredCourses}
+          isLoading={isLoading}
+        />
+      </Box>
+    </Container>
   );
 }
-
