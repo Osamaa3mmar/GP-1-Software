@@ -10,11 +10,17 @@ import {
 import SpecialHeading from "./SpecialHeading";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function TopCompanies() {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  
+  const handleCompanyClick = (id) => {
+    navigate(`/main/academy/profile/${id}`);
+  };
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -72,8 +78,7 @@ export default function TopCompanies() {
           {companies.map((org) => (
             <Card
               key={org.id}
-              component="a"
-              href={`/organization/${org.id}`}
+              onClick={() => handleCompanyClick(org.id)}
               sx={{
                 height: "100%",
                 textDecoration: "none",

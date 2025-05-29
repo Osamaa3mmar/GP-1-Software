@@ -34,6 +34,7 @@ import Notifications from "./component/Notifications/Notifications";
 import Landing from "./pages/Landing/Landing";
 import LandingPage from "./pages/Landing/Landing";
 import AcademyProfile from "./pages/AcademyProfile/AcademyProfile";
+import InstructorProfile from "./pages/InstructorProfile/InstructorProfile";
 import UserNotificationsContextProvider, { UserNotificationsContext } from "./Context/NotificationsUserContext";
 import CoursesAdminTemp from "./pages/AdminPages/CoursesAdminTemp";
 import ForgetPassword from "./pages/ForgetPassword/ForgetPAssword";
@@ -162,6 +163,10 @@ export default function App() {
         {
           path:"academy/profile/:id",
           element:<AcademyProfile />
+        },
+        {
+          path:"instructor/profile/:id",
+          element:<InstructorProfile />
         }
       ]
     },

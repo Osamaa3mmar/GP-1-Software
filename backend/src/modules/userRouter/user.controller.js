@@ -198,3 +198,55 @@ export const getTeachers = async (req, res) => {
         });
     }
 }
+
+export const getTeacherById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Find the teacher by ID with basic information
+        const teacher = await userModel.findOne({
+            where: {
+                id: id,
+                role: 'tech'
+            },
+            attributes: [
+                'id', 
+                'username', 
+                'email',
+                'profilePic', 
+                'bio', 
+                'specialization', 
+                'links',
+                'files',
+                'resume'
+            ]
+        });
+
+        if (!teacher) {
+            return res.status(404).json({ 
+                message: "Teacher not found" 
+            });
+        }
+        
+        // Find courses taught by this teacher
+        const courses = await courseModel.findAll({
+            where: { teacherId: id },
+            attributes: ['id', 'title', 'thumbnail', 'description', 'rating', 'duration', 'enrollmentNumber', 'price']
+        });
+        
+        // Create a response object with teacher data and courses
+        const teacherData = teacher.toJSON();
+        teacherData.courses = courses;
+
+        return res.status(200).json({
+            message: "Successfully retrieved teacher profile",
+            teacher: teacherData
+        });
+    } catch (error) {
+        console.error('Error in getTeacherById:', error);
+        return res.status(500).json({ 
+            message: "Error retrieving teacher profile",
+            error: error.message 
+        });
+    }
+}

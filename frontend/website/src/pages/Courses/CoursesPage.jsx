@@ -290,7 +290,7 @@ export default function CoursesPage() {
       <Box 
         sx={{ 
           padding: { xs: '1rem', md: '2rem' }, 
-          backgroundColor: 'white' 
+          backgroundColor: '#f9f9f9' 
         }}
       >
         <CourseHeader 

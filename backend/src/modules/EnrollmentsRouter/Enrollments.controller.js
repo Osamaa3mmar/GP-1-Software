@@ -112,3 +112,48 @@ export const allInOrg= async(req,res)=>{
         return res.status(500).json({message:"Server Error",error})
     }
 }
+
+export const getUserEnrolledCourses=async(req,res)=>{
+    try {
+        const userId = req.body.user.id;
+        
+        // Find all enrollments for the current user where progress is less than 100%
+        // This indicates courses they are still continuing to learn
+        const enrolledCourses = await enrollmentModel.findAll({
+            where: { 
+                studentId: userId,
+                progress: { [Op.lt]: 100 } // Only courses not yet completed
+            },
+            attributes: ['id', 'progress', 'points', 'createdAt'],
+            include: {
+                model: courseModel,
+                as: "course",
+                attributes: ['id', 'title', 'thumbnail', 'description', 'price', 'rating', 'duration', 'learningOutcomes'],
+                include: [
+                    {
+                        model: userModel,
+                        as: 'teacher',
+                        attributes: ['id', 'username', 'profilePic', 'specialization']
+                    },
+                    {
+                        model: organizationModel,
+                        as: 'organization',
+                        attributes: ['id', 'name', 'profile']
+                    }
+                ]
+            },
+            order: [['updatedAt', 'DESC']] // Show most recently updated courses first
+        });
+        
+        if (!enrolledCourses || enrolledCourses.length === 0) {
+            return res.status(200).json({ message: "You don't have any courses in progress", courses: [] });
+        }
+        
+        return res.status(200).json({ 
+            message: "Successfully retrieved courses in progress", 
+            courses: enrolledCourses 
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Server Error", error });
+    }
+}
