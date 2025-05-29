@@ -157,3 +157,150 @@ export const getUserEnrolledCourses=async(req,res)=>{
         return res.status(500).json({ message: "Server Error", error });
     }
 }
+
+/**
+ * Get the count of in-progress courses for the current user
+ */
+export const getInProgressCoursesCount = async (req, res) => {
+    try {
+        const userId = req.body.user.id;
+        
+        // Count enrollments where progress is less than 100%
+        const count = await enrollmentModel.count({
+            where: { 
+                studentId: userId,
+                progress: { [Op.lt]: 100 } // Courses not yet completed
+            }
+        });
+        
+        return res.status(200).json({ 
+            message: "Successfully retrieved in-progress courses count", 
+            count 
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Server Error", error });
+    }
+}
+
+/**
+ * Get the count of completed courses for the current user
+ */
+export const getCompletedCoursesCount = async (req, res) => {
+    try {
+        const userId = req.body.user.id;
+        
+        // Count enrollments where progress is exactly 100%
+        const count = await enrollmentModel.count({
+            where: { 
+                studentId: userId,
+                progress: 100 // Completed courses
+            }
+        });
+        
+        return res.status(200).json({ 
+            message: "Successfully retrieved completed courses count", 
+            count 
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Server Error", error });
+    }
+}
+
+/**
+ * Get the total points earned by the current user
+ */
+export const getUserTotalPoints = async (req, res) => {
+    try {
+        const userId = req.body.user.id;
+        
+        // Sum all points from user's enrollments
+        const result = await enrollmentModel.sum('points', {
+            where: { 
+                studentId: userId
+            }
+        });
+        
+        // Handle case where user has no points yet
+        const totalPoints = result || 0;
+        
+        // Determine rank based on points
+        let rank = "Beginner";
+        if (totalPoints >= 1000) {
+            rank = "Diamond Scholar";
+        } else if (totalPoints >= 750) {
+            rank = "Platinum Scholar";
+        } else if (totalPoints >= 500) {
+            rank = "Gold Scholar";
+        } else if (totalPoints >= 250) {
+            rank = "Silver Scholar";
+        } else if (totalPoints >= 100) {
+            rank = "Bronze Scholar";
+        }
+        
+        return res.status(200).json({ 
+            message: "Successfully retrieved user's total points", 
+            totalPoints,
+            rank
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Server Error", error });
+    }
+}
+
+/**
+ * Calculate and return estimated learning hours for the current user
+ */
+export const getUserLearningHours = async (req, res) => {
+    try {
+        const userId = req.body.user.id;
+        const currentDate = new Date();
+        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        
+        // Get all enrolled courses for the user with their progress
+        const enrollments = await enrollmentModel.findAll({
+            where: { 
+                studentId: userId
+            },
+            include: {
+                model: courseModel,
+                as: "course",
+                attributes: ['duration']
+            }
+        });
+        
+        // Calculate total learning hours based on course duration and progress
+        let totalHours = 0;
+        let thisMonthHours = 0;
+        
+        for (const enrollment of enrollments) {
+            // Each course duration is in weeks
+            // We'll estimate that a typical course week requires 5 hours of study
+            if (enrollment.course && enrollment.course.duration) {
+                const courseHoursTotal = enrollment.course.duration * 5; // 5 hours per week
+                const userCompletedHours = (courseHoursTotal * enrollment.progress) / 100;
+                
+                totalHours += userCompletedHours;
+                
+                // Check if the enrollment was updated this month to estimate this month's hours
+                if (enrollment.updatedAt >= firstDayOfMonth) {
+                    // Calculate this month's progress
+                    // For simplicity, we'll assume an even distribution of progress over time
+                    // In a real application, you might track actual session times
+                    thisMonthHours += userCompletedHours / 3; // Rough estimate: 1/3 of total progress made this month
+                }
+            }
+        }
+        
+        // Round to nearest whole number
+        totalHours = Math.round(totalHours);
+        thisMonthHours = Math.round(thisMonthHours);
+        
+        return res.status(200).json({ 
+            message: "Successfully retrieved user's learning hours", 
+            totalHours,
+            thisMonthHours
+        });
+    } catch (error) {
+        return res.status(500).json({ message: "Server Error", error });
+    }
+}
