@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   Container,
@@ -36,9 +36,10 @@ import {
 
 const InstructorProfile = () => {
   const { id } = useParams();
-  const [instructor, setInstructor] = useState(null);
+  const navigate = useNavigate();
+  const [instructor, setInstructor] = useState({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchInstructorData = async () => {
@@ -274,7 +275,7 @@ const InstructorProfile = () => {
                         }
                       }}
                     >
-                      <CardActionArea href={`/courses/details/${course.id}`}>
+                      <CardActionArea onClick={() => navigate(`/main/course/${course.id}`)}>
                         <CardMedia
                           component="img"
                           height="140"
@@ -340,6 +341,6 @@ const InstructorProfile = () => {
       </Grid>
     </Container>
   );
-};
+}
 
 export default InstructorProfile;

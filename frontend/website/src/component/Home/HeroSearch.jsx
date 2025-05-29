@@ -114,14 +114,14 @@ export default function HeroSearch() {
 
   // Handle navigation when clicking on a teacher
   const handleTeacherClick = (teacherId) => {
-    navigate(`/profile/${teacherId}`);
+    navigate(`/main/instructor/profile/${teacherId}`);
     setQuery("");
     setIsFocused(false);
   };
 
   // Handle navigation when clicking on an organization
   const handleOrgClick = (orgId) => {
-    navigate(`/org/${orgId}`);
+    navigate(`/main/academy/profile/${orgId}`);
     setQuery("");
     setIsFocused(false);
   };
