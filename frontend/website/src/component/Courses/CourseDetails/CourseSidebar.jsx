@@ -12,12 +12,38 @@ const CourseSidebar = ({ course, courseTags, formatDate }) => {
       borderRadius: 2
     }}>
       {/* Course Thumbnail */}
-      <Box sx={{ mb: 1.5, borderRadius: 2, overflow: 'hidden', width: '100%' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', maxHeight: 180 }}>
+      <Box sx={{ 
+        mb: 1.5, 
+        borderRadius: 2, 
+        overflow: 'hidden', 
+        width: '100%',
+        position: 'relative',
+        paddingBottom: '56.25%', // 16:9 aspect ratio (9/16=56.25%)
+      }}>
+        <Box sx={{ 
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#f5f7fa' // Fallback background color
+        }}>
           <img 
             src={course.thumbnail} 
             alt={course.title} 
-            style={{ width: '100%', height: 'auto', maxHeight: 180, objectFit: 'contain' }} 
+            style={{ 
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transition: 'transform 0.3s ease',
+            }} 
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/placeholder-image.jpg';
+            }}
           />
         </Box>
       </Box>
@@ -101,14 +127,14 @@ const CourseSidebar = ({ course, courseTags, formatDate }) => {
       </Typography>
       
       {/* Course Features */}
-      <Box sx={{ mt: 3 }}>
+      {/* <Box sx={{ mt: 3 }}>
         {['Certificate of Completion', '30-Day Money-Back Guarantee'].map((feature, index) => (
           <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
             <Typography variant="body1">{feature}</Typography>
             <EmojiEvents color="success" />
           </Box>
         ))}
-      </Box>
+      </Box> */}
     </Paper>
   );
 };

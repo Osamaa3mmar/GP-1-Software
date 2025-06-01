@@ -158,12 +158,12 @@ const CourseDetails = () => {
       {/* Main Content Grid */}
       <Grid container spacing={4}>
         {/* Left Column */}
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={8} sx={{ order: { xs: 2, md: 1 } }}>
           {/* Course Banner */}
           <CourseBanner course={course} />
           
           {/* Course Schedule */}
-          <CourseScheduleInfo course={course} formatDate={formatDate} />
+          {/* <CourseScheduleInfo course={course} formatDate={formatDate} /> */}
 
           {/* Learning Outcomes */}
           <CourseLearningOutcomes learningOutcomes={course.learningOutcomes} />
@@ -172,16 +172,16 @@ const CourseDetails = () => {
           <CourseLearningPath learningPath={course.learningPath} />
           
           {/* Course Curriculum */}
-          {courseTags.topics && Array.isArray(courseTags.topics) && courseTags.topics.length > 0 && (
+          {/* {courseTags.topics && Array.isArray(courseTags.topics) && courseTags.topics.length > 0 && (
             <CourseCurriculum topics={courseTags.topics} />
-          )}
+          )} */}
 
           {/* Course Description */}
           <CourseDescription course={course} courseTags={courseTags} />
 
           {/* Instructor Information */}
           {course.teacherId && course.teacher && (
-            <CourseInstructor teacher={course.teacher} />
+            <CourseInstructor instructor={course.teacher} />
           )}
           
           {/* Organization Information */}
@@ -196,7 +196,7 @@ const CourseDetails = () => {
         </Grid>
 
         {/* Right Sidebar */}
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={4} sx={{ order: { xs: 1, md: 2 } }}>
           <CourseSidebar 
             course={course} 
             courseTags={courseTags} 
@@ -206,13 +206,13 @@ const CourseDetails = () => {
       </Grid>
 
       {/* Recommended Courses */}
-      <Box sx={{ mt: 6 }}>
-        <Typography variant="h4" gutterBottom>Recommended Courses</Typography>
+      {/* <Box sx={{ mt: 6 }}>
+        <Typography variant="h4" gutterBottom>Recommended Courses</Typography> */}
         {/* <CourseCarousel /> */}
-      </Box>
+      {/* </Box> */}
 
       {/* Course Goals */}
-      <Box sx={{ mt: 6, p: 4, bgcolor: 'background.paper', borderRadius: 2 }}>
+      {/* <Box sx={{ mt: 6, p: 4, bgcolor: 'background.paper', borderRadius: 2 }}>
         <Typography variant="h4" gutterBottom>What You will Learn</Typography>
         <Grid container spacing={3}>
           {course?.goals?.map((goal, i) => (
@@ -226,7 +226,7 @@ const CourseDetails = () => {
             </Grid>
           ))}
         </Grid>
-      </Box>
+      </Box> */}
     </Container>
   );
 };
