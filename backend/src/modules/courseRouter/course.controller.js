@@ -297,3 +297,54 @@ export const getFeaturedCourses=async(req,res)=>{
     res.status(500).json({ message: error.message });
   }
 }
+
+export const getTopCategories = async (req, res) => {
+  try {
+    // Get all courses with their tags
+    const courses = await courseModel.findAll({
+      attributes: ['tags'],
+      where: {
+        tags: {
+          [Op.ne]: null
+        }
+      }
+    });
+
+    // Create counters for categories
+    const categoryCounter = {};
+    
+    // Process all courses and count category occurrences
+    courses.forEach(course => {
+      const tags = typeof course.tags === 'string' ? JSON.parse(course.tags) : course.tags;
+      
+      // Process only category tags and not topics
+      if (tags && tags.category && Array.isArray(tags.category)) {
+        tags.category.forEach(category => {
+          if (!categoryCounter[category]) {
+            categoryCounter[category] = 0;
+          }
+          categoryCounter[category]++;
+        });
+      }
+    });
+    
+    // Convert to array of {category, count} objects for sorting
+    const categoriesArray = Object.keys(categoryCounter).map(category => ({
+      category,
+      count: categoryCounter[category]
+    }));
+    
+    // Sort by count in descending order and take top 4
+    const topCategories = categoriesArray
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 4);
+    
+    return res.status(200).json({
+      message: "Top categories retrieved successfully!",
+      categories: topCategories
+    });
+  } catch (error) {
+    console.error("Error in getTopCategories:", error);
+    return res.status(500).json({ message: "Server Error", error: error.message });
+  }
+}
