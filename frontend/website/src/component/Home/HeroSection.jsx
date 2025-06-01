@@ -8,7 +8,9 @@ export default function HeroSection() {
     <>
       {/* Hero Header */}
       <Box sx={{
-        background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
+        backgroundImage: 'url("../../../CoursesHomeBackground.avif")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         py: { xs: 6, md: 10 },
         color: 'white',
       }}>

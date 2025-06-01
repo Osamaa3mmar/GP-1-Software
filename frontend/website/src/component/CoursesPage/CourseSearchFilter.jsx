@@ -219,10 +219,10 @@ const CourseSearchFilter = ({
               </MenuItem>
               {Array.isArray(categories) && categories.map((category) => (
                 <MenuItem 
-                  key={category.id || Math.random()} 
-                  value={category.name || category.title || ''}
+                  key={category.id} 
+                  value={category.name}
                 >
-                  {category.name || category.title || 'Category'}
+                  {category.name}
                 </MenuItem>
               ))}
             </StyledSelect>

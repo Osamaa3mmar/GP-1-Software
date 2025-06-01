@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useCourses } from '../../Context/CourseContext';
 import { CourseHeader, CourseSearchFilter, CourseList } from '../../component/CoursesPage';
-import { Container, Box } from '@mui/material';
+import { Container, Box, Typography } from '@mui/material';
+import axios from 'axios';
 
 const staticCourses = [
   {
@@ -204,38 +204,27 @@ const expectedCourses = [
 ];
 
 export default function CoursesPage() {
-  const { courses } = useCourses();
+  const { courses, setCourses } = useCourses();
   const [categories, setCategories] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
-  // Fetch categories
+  // Fetch categories from API endpoint
   useEffect(() => {
     const fetchCategories = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
-        const response = await axios.get("http://localhost:4545/category");
-        // Ensure categories is an array before setting state
-        const categoriesData = response.data || [];
-        // Check if categoriesData is an array, if not, try to extract it from the response
-        if (Array.isArray(categoriesData)) {
-          setCategories(categoriesData);
-        } else if (categoriesData.categories && Array.isArray(categoriesData.categories)) {
-          // If the API returns an object with a categories property that is an array
-          setCategories(categoriesData.categories);
-        } else if (typeof categoriesData === 'object') {
-          // If it's an object, convert object values to array
-          const categoriesArray = Object.values(categoriesData).filter(item => item !== null && typeof item === 'object');
-          setCategories(categoriesArray);
-        } else {
-          // Fallback to empty array if nothing works
-          setCategories([]);
+        const response = await axios.get('http://localhost:4545/category');
+        if (response.data && Array.isArray(response.data.data)) {
+          setCategories(response.data.data);
         }
       } catch (error) {
         console.error("Failed to fetch categories:", error);
-        // Fallback categories in case the API fails
+        setFetchError("Failed to load categories. Please try again later.");
+        // Fallback categories in case of error
         setCategories([
           { id: 1, name: "Web Development" },
           { id: 2, name: "Data Science" },
@@ -252,6 +241,28 @@ export default function CoursesPage() {
     fetchCategories();
   }, []);
 
+  // Fetch courses from API endpoint
+  useEffect(() => {
+    const fetchCourses = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get('http://localhost:4545/course/getall');
+        if (response.data && Array.isArray(response.data.data)) {
+          setCourses(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+        setFetchError("Failed to load courses. Please try again later.");
+        // Use expected courses as fallback
+        setCourses(expectedCourses);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, [setCourses]);
+
   // Filter courses based on category and search query
   useEffect(() => {
     const displayCourses = courses.length > 0 ? courses : expectedCourses;
@@ -260,9 +271,19 @@ export default function CoursesPage() {
     
     // Filter by category
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(course => 
-        course.tags?.category?.toLowerCase() === selectedCategory.toLowerCase()
-      );
+      filtered = filtered.filter(course => {
+        // Check if tags.category is an array and if so, check if it includes the selected category
+        if (Array.isArray(course.tags?.category)) {
+          return course.tags.category.some(cat => 
+            cat.toLowerCase() === selectedCategory.toLowerCase()
+          );
+        } 
+        // For backward compatibility with the existing data structure
+        else if (typeof course.tags?.category === 'string') {
+          return course.tags.category.toLowerCase() === selectedCategory.toLowerCase();
+        }
+        return false;
+      });
     }
     
     // Filter by search query
@@ -306,10 +327,16 @@ export default function CoursesPage() {
           categories={categories}
         />
         
-        <CourseList 
-          courses={filteredCourses}
-          isLoading={isLoading}
-        />
+        {fetchError ? (
+          <Box sx={{ p: 3, textAlign: 'center', color: 'error.main' }}>
+            <Typography variant="h6">{fetchError}</Typography>
+          </Box>
+        ) : (
+          <CourseList 
+            courses={filteredCourses}
+            isLoading={isLoading}
+          />
+        )}
       </Box>
     </Container>
   );
