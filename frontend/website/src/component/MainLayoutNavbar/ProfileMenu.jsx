@@ -79,8 +79,10 @@ export default function ProfileMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem component={"a"} href={`http://localhost:8081/profile/${localStorage.getItem("token")}?id=${user?.id}&isMe=true&isMobile=false`} onClick={handleClose}>
-        
+        <MenuItem onClick={() => {
+          handleClose();
+          navigate(`/main/profile/user/${user?.id}`);
+        }}>
           <Avatar src={user?user.profilePic:''}/> {user?user.username:'Profile'}
         </MenuItem>
         <Divider />

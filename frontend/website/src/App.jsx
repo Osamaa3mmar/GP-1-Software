@@ -4,7 +4,7 @@ import theme from "./theme/index";
 */
 import { CartProvider } from "./contexts/CartContext";
 import CartPage from "./pages/Cart/CartPage";
-import { createBrowserRouter, Link, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AuthLayout from "./layouts/auth/authLayout";
 import SignUp from "./pages/signup/SignUp";
 import SignupContextProvider from "./component/signup/SignupContext";
@@ -14,6 +14,7 @@ import Login from "./pages/Login/Login";
 import MainPage from "./pages/MainPage/MainPage";
 import MainLayout from "./layouts/MainLayout/MainLayout";
 import Profile from "./pages/Profile/Profile";
+import RealProfile from "./pages/Profile/RealProfile";
 import CoursesPage from "./pages/Courses/CoursesPage";
 import LoginCheck from "./component/protected_route/LoginCheck";
 import UserContextProvider from "./Context/userContext";
@@ -23,7 +24,7 @@ import EnrollmentsAdmin from "./pages/AdminPages/EnrollmentsAdmin";
 import CoursesAdmin from "./pages/AdminPages/CoursesAdmin";
 import InstructorsAdmin from "./pages/AdminPages/InstructorsAdmin";
 import StudentsAdmin from "./pages/AdminPages/StudentsAdmin";
-import TransactionsAdmin from "./pages/AdminPages/TransactionsAdmin";
+// import TransactionsAdmin from "./pages/AdminPages/TransactionsAdmin";
 import ReportsAdmin from "./pages/AdminPages/ReportsAdmin";
 import { createTheme, ThemeProvider } from "@mui/material";
 import CourseDetails from "./pages/Course/CourseDetails";
@@ -31,11 +32,11 @@ import ClassRoomsUser from "./pages/UserClassRooms/ClassRoomsUser";
 import AuthProtectedRout from "./component/protected_route/AuthProtectedRout";
 import OrgNotificationsContextProvider from "./Context/NotificationsOrgContext";
 import Notifications from "./component/Notifications/Notifications";
-import Landing from "./pages/Landing/Landing";
+// import Landing from "./pages/Landing/Landing";
 import LandingPage from "./pages/Landing/Landing";
 import AcademyProfile from "./pages/AcademyProfile/AcademyProfile";
 import InstructorProfile from "./pages/InstructorProfile/InstructorProfile";
-import UserNotificationsContextProvider, { UserNotificationsContext } from "./Context/NotificationsUserContext";
+import UserNotificationsContextProvider from "./Context/NotificationsUserContext";
 import CoursesAdminTemp from "./pages/AdminPages/CoursesAdminTemp";
 import ForgetPassword from "./pages/ForgetPassword/ForgetPAssword";
 import ClassroomsListPage from "./pages/UserClassRooms/ClassroomsListPage";
@@ -138,6 +139,9 @@ export default function App() {
         },{
           path:"profile",
           element:<Profile/>,
+        },{
+          path:"profile/user/:id?",
+          element:<RealProfile/>,
         },{
           path:"courses",
           element:<CoursesPage/>
