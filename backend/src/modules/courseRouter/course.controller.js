@@ -160,7 +160,7 @@ export const deleteCourse=async(req,res)=>{
 export const getAllCourses = async (req, res) => {
     try {
         const courses = await courseModel.findAll({
-            attributes: ["id", "title","thumbnail","tags","learningOutcomes","learningPath","duration","price","rating","enrollmentNumber"],
+            attributes: ["id", "title","thumbnail","tags","learningOutcomes","learningPath","duration","price","rating","enrollmentNumber","startDate","endDate"],
             where: {
                 completionStatus: {
                     [Op.ne]: "notStarted"
