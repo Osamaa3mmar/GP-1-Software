@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { addLink, editBio, editSpecialization, getFullProfile, getMyProfile, getTopStudents, getTeachers, getTeacherById } from "./user.controller.js";
+import { addLink, editBio, editSpecialization,getTeachers, getFullProfile, getMyProfile, getTopStudents, getTeacherById, getUserById } from "./user.controller.js";
 import {auth} from '../../middleware/auth.js'
 import { topicModel } from "../../../DB/models/Topic/Topic.js";
 const router = Router();
 
 
 router.get("/my-profile",auth(),getMyProfile);
-router.get("/:id", auth(), getUserById);
 
 router.post("/fullprofile",auth(),getFullProfile);
 router.post("/edit/specialization",auth(),editSpecialization);
@@ -15,5 +14,6 @@ router.post("/edit/addlink",auth(),addLink);
 router.get("/getTopStudents",getTopStudents);
 router.get("/getTeachers", getTeachers);
 router.get("/teacher/:id", getTeacherById);
+router.get("/:id", auth(), getUserById);
 
 export default router;

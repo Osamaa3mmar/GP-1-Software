@@ -1,7 +1,6 @@
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { organizationModel } from "../../../DB/models/organaization/organaization.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
-import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import cloudinary from "../../utils/Claoudinary.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
 import { sequelize } from "../../../DB/Connection.js";

@@ -20,6 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import BusinessIcon from "@mui/icons-material/Business";
 import PersonIcon from "@mui/icons-material/Person";
 import VerifiedIcon from "@mui/icons-material/Verified";
+import axios from "axios";
 
 // Helper function to check if an object has a property
 const hasProperty = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
@@ -38,8 +39,12 @@ export default function HeroSearch() {
   const fetchTeachers = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:4545/user/getTeachers");
-      const data = await response.json();
+      const {data} = await axios.get("http://localhost:4545/user/getTeachers",{
+        headers:{
+          token: localStorage.getItem("token")
+        }
+      });
+      console.log(data);
       if (data.teachers) {
         setTeachers(data.teachers);
       }

@@ -2,8 +2,7 @@ import {Router} from 'express';
 import { organizationModel } from '../../../DB/models/organaization/organaization.js';
 import { userModel } from '../../../DB/models/UserModel/user.model.js';
 import { auth } from '../../middleware/auth.js';
-import { editOrgDescription, editOrgImages, editOrgName, getByOrganizationID, getinstructors , getTopOrganizations, getOrganizations} from './org.controller.js';
-import { editOrgDescription, editOrgImages, editOrgName, getByOrganizationID, getOrgCategories, getinstructors } from './org.controller.js';
+import { editOrgDescription, editOrgImages, editOrgName, getByOrganizationID, getinstructors , getTopOrganizations, getOrganizations, getOrgCategories} from './org.controller.js';
 import { fileUpload } from '../../utils/fileUpload.js';
 
 const router=Router();

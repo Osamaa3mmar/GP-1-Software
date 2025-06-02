@@ -61,7 +61,7 @@ export const createCourse=async (req,res)=>{
 
 
 export const getAdminCourses = async (req, res) => {
-  try {
+  // try {
     if (req.body.user.role == "owner") {
       const org = await organizationModel.findOne({
         where: { ownerId: req.body.user.id },
@@ -104,9 +104,9 @@ export const getAdminCourses = async (req, res) => {
     return res
       .status(403)
       .json({ message: "You are not authorized to view courses" });
-  } catch (error) {
-    return res.status(500).json({ message: "Server Error", error });
-  }
+  // } catch (error) {
+  //   return res.status(500).json({ message: "Server Error", error });
+  // }
 };
 
 

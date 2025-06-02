@@ -1,6 +1,5 @@
 import {Router} from 'express'
-import { allInCourse, allInOrg, enroll, getUserEnrolledCourses, getInProgressCoursesCount, getCompletedCoursesCount, getUserTotalPoints, getUserLearningHours } from './Enrollments.controller.js';
-import { allInCourse, allInOrg, enroll, getStudentStatistics } from './Enrollments.controller.js';
+import { allInCourse, allInOrg, enroll, getUserEnrolledCourses, getInProgressCoursesCount, getCompletedCoursesCount, getUserTotalPoints, getUserLearningHours, getStudentStatistics } from './Enrollments.controller.js';
 import { auth } from '../../middleware/auth.js';
 const router = Router();
 

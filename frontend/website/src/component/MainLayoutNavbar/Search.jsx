@@ -59,9 +59,10 @@ export default function CourseSearch() {
     const matchTopics = course.tags?.topics?.some((topic) =>
       topic.toLowerCase().includes(searchTerm)
     );
-    const matchCategory = course.tags?.category
-      ?.toLowerCase()
-      .includes(searchTerm);
+    const matchCategory = course.tags?.category.some((cat)=>{
+      return cat.toLowerCase().includes(searchTerm);
+    })
+    
     const matchTeacher = course.teacher?.username
       ?.toLowerCase()
       .includes(searchTerm);

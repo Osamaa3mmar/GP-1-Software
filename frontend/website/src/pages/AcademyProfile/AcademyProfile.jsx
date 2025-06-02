@@ -57,7 +57,7 @@ export default function AcademyProfile() {
           token: localStorage.getItem("token"),
         }
       });
-      
+      console.log(data);      
       // If we get here, the academy exists
       setAcademyExists(true);
       

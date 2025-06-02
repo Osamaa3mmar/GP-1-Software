@@ -1,6 +1,5 @@
 import {Router} from 'express';
-import { courseToggleStatus, createCourse, deleteCourse, editAll, getAdminCourses, getAllCourses, getallnotassigninorg, getDetailedCourseInfo, getFeaturedCourses, getTopCategories } from './course.controller.js';
-import { courseToggleStatus, createCourse, deleteCourse, editAll, getAdminCourses, getAllCourses, getallnotassigninorg, getDetailedCourseInfo, getTeacherCourses } from './course.controller.js';
+import { courseToggleStatus, createCourse, deleteCourse, editAll, getAdminCourses, getAllCourses, getallnotassigninorg, getDetailedCourseInfo, getFeaturedCourses, getTeacherCourses, getTopCategories } from './course.controller.js';
 import { fileUpload } from '../../utils/fileUpload.js';
 import { auth } from '../../middleware/auth.js';
 const router = Router();
