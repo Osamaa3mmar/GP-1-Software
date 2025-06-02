@@ -1,5 +1,6 @@
 import {Router} from 'express'
 import { allInCourse, allInOrg, enroll, getUserEnrolledCourses, getInProgressCoursesCount, getCompletedCoursesCount, getUserTotalPoints, getUserLearningHours } from './Enrollments.controller.js';
+import { allInCourse, allInOrg, enroll, getStudentStatistics } from './Enrollments.controller.js';
 import { auth } from '../../middleware/auth.js';
 const router = Router();
 
@@ -12,4 +13,5 @@ router.get("/user/inprogress/count",auth(),getInProgressCoursesCount);
 router.get("/user/completed/count",auth(),getCompletedCoursesCount);
 router.get("/user/points",auth(),getUserTotalPoints);
 router.get("/user/learning-hours",auth(),getUserLearningHours);
+router.get("/statistics/:orgId",auth(),getStudentStatistics);
 export default router;

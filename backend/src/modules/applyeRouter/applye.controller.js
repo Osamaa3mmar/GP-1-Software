@@ -43,6 +43,14 @@ export const setResumeStatusAccepted=async(req,res)=>{
         id: { [Op.ne]: resume.id }
     }
 });
+    const org=await organizationModel.findByPk(resume.orgId);
+    const user=await userModel.findByPk(resume.userId);
+    let message1=`${user.username} Become a Teacher In This Academy`;
+    let actionUrl1=`/dashboard/instructors`;
+    let message2=`Your Application To ${org.name} Has Been Accepted.`;
+    let actionUrl2=`/main/academy/profile/${org.id}`;
+    makeNotification("Accept","accept",message1,actionUrl1,org.id,false,null);
+    makeNotification("Accept","accept",message2,actionUrl2,null,false,user.id);
         return res.status(200).json({message:"success",resume});
     }catch(error){
         return res.status(500).json({message:"server error",error});
@@ -92,7 +100,10 @@ export const makeApplay=async(req,res)=>{
         }
         let message=`You have a new application to your academy.`;
         let actionUrl="/dashboard/instructors";
-        makeNotification("Application","applay",message,actionUrl,orgId,false,userId);
+        makeNotification("Application","applay",message,actionUrl,orgId,false,null);
+        let message2=`You have been applied to an academy.`;
+        let actionUrl2="/main/academy/profile/"+orgId;
+        makeNotification("Application","applay",message2,actionUrl2,null,false,userId);
         return res.status(200).json({message:"Applecation send successfully .",resume});
 
     }catch(error){

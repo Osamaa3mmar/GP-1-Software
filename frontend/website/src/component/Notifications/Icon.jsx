@@ -10,18 +10,29 @@ import AddIcon from '@mui/icons-material/Add';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
+import TaskIcon from '@mui/icons-material/Task';
+import DeleteIcon from '@mui/icons-material/Delete';
+import UpdateIcon from '@mui/icons-material/Update';
+import ClassIcon from '@mui/icons-material/Class';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import QuizIcon from '@mui/icons-material/Quiz';
 export default function Icon({ icon ,isRead}) {
   const iconMaps = {
     user: <PersonIcon sx={{ fontSize: 28, color: '#1976d2' }} />,
-    // Add more icon mappings if needed
-    applay:<InsertDriveFileIcon sx={{ fontSize: 28, color:"#00007c" }} />,
+    applay: <InsertDriveFileIcon sx={{ fontSize: 28, color:"#00007c" }} />,
     create: <AddCircleIcon sx={{ fontSize: 28, color:"#388e3c" }} />,
     edit: <EditIcon sx={{ fontSize: 28, color:"#f57c00" }} />,
     warning: <WarningAmberIcon sx={{ fontSize: 28, color:"#d32f2f" }} />,
-    add:<AddIcon sx={{ fontSize: 28, color:"#6a1b9a" }}/>,
-    unassign:<PersonOffIcon sx={{ fontSize: 28, color:"#d32f2f" }}/>,
-    assign:<BusinessCenterIcon sx={{ fontSize: 28, color:"#388e3c" }}/>,
-    kick:<WorkOffIcon sx={{ fontSize: 28, color:"red" }}/>
+    add: <AddIcon sx={{ fontSize: 28, color:"#6a1b9a" }}/>,
+    unassign: <PersonOffIcon sx={{ fontSize: 28, color:"#d32f2f" }}/>,
+    assign: <BusinessCenterIcon sx={{ fontSize: 28, color:"#388e3c" }}/>,
+    kick: <WorkOffIcon sx={{ fontSize: 28, color:"red" }}/>,
+    accept: <TaskIcon sx={{ fontSize: 28, color:"#28a745" }}/>,
+    delete: <DeleteIcon sx={{ fontSize: 28, color:"#d32f2f" }}/>,
+    update: <UpdateIcon sx={{ fontSize: 28, color:"#0288d1" }}/>,
+    course: <ClassIcon sx={{ fontSize: 28, color:"#6a1b9a" }}/>,
+    lesson: <MenuBookIcon sx={{ fontSize: 28, color:"#388e3c" }}/>,
+    quiz: <QuizIcon sx={{ fontSize: 28, color:"#f57c00" }}/>,
   };
   console.log(isRead)
   return (

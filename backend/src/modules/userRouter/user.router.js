@@ -6,6 +6,7 @@ const router = Router();
 
 
 router.get("/my-profile",auth(),getMyProfile);
+router.get("/:id", auth(), getUserById);
 
 router.post("/fullprofile",auth(),getFullProfile);
 router.post("/edit/specialization",auth(),editSpecialization);

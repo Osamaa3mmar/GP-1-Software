@@ -7,16 +7,17 @@ import enrollRouter from './modules/EnrollmentsRouter/Enrollments.router.js';
 import aiRouter from './modules/Ai/ai.router.js';
 import applyeRouter from './modules/applyeRouter/applye.router.js';
 import notificationsRouter from './modules/Notification/Notification.router.js'
-import questionRouter from './modules/questionRouter/question.router.js';
+import questionRouter from './modules/question/question.router.js';
 import quizRouter from './modules/quizRouter/quiz.router.js';
 import lessonRouter from './modules/lessonRouter/lesson.router.js';
 import couponRouter from './modules/couponRouter/coupon.router.js';
-import quizSubmissionRouter from './modules/quizSubmissionRouter/quizSubmission.router.js';
+import quizSubmissionRouter from './modules/quiz-submission/quiz-submission.router.js';
 import lessonSectionRouter from './modules/lessonSectionRouter/lessonSection.router.js';
 import categoryRouter from './modules/categoryRouter/category.router.js';
 import cartRouter from './modules/cartRouter/cart.router.js';
 import cartCourseRouter from './modules/cartCourseRouter/cartCourse.router.js';
 import topicRouter from './modules/topicRouter/topic.router.js';
+import messagingRouter from './modules/messaging/messaging.router.js';
 
 export const initApp=(app,express)=>{
     //here put use statment
@@ -28,7 +29,7 @@ export const initApp=(app,express)=>{
     app.use("/enrollments",enrollRouter);
     app.use("/ai",aiRouter);
     app.use("/notifications",notificationsRouter);
-    app.use("/qustion",questionRouter);
+    app.use("/question",questionRouter);
     app.use("/quiz",quizRouter);
     app.use("/lesson",lessonRouter);
     app.use("/copun",couponRouter);
@@ -39,4 +40,5 @@ export const initApp=(app,express)=>{
     app.use("/cartcourse",cartCourseRouter);
     app.use("/topics",topicRouter);
     app.use("/applye",applyeRouter);
+    app.use("/messaging", messagingRouter);
 }

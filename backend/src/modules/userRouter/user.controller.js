@@ -31,7 +31,7 @@ export const getFullProfile=async (req,res)=>{
         const {id}=req.body;
         console.log(id);
         const fullUser=await userModel.findByPk(id,{
-            attributes:['bio','links','files','specialization','username','profilePic'],
+            
             include:[{
                 model:enrollmentModel,
                 as:"enrollments",
@@ -40,7 +40,10 @@ export const getFullProfile=async (req,res)=>{
                     {
                         model:courseModel,
                         as:"course",
-                        attributes:['title','duration','thumbnail'],
+                        include:[{
+                            model:userModel,
+                            as:"teacher"
+                        }]
 
                     }
                 ]
@@ -125,6 +128,7 @@ export const editSpecialization=async(req,res)=>{
         });
     }
 }
+
 
 export const getTopStudents = async (req, res) => {
     try {
@@ -247,6 +251,46 @@ export const getTeacherById = async (req, res) => {
         return res.status(500).json({ 
             message: "Error retrieving teacher profile",
             error: error.message 
+        });
+    }
+}
+// Get user by ID for profile page
+export const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        if (!id) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+        
+        // Use a simpler query first to test if we can find the user
+        const user = await userModel.findByPk(id);
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        // Return basic user data without trying to include related models for now
+        // This ensures we at least return something even if relations have issues
+        return res.status(200).json({
+            message: "User found",
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                profilePic: user.profilePic,
+                role: user.role,
+                bio: user.bio,
+                specialization: user.specialization,
+                // Add any other fields you need
+                enrollments: [] // Empty array for now
+            }
+        });
+    } catch (error) {
+        console.error("Error getting user by ID:", error);
+        return res.status(500).json({ 
+            message: "Error fetching user data", 
+            error: error.message || error 
         });
     }
 }

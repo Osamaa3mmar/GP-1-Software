@@ -1,6 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../Connection.js";
 import { courseModel } from "../CourseModel/course.model.js"; // تأكد من المسار
+import { lessonModel } from "../Lessons/Lesson.js";
+import { lessonSectionModel } from "../Section/Section.modal.js";
 
 export const quizModel = sequelize.define('Quiz', {
   id: {
@@ -19,6 +21,18 @@ export const quizModel = sequelize.define('Quiz', {
   courseId: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  lessonId: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  sectionId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'LessonSections',
+      key: 'id'
+    }
   },
   duration: {
     type: DataTypes.INTEGER, // in minutes
@@ -49,4 +63,27 @@ courseModel.hasMany(quizModel, {
 quizModel.belongsTo(courseModel, {
   as: "course",
   foreignKey: "courseId"
+});
+
+// Relationship with lessons
+lessonModel.hasOne(quizModel, {
+  as: "quiz",
+  foreignKey: "lessonId"
+});
+quizModel.belongsTo(lessonModel, {
+  as: "lesson",
+  foreignKey: "lessonId"
+});
+
+// Define relationship with Section model
+// A section can have many quizzes
+lessonSectionModel.hasMany(quizModel, {
+  as: "quizzes",
+  foreignKey: "sectionId"
+});
+
+// A quiz belongs to a section
+quizModel.belongsTo(lessonSectionModel, {
+  as: "section",
+  foreignKey: "sectionId"
 });

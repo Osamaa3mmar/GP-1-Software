@@ -1,7 +1,6 @@
-
 import { DataTypes } from "sequelize";
 import { sequelize } from "../../Connection.js";
-import { quizModel } from "../quizes/Quiz.js";
+
 export const lessonSectionModel = sequelize.define("LessonSection", {
   id: {
     type: DataTypes.INTEGER,
@@ -27,27 +26,13 @@ export const lessonSectionModel = sequelize.define("LessonSection", {
   order: {
     type: DataTypes.INTEGER,
     allowNull: true
-  },quizId: {
-  type: DataTypes.INTEGER,
-  allowNull: true,
-  references: {
-    model: quizModel, // ✅ الأفضل استخدام الكائن نفسه
-    key: 'id'
   },
-  onDelete: 'SET NULL',
-  onUpdate: 'CASCADE'
-}
+  quizId: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  }
 }, {
   timestamps: true
 });
 
-lessonSectionModel.belongsTo(quizModel, {
-  as: "quiz",
-  foreignKey: "quizId"
-});
-
-// كويز ممكن يكون له سكشن (إذا كان يظهر في مكان واحد فقط)
-quizModel.hasOne(lessonSectionModel, {
-  as: "section",
-  foreignKey: "quizId"
-});
+// Relationships with Quiz model will be defined in Quiz.js to avoid circular dependencies

@@ -1,13 +1,19 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import RealProfileScreen from './src/Screens/RealProfileScreen';
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import Test from './src/Screens/Test';
 import { DefaultTheme, PaperProvider } from 'react-native-paper';
 
+// Import screens
+import RealProfileScreen from './src/Screens/RealProfileScreen';
+import Test from './src/Screens/Test';
+import LoginScreen from './src/Screens/LoginScreen';
+import HomeScreen from './src/Screens/HomeScreen';
+import SplashScreen from './src/Screens/SplashScreen';
+
 export default function App() {
-  const Stack=createNativeStackNavigator();
+  const Stack = createNativeStackNavigator();
+  
+  // Deep linking configuration
   const linking = {
     prefixes: ['myapp://', 'https://myapp.com'],
     config: {
@@ -25,19 +31,44 @@ export default function App() {
     },
   };
   
-  const ProfileLayout=()=>{
+  // Main navigation stack
+  const MainNavigator = () => {
     return (
-      <Stack.Navigator initialRouteName='Test'>
-        <Stack.Screen name='Profile' options={{headerShown:false}} component={RealProfileScreen}></Stack.Screen>
-        <Stack.Screen name='Test' options={{headerShown:false}} component={Test}></Stack.Screen>
+      <Stack.Navigator initialRouteName='Splash'>
+        <Stack.Screen 
+          name='Splash' 
+          component={SplashScreen} 
+          options={{headerShown: false}}
+        />
+        <Stack.Screen 
+          name='Login' 
+          component={LoginScreen} 
+          options={{headerShown: false}}
+        />
+        <Stack.Screen 
+          name='Home' 
+          component={HomeScreen} 
+          options={{title: 'Thuraa Dashboard'}}
+        />
+        <Stack.Screen 
+          name='Profile' 
+          component={RealProfileScreen} 
+          options={{headerShown: false}}
+        />
+        <Stack.Screen 
+          name='Test' 
+          component={Test} 
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
-    )
-  }
+    );
+  };
+  
   return (
-    <PaperProvider theme={DefaultTheme }>
-    <NavigationContainer linking={linking}>
-      <ProfileLayout/>
-    </NavigationContainer>
+    <PaperProvider theme={DefaultTheme}>
+      <NavigationContainer linking={linking}>
+        <MainNavigator />
+      </NavigationContainer>
     </PaperProvider>
-  )
+  );
 }

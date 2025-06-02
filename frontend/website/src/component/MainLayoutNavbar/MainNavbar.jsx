@@ -60,7 +60,7 @@ position:"sticky"
           >
             <Cart />
             <Notification  />
-            <Chat/>
+            {/* <Chat/> */}
             <ProfileMenu />
           </Box>
         </Stack>

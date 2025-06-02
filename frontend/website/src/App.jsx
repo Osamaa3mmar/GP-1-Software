@@ -40,6 +40,11 @@ import UserNotificationsContextProvider from "./Context/NotificationsUserContext
 import CoursesAdminTemp from "./pages/AdminPages/CoursesAdminTemp";
 import ForgetPassword from "./pages/ForgetPassword/ForgetPAssword";
 import ClassroomsListPage from "./pages/UserClassRooms/ClassroomsListPage";
+import ClassroomLayout from "./layouts/classroom/ClassroomLayout";
+import QuizeMaker from "./pages/QuizeMaker/QuizeMaker";
+import Quiz from "./pages/Quiz/Quiz";
+import Lessons from "./pages/Lessons/Lessons";
+import Lesson from "./pages/Lesson/Lesson";
 import Checkout from "./pages/Cart/Checkout";
 import { CourseProvider } from './Context/CourseContext';
 export default function App() {
@@ -138,7 +143,12 @@ export default function App() {
           element: <MainPage />,
         },{
           path:"profile",
-          element:<Profile/>,
+          element:<Profile/>
+        },
+        {
+          path:"profile/:id",
+          element:<Profile/>
+          
         },{
           path:"profile/user/:id?",
           element:<RealProfile/>,
@@ -157,16 +167,39 @@ export default function App() {
         },{
           path:'course/:id',
           element:<CourseDetails/>
-        },{
-          path:"classrooms",
-          element:<ClassroomsListPage/>,
-          children:[
-            {path:":id",element:<ClassRoomsUser/>}
+        }, {
+          path: "classrooms",
+          children: [
+            {
+              index: true,
+              element: <ClassroomsListPage />
+            },
+            {
+              path: ":courseId/lessons",
+              children: [
+                {
+                  index: true,
+                  element: <Lessons />
+                },
+                {
+                  path: "lesson/:lessonId",
+                  element: <Lesson />
+                }
+              ]
+            }
           ]
         },
         {
           path:"academy/profile/:id",
           element:<AcademyProfile />
+        },
+        {
+          path:"profile",
+          element:<Profile/>
+        },
+        {
+          path:"profile/:id",
+          element:<Profile/>
         },
         {
           path:"instructor/profile/:id",
@@ -199,7 +232,24 @@ export default function App() {
         { path: "reports", element: <ReportsAdmin /> },
         { path: "notifications", element: <Notifications type={"org"}/> },
       ],
-    },
+    },{
+      path:"classroom",
+      element:(<LoginCheck>
+         <UserContextProvider>
+          <ClassroomLayout/>
+          </UserContextProvider>
+          </LoginCheck>),
+      children:[
+        {
+          path:"quizmaker/:quizId",
+          element:<QuizeMaker/>
+        },
+        {
+          path:"quiz/:quizId",
+          element:<Quiz/>
+        }
+      ]
+    }
   ]);
   return (
     <ThemeProvider theme={theme}>

@@ -8,10 +8,6 @@ const transporter = nodemailer.createTransport({
       pass: "wxxo lshy ktws ktks",
     },
   });
-
-
-
-
   const info = await transporter.sendMail({
     from: '"Thuraa" <osama1111222@gmail.com>',
     to, 

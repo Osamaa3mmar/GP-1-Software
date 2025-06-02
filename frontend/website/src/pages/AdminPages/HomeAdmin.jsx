@@ -62,8 +62,8 @@ if (user?.orgId) {
       <Box sx={{display:"flex",alignItems:"center",justifyContent:"center",width:"100%",paddingTop:"150px",height:"500px"}}><CircularProgress size="150px" /></Box>
       :
       <>
-      <Profile edit={edit}  setOrg={setOrg} save={setOnSave} name={org?.name} profile={org?.profile} background={org?.backGroundImage} setModal={setModal} setTitle={setTitle} setContent={setContent}/>
-      <Description edit={edit} setOrg={setOrg} save={setOnSave} description={org?.description} setModal={setModal} setTitle={setTitle} setContent={setContent}/>
+      <Profile edit={edit} setOrg={setOrg} save={setOnSave} name={org?.name} profile={org?.profile} background={org?.backGroundImage} setModal={setModal} setTitle={setTitle} setContent={setContent}/>
+      <Description edit={edit} setOrg={setOrg} save={setOnSave} description={org?.description} setModal={setModal} setTitle={setTitle} setContent={setContent} orgId={org?.id || id}/>
       <Tabs/>
       </>
       

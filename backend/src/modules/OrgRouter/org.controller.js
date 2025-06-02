@@ -1,6 +1,7 @@
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { organizationModel } from "../../../DB/models/organaization/organaization.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
+import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import cloudinary from "../../utils/Claoudinary.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
 import { sequelize } from "../../../DB/Connection.js";
@@ -38,6 +39,48 @@ export const getinstructors=async(req,res)=>{
     const {id}=req.params;
     
     return res.status(200).json({message:req.body});
+}
+
+export const getOrgCategories = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Find all courses for this organization
+        const courses = await courseModel.findAll({
+            where: { orgId: id },
+            attributes: ['tags']
+        });
+        
+        if (!courses || courses.length === 0) {
+            return res.status(200).json({ 
+                message: "No courses found for this organization", 
+                categories: [] 
+            });
+        }
+        
+        // Extract unique categories from all courses' tags
+        const allCategories = new Set();
+        
+        courses.forEach(course => {
+            if (course.tags && typeof course.tags === 'object') {
+                // Extract category from tags if it exists
+                const categoryArray = course.tags.category || [];
+                if (Array.isArray(categoryArray)) {
+                    categoryArray.forEach(category => {
+                        if (category) allCategories.add(category);
+                    });
+                }
+            }
+        });
+        
+        return res.status(200).json({
+            message: "Categories retrieved successfully",
+            categories: Array.from(allCategories)
+        });
+    } catch (error) {
+        console.error("Error getting organization categories:", error);
+        return res.status(500).json({ message: "Server error", error });
+    }
 }
 
 

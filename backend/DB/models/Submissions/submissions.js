@@ -25,6 +25,41 @@ export const quizSubmissionModel = sequelize.define('QuizSubmission', {
     allowNull: true,
     defaultValue: 0
   },
+  // Timing & Duration
+  startedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  submittedAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  timeSpent: {
+    type: DataTypes.INTEGER, // in seconds
+    allowNull: true
+  },
+  
+  // Status Tracking
+  status: {
+    type: DataTypes.ENUM('in_progress', 'submitted', 'graded', 'expired'),
+    defaultValue: 'in_progress'
+  },
+  
+  // Grading Details
+  maxScore: {
+    type: DataTypes.FLOAT,
+    allowNull: true
+  },
+  passingScore: {
+    type: DataTypes.FLOAT,
+    allowNull: true
+  },
+  isPassed: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  
   feedback: {
     type: DataTypes.TEXT,
     allowNull: true
@@ -37,7 +72,8 @@ export const quizSubmissionModel = sequelize.define('QuizSubmission', {
   submittedAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
-  }
+  },
+  
 }, {
   timestamps: true
 });
