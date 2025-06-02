@@ -23,7 +23,6 @@ import { Delete } from "@mui/icons-material";
 export default function QustionCardMaker({
   index,
   reload,
-  order,
   id,
   questionText,
   options,
@@ -52,7 +51,6 @@ export default function QustionCardMaker({
   const theme = useTheme();
   const save = async (formData) => {
     try {
-      // Validate required fields
       if (!formData.questionText || formData.questionText.trim() === '') {
         toast.warning("Question text is required");
         return;

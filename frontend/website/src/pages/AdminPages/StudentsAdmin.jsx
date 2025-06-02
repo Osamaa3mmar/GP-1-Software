@@ -90,7 +90,6 @@ export default function StudentsAdmin() {
   // Enhanced color palette for charts
   const COLORS = [
     theme.palette.primary.main, 
-    theme.palette.secondary.main, 
     '#0088FE', 
     '#00C49F', 
     '#FFBB28', 
@@ -711,7 +710,7 @@ export default function StudentsAdmin() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis 
                         dataKey="name" 
-                        tick={{ fill: theme.palette.text.secondary, fontSize: 12 }}
+                        tick={{ fill:"black", fontSize: 12 }}
                         axisLine={{ stroke: '#e0e0e0' }}
                         tickLine={{ stroke: '#e0e0e0' }}
                       />
@@ -804,7 +803,7 @@ export default function StudentsAdmin() {
                           {stats.courseDistribution && stats.courseDistribution.map((entry, index) => (
                             <Cell 
                               key={`cell-${index}`} 
-                              fill={COLORS[index % COLORS.length]} 
+                              fill={COLORS[Math.floor(index % COLORS.length)]} 
                               stroke="white"
                               strokeWidth={2}
                             />

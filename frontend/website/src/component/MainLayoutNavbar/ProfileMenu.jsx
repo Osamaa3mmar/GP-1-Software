@@ -24,7 +24,6 @@ export default function ProfileMenu() {
     }
 
     const {user}=useContext(UserContext);
-    console.log(user);
   return (<>
   <Tooltip title="Profile">
     <IconButton 

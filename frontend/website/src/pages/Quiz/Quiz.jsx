@@ -43,7 +43,7 @@ export default function Quiz() {
       navigate('/quizzes');
     }
   }, [quizId, navigate]);
-  
+
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});

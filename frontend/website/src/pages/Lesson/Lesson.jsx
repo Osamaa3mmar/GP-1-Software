@@ -89,26 +89,19 @@ export default function Lesson() {
   const [copiedCode, setCopiedCode] = useState(null);
   const [generatingQuiz, setGeneratingQuiz] = useState(false);
   const [quizId, setQuizId] = useState(null);
-
-  // Dialog states
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [currentSection, setCurrentSection] = useState(null);
-
-  // New section form state
   const [newSectionTitle, setNewSectionTitle] = useState('');
   const [newSectionType, setNewSectionType] = useState('text');
   const [newSectionContent, setNewSectionContent] = useState('');
   const [newSectionMediaUrl, setNewSectionMediaUrl] = useState('');
   const [newSectionImage, setNewSectionImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-
-  // Menu state
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [selectedSectionId, setSelectedSectionId] = useState(null);
 
-  // Fetch lesson and sections data
   const fetchLessonData = async () => {
     setLoading(true);
     setError(null);
@@ -123,21 +116,6 @@ export default function Lesson() {
       setAllowEdit(data.control);
       
       // Check if there's a quiz for this lesson
-      try {
-        const quizResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/quiz/lesson/${lessonId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        
-        if (quizResponse.data && quizResponse.data.quizId) {
-          setQuizId(quizResponse.data.quizId);
-          console.log('Found quiz ID:', quizResponse.data.quizId);
-        }
-      } catch (quizError) {
-        // No quiz found or error, which is fine - we'll just not set the quiz ID
-        console.log('No quiz found for this lesson or error:', quizError);
-      }
       
       setLoading(false);
     } catch (error) {
@@ -147,7 +125,6 @@ export default function Lesson() {
     }
   };
 
-  // Handle opening the menu
   const handleMenuOpen = (event, sectionId) => {
     setMenuAnchorEl(event.currentTarget);
     setSelectedSectionId(sectionId);
@@ -290,10 +267,8 @@ export default function Lesson() {
         }
       });
 
-      // Show success message with toast
       toast.success('Section updated successfully');
 
-      // Refresh the sections list
       fetchLessonData();
     } catch (error) {
       console.error('Error updating section:', error);
@@ -305,23 +280,18 @@ export default function Lesson() {
     }
   };
 
-  // Handle deleting a section
   const handleDeleteSection = async () => {
-    // Close the dialog
     setOpenDeleteDialog(false);
     setOperationLoading(true);
 
     try {
-      // Make API call to delete the section
       await axios.delete('http://localhost:4545/sections/delete', {
         headers: { token: localStorage.getItem('token') },
-        data: { id: currentSection.id } // Send data in the request body for DELETE
+        data: { id: currentSection.id } 
       });
 
-      // Show success message with toast
       toast.success('Section deleted successfully');
 
-      // Refresh the sections list
       fetchLessonData();
     } catch (error) {
       console.error('Error deleting section:', error);
@@ -332,7 +302,6 @@ export default function Lesson() {
     }
   };
 
-  // Navigate back to lessons list
   const navigateBack = () => {
     navigate(`/main/classrooms/${courseId}/lessons`);
   };
@@ -520,52 +489,53 @@ export default function Lesson() {
                 color="primary"
                 startIcon={<AutoFixHighIcon />}
                 onClick={() => {
-                  // Check if a quiz already exists for this lesson
                   const checkQuiz = async () => {
                     try {
-                      // First check if there's an existing quiz for this lesson
-                      const response = await axios.get(`http://localhost:4545/quiz/lesson/${lessonId}`, {
+                      const response = await axios.get(`http://localhost:4545/quiz/section/`+section.id, {
                         headers: {
                           token: localStorage.getItem('token')
                         }
                       });
-                      
-                      if (response.data && response.data.quizId) {
-                        // Quiz exists, navigate to the appropriate page based on user role
-                        const quizId = response.data.quizId;
-                        
-                        // If user is teacher or admin, go to quiz maker, otherwise go to quiz page
+                      console.log(response.data.quiz.id)
+                      if (response.data && response.data.quiz.id) {
+                        console.log("osama");
+                        const quizId = response.data.quiz.id;
                         if (allowEdit) {
+                        
+
                           navigate(`/classroom/quizmaker/${quizId}`);
                         } else {
                           navigate(`/classroom/quiz/${quizId}`);
                         }
-                      } else {
-                        // No quiz exists yet, create a basic quiz
-                        const createResponse = await axios.post(`http://localhost:4545/quiz/generate`, {
-                          lessonId,
-                          title: `Quiz for ${lesson.title}`,
-                          description: `Test your knowledge of ${lesson.title}`
-                        }, {
-                          headers: {
-                            token: localStorage.getItem('token')
-                          }
-                        });
+                      } 
+                      // else {
+                      //   console.log("osama");
+                      //   // No quiz exists yet, create a basic quiz
+                      //   const createResponse = await axios.post(`http://localhost:4545/quiz/generate`, {
+                      //     lessonId,
+                      //     title: `Quiz for ${lesson.title}`,
+                      //     description: `Test your knowledge of ${lesson.title}`
+                      //   }, {
+                      //     headers: {
+                      //       token: localStorage.getItem('token')
+                      //     }
+                      //   });
+                      //   console.log("osama");
                         
-                        if (createResponse.data && createResponse.data.quizId) {
-                          const newQuizId = createResponse.data.quizId;
-                          toast.success('Quiz created successfully!');
+                      //   if (createResponse.data && createResponse.data.quizId) {
+                      //     const newQuizId = createResponse.data.quizId;
+                      //     toast.success('Quiz created successfully!');
                           
-                          // Navigate to quiz maker for teachers/admins
-                          if (allowEdit) {
-                            navigate(`/classroom/quizmaker/${newQuizId}`);
-                          } else {
-                            navigate(`/classroom/quiz/${newQuizId}`);
-                          }
-                        } else {
-                          toast.error('Failed to create quiz');
-                        }
-                      }
+                      //     // Navigate to quiz maker for teachers/admins
+                      //     if (allowEdit) {
+                      //       navigate(`/classroom/quizmaker/${newQuizId}`);
+                      //     } else {
+                      //       navigate(`/classroom/quiz/${newQuizId}`);
+                      //     }
+                      //   } else {
+                      //     toast.error('Failed to create quiz');
+                      //   }
+                      // }
                     } catch (error) {
                       console.error('Error checking/creating quiz:', error);
                       toast.error('Error accessing quiz');
@@ -597,7 +567,7 @@ export default function Lesson() {
                   const checkQuiz = async () => {
                     try {
                       // First check if there's an existing quiz for this lesson
-                      const response = await axios.get(`http://localhost:4545/quiz/lesson/${lessonId}`, {
+                      const response = await axios.get(`http://localhost:4545/quiz/section/`+section.id, {
                         headers: {
                           token: localStorage.getItem('token')
                         }
@@ -762,7 +732,8 @@ export default function Lesson() {
           </Paper>
 
           {/* Sections */}
-          {sections.length === 0 ? (
+          {sections.length === 0 ? 
+          (
             <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 2 }}>
               <Box sx={{ mb: 2 }}>
                 <Typography variant="h6" color="text.secondary" gutterBottom>
@@ -906,8 +877,6 @@ export default function Lesson() {
                       </IconButton>
                     )}
                   </Box>
-
-                  {/* Section content with padding */}
                   <Box sx={{ p: 3 }}>
                     {renderSectionContent(section)}
                   </Box>

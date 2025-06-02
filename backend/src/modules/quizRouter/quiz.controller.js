@@ -28,7 +28,6 @@ export const generateQuiz = async (req, res) => {
       return res.status(404).json({ message: "Lesson not found" });
     }
 
-    // Check if user is authorized (teacher or organization owner)
     const isTeacher = lesson.course?.teacherId === userId;
     const isOrgOwner = lesson.course?.organization?.userId === userId;
 

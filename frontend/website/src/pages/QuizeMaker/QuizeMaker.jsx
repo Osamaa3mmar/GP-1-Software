@@ -11,10 +11,10 @@ import {
   CircularProgress,
   Fade,
   Alert,
-  Snackbar,
-  Card,
-  CardContent,
-  CardActions,
+  // Snackbar,
+  // Card,
+  // CardContent,
+  // CardActions,
   Modal,
   TextField,
   FormControl,
@@ -22,7 +22,7 @@ import {
   Select,
   MenuItem,
   IconButton,
-  LinearProgress
+  // LinearProgress
 } from "@mui/material";
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import EditIcon from '@mui/icons-material/Edit';
@@ -33,8 +33,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import CloseIcon from '@mui/icons-material/Close';
-import TimerIcon from '@mui/icons-material/Timer';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+// import TimerIcon from '@mui/icons-material/Timer';
+// import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QustionCardMaker from "../../component/Qustion/QustionCardMaker";
@@ -74,9 +74,9 @@ export default function QuizeMaker() {
     timeLimit: 30 // Default time limit in minutes
   });
   
-  // Timer state
-  const [timeRemaining, setTimeRemaining] = useState(null);
-  const [timerActive, setTimerActive] = useState(false);
+  // // Timer state
+  // const [timeRemaining, setTimeRemaining] = useState(null);
+  // const [timerActive, setTimerActive] = useState(false);
   const [submissionId, setSubmissionId] = useState(null);
 
   // State for AI question generation modal
@@ -144,11 +144,8 @@ export default function QuizeMaker() {
           }
         }
       );
-      console.log(response.data)
-      // Close modal and show success message
+      console.log(response.data);
       handleCloseAIModal();
-      
-      // Show appropriate success message based on number of questions generated
       if (aiQuestionCount > 1) {
         toast.success(`${aiQuestionCount} questions generated successfully!`, {
           position: "bottom-left",
@@ -158,15 +155,10 @@ export default function QuizeMaker() {
           position: "bottom-left",
         });
       }
-      
-      // Reset form fields for next use
       setAiQuestionTopic('');
       setAiQuestionDetails('');
-      
-      // Refresh questions list to include the new AI-generated questions
       getAllQuestions();
     } catch (error) {
-      console.error("Error generating question:", error);
       toast.error(error.response?.data?.message || "Failed to generate question", {
         position: "bottom-left",
       });
@@ -175,55 +167,55 @@ export default function QuizeMaker() {
   }
 
   // Format time for display (mm:ss)
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
+  // const formatTime = (seconds) => {
+  //   const minutes = Math.floor(seconds / 60);
+  //   const remainingSeconds = seconds % 60;
+  //   return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  // };
 
   // Start the quiz timer
-  const startQuizTimer = async () => {
-    try {
-      // Call the backend to start the quiz and create a submission
-      const response = await axios.get(`http://localhost:4545/quiz-submission/start/${quizId}`, {
-        headers: {
-          token: localStorage.getItem("token")
-        }
-      });
+  // const startQuizTimer = async () => {
+  //   try {
+  //     // Call the backend to start the quiz and create a submission
+  //     const response = await axios.get(`http://localhost:4545/quiz-submission/start/${quizId}`, {
+  //       headers: {
+  //         token: localStorage.getItem("token")
+  //       }
+  //     });
       
-      // Set the submission ID for saving answers
-      setSubmissionId(response.data.submission.id);
+  //     // Set the submission ID for saving answers
+  //     setSubmissionId(response.data.submission.id);
       
-      // Set the time limit from the quiz data
-      const timeLimit = response.data.quiz.timeLimit || 30; // Default to 30 minutes
+  //     // Set the time limit from the quiz data
+  //     const timeLimit = response.data.quiz.timeLimit || 30; // Default to 30 minutes
       
-      // If there's already a submission in progress, use the remaining time
-      if (response.data.timeRemaining) {
-        setTimeRemaining(response.data.timeRemaining);
-      } else {
-        // Otherwise, set the full time limit
-        setTimeRemaining(timeLimit * 60); // Convert minutes to seconds
-      }
+  //     // If there's already a submission in progress, use the remaining time
+  //     if (response.data.timeRemaining) {
+  //       setTimeRemaining(response.data.timeRemaining);
+  //     } else {
+  //       // Otherwise, set the full time limit
+  //       setTimeRemaining(timeLimit * 60); // Convert minutes to seconds
+  //     }
       
-      // Update quiz info
-      setQuizInfo(prev => ({
-        ...prev,
-        timeLimit: timeLimit
-      }));
+  //     // Update quiz info
+  //     setQuizInfo(prev => ({
+  //       ...prev,
+  //       timeLimit: timeLimit
+  //     }));
       
-      // Start the timer
-      setTimerActive(true);
+  //     // Start the timer
+  //     setTimerActive(true);
       
-      toast.info("Quiz timer started", {
-        position: "bottom-left",
-      });
-    } catch (error) {
-      console.error("Error starting quiz timer:", error);
-      toast.error(error.response?.data?.message || "Failed to start quiz timer", {
-        position: "bottom-left",
-      });
-    }
-  };
+  //     toast.info("Quiz timer started", {
+  //       position: "bottom-left",
+  //     });
+  //   } catch (error) {
+  //     console.error("Error starting quiz timer:", error);
+  //     toast.error(error.response?.data?.message || "Failed to start quiz timer", {
+  //       position: "bottom-left",
+  //     });
+  //   }
+  // };
 
   // Save an answer to the backend
   const saveAnswer = async (questionId, selectedAnswer) => {
@@ -244,7 +236,6 @@ export default function QuizeMaker() {
       });
       
       // No need for a toast here as it would be distracting
-      console.log(`Answer saved for question ${questionId}`);
     } catch (error) {
       console.error("Error saving answer:", error);
       // Only show an error toast if it's a serious issue
@@ -257,31 +248,31 @@ export default function QuizeMaker() {
   };
 
   // Timer effect
-  useEffect(() => {
-    let timer;
-    if (timerActive && timeRemaining !== null && timeRemaining > 0) {
-      timer = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            // Auto-submit when time expires
-            toast.warning("Time's up! Your quiz is being submitted.", {
-              position: "bottom-center",
-            });
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else if (timeRemaining === 0 && timerActive) {
-      setTimerActive(false);
-      // Auto-submit logic would go here
-    }
+  // useEffect(() => {
+  //   let timer;
+  //   if (timerActive && timeRemaining !== null && timeRemaining > 0) {
+  //     timer = setInterval(() => {
+  //       setTimeRemaining(prev => {
+  //         if (prev <= 1) {
+  //           clearInterval(timer);
+  //           // Auto-submit when time expires
+  //           toast.warning("Time's up! Your quiz is being submitted.", {
+  //             position: "bottom-center",
+  //           });
+  //           return 0;
+  //         }
+  //         return prev - 1;
+  //       });
+  //     }, 1000);
+  //   } else if (timeRemaining === 0 && timerActive) {
+  //     setTimerActive(false);
+  //     // Auto-submit logic would go here
+  //   }
     
-    return () => {
-      if (timer) clearInterval(timer);
-    };
-  }, [timerActive, timeRemaining]);
+  //   return () => {
+  //     if (timer) clearInterval(timer);
+  //   };
+  // }, [timerActive, timeRemaining]);
 
   // Handle question deletion
   const handleDeleteQuestion = async (questionId, questionIndex) => {
@@ -403,7 +394,6 @@ export default function QuizeMaker() {
       if (error.response) {
         // If we get a 404 or 500 status, the quiz doesn't exist in the database
         if (error.response.status === 404 || error.response.status === 500) {
-          console.log("Quiz not found in database");
           return false;
         }
       }
@@ -426,22 +416,14 @@ export default function QuizeMaker() {
           position: "bottom-left",
         });
       }
-      
-      // Check if quiz exists and fetch questions in one step
       const quizExists = await checkQuizExists();
       if (!quizExists) {
-        // If quiz doesn't exist, the checkQuizExists function will have already set the appropriate error state
         setLoading(false);
         return;
       }
-      
-      // No need to fetch questions again since checkQuizExists already did that
-      // and updated the state with the questions and totalMarks
       setError(null);
     } catch (error) {
       console.error("Error fetching questions:", error);
-      
-      // Error handling is already done in checkQuizExists
       if (!error.response || error.response.status !== 404) {
         setError("Failed to load questions. Please try again.");
         toast.error("Failed to load questions");
@@ -476,7 +458,6 @@ export default function QuizeMaker() {
         <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
       ) : (
         <>
-          {/* Header with back button and timer */}
           <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Button
               variant="outlined"
@@ -485,46 +466,8 @@ export default function QuizeMaker() {
             >
               Back
             </Button>
-            <Typography variant="h4" component="h1">
-              {quizInfo.title}
-            </Typography>
             
-            {/* Timer display */}
-            {timeRemaining !== null ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AccessTimeIcon color={timeRemaining < 60 ? "error" : "primary"} />
-                <Typography 
-                  variant="h6" 
-                  color={timeRemaining < 60 ? "error" : "primary"}
-                  fontWeight="bold"
-                >
-                  {formatTime(timeRemaining)}
-                </Typography>
-              </Box>
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<TimerIcon />}
-                onClick={startQuizTimer}
-              >
-                Start Timer ({quizInfo.timeLimit} min)
-              </Button>
-            )}
           </Box>
-          
-          {/* Timer progress bar */}
-          {timeRemaining !== null && quizInfo.timeLimit && (
-            <Box sx={{ width: '100%', mb: 2 }}>
-              <LinearProgress 
-                variant="determinate" 
-                value={(timeRemaining / (quizInfo.timeLimit * 60)) * 100} 
-                color={timeRemaining < 60 ? "error" : "primary"}
-                sx={{ height: 8, borderRadius: 5 }}
-              />
-            </Box>
-          )}
-
           {/* Quiz info card */}
           <Paper 
             elevation={3} 
@@ -589,16 +532,12 @@ export default function QuizeMaker() {
                       key={question.id || index} 
                       {...question} 
                       onDelete={(questionId, questionIndex) => {
-                        // Handle question deletion
                         handleDeleteQuestion(questionId, questionIndex);
                       }}
                       onChange={(e, questionIndex, field, value) => {
-                        // Update the question in the questions array
                         const updatedQuestions = [...questions];
                         updatedQuestions[questionIndex][field] = value;
                         setQuestions(updatedQuestions);
-                        
-                        // If this is an answer selection and we have an active submission, save it to the backend
                         if (field === 'selectedAnswer' && submissionId) {
                           const questionId = updatedQuestions[questionIndex].id;
                           if (questionId) {
