@@ -31,19 +31,12 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import SendIcon from "@mui/icons-material/Send";
 import { toast } from "react-toastify";
+import { Home, Password, RemoveRedEye } from "@mui/icons-material";
 
 export default function Quiz() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { quizId } = useParams();
-  
-  // Redirect to quizzes page if no quiz ID is provided
-  useEffect(() => {
-    if (!quizId) {
-      navigate('/quizzes');
-    }
-  }, [quizId, navigate]);
-
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -55,6 +48,7 @@ export default function Quiz() {
     totalMarks: 0,
     timeLimit: 30, // minutes
   });
+  const [isSubmited, setIsSubmited] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(30 * 60); // seconds
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
@@ -68,11 +62,9 @@ export default function Quiz() {
         token: localStorage.getItem("token")
       }
     });
-    
     if(data.taken){
       setIsTaken(true);
-      
-      // If there's submission data available, store it
+      console.log(data);
       if(data.submission){
         setPreviousSubmission(data.submission);
       }
@@ -221,33 +213,22 @@ export default function Quiz() {
         return;
       }
       
-      console.log("Questions:", questions);
-      console.log("Answers:", answers);
+    
       
-      // Calculate the score locally to avoid backend issues
       let score = 0;
       let correctAnswersCount = 0;
       
       try {
-        // Check each answer against the correct answer
         Object.entries(answers).forEach(([index, value]) => {
           const question = questions[parseInt(index)];
-          console.log(`Checking answer for question ${index}:`, question);
-          console.log(`User answer: ${value}, Correct answer: ${question?.correctAnswer}`);
+        
           
           if (question && value === question.correctAnswer) {
             const marks = parseInt(question.marks) || 0;
-            console.log(`Correct! Adding ${marks} marks`);
             score += marks;
             correctAnswersCount++;
           }
         });
-        
-        console.log("Final score:", score);
-        console.log("Correct answers:", correctAnswersCount);
-        console.log("Total marks:", quizInfo.totalMarks);
-        
-        // Update UI with results
         setQuizSubmitted(true);
         setQuizResult({
           score: score,
@@ -256,8 +237,6 @@ export default function Quiz() {
           totalQuestions: questions.length,
           percentage: quizInfo.totalMarks ? Math.round((score / quizInfo.totalMarks) * 100) : 0
         });
-        
-        // Try to submit to backend, but don't block the UI
         try {
           const submission = {
             quizId: parseInt(quizId),
@@ -265,10 +244,9 @@ export default function Quiz() {
               questionId: questions[parseInt(index)].id,
               selectedAnswer: value
             })),
-            timeSpent: quizInfo.timeLimit * 60 - timeRemaining
+            
           };
           
-          console.log("Sending submission to backend:", submission);
           
           await axios.post("http://localhost:4545/submissions/submit", submission, {
             headers: {
@@ -276,10 +254,8 @@ export default function Quiz() {
             }
           });
           
-          console.log("Backend submission successful");
         } catch (submitError) {
           console.error("Backend submission failed, but quiz results are displayed:", submitError);
-          // We already calculated and displayed results, so no need to show an error
         }
       } catch (calculationError) {
         console.error("Error calculating quiz results:", calculationError);
@@ -295,59 +271,24 @@ export default function Quiz() {
       setSubmitting(false);
     }
   };
-  const [isSubmited, setIsSubmited] = useState(false);
   // Format time (seconds) to MM:SS
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
-  // const checkIfSubmited = async () => {
-  //   try {
-  //     const response = await axios.get(`http://localhost:4545/submissions/isSubmitedUser/${quizId}`, {
-  //       headers: {
-  //         token: localStorage.getItem("token")
-  //       }
-  //     });
-  //     const isSubmited = response.data.isSubmited;
-  //     setIsSubmited(isSubmited);
-  //   } catch (error) {
-  //     console.error("Error checking if quiz is submited:", error);
-  //   }
-  // };
+ 
 
-  // Timer effect
-  useEffect(() => {
-    if (!loading && !quizSubmitted && timeRemaining > 0) {
-      const timer = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            submitQuiz();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      // checkIfSubmited();
-      return () => clearInterval(timer);
-    }
-  }, [loading, quizSubmitted, timeRemaining]);
-
-  // Initial data fetch
   useEffect(() => {
     getQuestions();
   }, [quizId]);
 
-  // Current question
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Calculate progress percentage
   const progressPercentage = questions.length > 0 
     ? (Object.keys(answers).length / questions.length) * 100 
     : 0;
     
-
 
 if (isTaken) {
   return (
@@ -389,7 +330,7 @@ if (isTaken) {
           }} 
         />
         
-        {/* Content */}
+        
         <Box sx={{ position: 'relative', zIndex: 1 }}>
           <CheckCircleIcon sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
           
@@ -404,80 +345,41 @@ if (isTaken) {
           {previousSubmission ? (
             <Box sx={{ mt: 4, mb: 4 }}>
               <Grid container spacing={3} justifyContent="center">
-                <Grid item xs={12} sm={4}>
-                  <Card 
-                    elevation={2} 
-                    sx={{ 
-                      height: '100%', 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      p: 2,
-                      borderRadius: 2,
-                      bgcolor: 'primary.light',
-                      color: 'white'
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom>Score</Typography>
-                    <Typography variant="h3" fontWeight="bold">
-                      {previousSubmission.score || 0}
-                    </Typography>
-                    <Typography variant="body2">
-                      out of {previousSubmission.totalMarks || 100}
-                    </Typography>
-                  </Card>
-                </Grid>
-                
-                <Grid item xs={12} sm={4}>
-                  <Card 
-                    elevation={2} 
-                    sx={{ 
-                      height: '100%', 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      p: 2,
-                      borderRadius: 2,
-                      bgcolor: 'success.light',
-                      color: 'white'
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom>Percentage</Typography>
-                    <Typography variant="h3" fontWeight="bold">
-                      {previousSubmission.percentage || Math.round((previousSubmission.score / previousSubmission.totalMarks) * 100) || 0}%
-                    </Typography>
-                    <Typography variant="body2">
-                      overall performance
-                    </Typography>
-                  </Card>
-                </Grid>
-                
-                <Grid item xs={12} sm={4}>
-                  <Card 
-                    elevation={2} 
-                    sx={{ 
-                      height: '100%', 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      p: 2,
-                      borderRadius: 2,
-                      bgcolor: 'info.light',
-                      color: 'white'
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom>Correct Answers</Typography>
-                    <Typography variant="h3" fontWeight="bold">
-                      {previousSubmission.correctAnswers || 0}
-                    </Typography>
-                    <Typography variant="body2">
-                      out of {previousSubmission.totalQuestions || questions.length || 0}
-                    </Typography>
-                  </Card>
-                </Grid>
+                <Grid item xs={12} sm={10} md={10}> {/* Adjusted sm and md for better responsiveness if needed */}
+  <Card 
+    elevation={3} // Slightly more pronounced shadow
+    sx={{ 
+      height: '100%', 
+      display: 'flex', 
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      p: 3, // Increased padding
+      borderRadius: 3, // Slightly more rounded corners
+      background: `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`, // Gradient background
+      color: 'white',
+      textAlign: 'center',
+      boxShadow: '0 4px 20px 0 rgba(0,0,0,0.12), 0 7px 8px -4px rgba(0,0,0,0.20)' // Custom shadow for depth
+    }}
+  >
+    <QuizIcon sx={{ fontSize: 40, mb: 1, opacity: 0.8 }} /> {/* Added an icon */}
+    <Typography variant="overline" sx={{ mb: 0.5, letterSpacing: '0.5px', opacity: 0.9 }}>
+      Your Score
+    </Typography>
+    <Typography variant="h2" fontWeight="bold" sx={{ lineHeight: 1.2 }}> {/* Larger score */}
+      {previousSubmission.score || 0}
+    </Typography>
+    <Typography variant="subtitle1" sx={{ opacity: 0.85 }}> {/* Clearer "out of" text */}
+      out of {previousSubmission.maxScore}
+    </Typography>
+    {previousSubmission.maxScore > 0 && (
+      <Typography variant="caption" sx={{ mt: 1, opacity: 0.7 }}>
+        ({((previousSubmission.score || 0) / previousSubmission.maxScore * 100).toFixed(0)}%)
+      </Typography>
+    )}
+  </Card>
+</Grid>
+
               </Grid>
               
               <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
@@ -486,6 +388,8 @@ if (isTaken) {
                   color="primary"
                   onClick={() => navigate(-1)}
                   sx={{ borderRadius: 2, px: 3 }}
+                  startIcon={<NavigateBeforeIcon />}
+                  size="large"
                 >
                   Go Back
                 </Button>
@@ -493,10 +397,24 @@ if (isTaken) {
                 <Button 
                   variant="contained" 
                   color="primary"
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate('/classroom/quiz/preview/'+previousSubmission.id)}
                   sx={{ borderRadius: 2, px: 3 }}
+                  endIcon={ <RemoveRedEye/>}
+                  size="large"
+
                 >
-                  Dashboard
+                 Preview
+                </Button>
+                <Button 
+                  variant="contained" 
+                  color="primary"
+                  onClick={() => navigate('/main')}
+                  sx={{ borderRadius: 2, px: 3 }}
+                  endIcon={<Home />}
+                  size="large"
+
+                >
+                 Go To Main Page
                 </Button>
               </Box>
             </Box>
@@ -688,10 +606,10 @@ if (isTaken) {
             variant="contained" 
             color="primary" 
             size="large"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/main')}
             sx={{ mt: 2, borderRadius: 2, px: 4 }}
           >
-            Back to Dashboard
+            Back To Main Page
           </Button>
         </Paper>
       </Container>
@@ -1056,7 +974,7 @@ if (isTaken) {
                   No questions available
                 </Typography>
                 <Typography variant="body1" color="text.secondary" paragraph>
-                  This quiz doesn't have any questions yet.
+                  This quiz doesnt have any questions yet.
                 </Typography>
                 <Button 
                   variant="outlined" 

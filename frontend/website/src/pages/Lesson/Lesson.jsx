@@ -567,20 +567,16 @@ export default function Lesson() {
                   const checkQuiz = async () => {
                     try {
                       // First check if there's an existing quiz for this lesson
+                      console.log(section.id);
                       const response = await axios.get(`http://localhost:4545/quiz/section/`+section.id, {
                         headers: {
                           token: localStorage.getItem('token')
                         }
                       });
-                      
-                      if (response.data && response.data.quizId) {
-                        // Quiz exists, navigate to the quiz page
-                        const quizId = response.data.quizId;
+                      console.log(response.data.quiz.id);
+                      let quizId = response.data.quiz.id;
                         navigate(`/classroom/quiz/${quizId}`);
-                      } else {
-                        // No quiz exists yet, show message
-                        toast.info('No quiz available for this lesson yet');
-                      }
+                      
                     } catch (error) {
                       console.error('Error checking for quiz:', error);
                       toast.info('No quiz available for this lesson yet');

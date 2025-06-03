@@ -63,7 +63,6 @@ export default function RealProfile() {
   const { id } = useParams();
   const navigate = useNavigate(); // Keep navigate as it's used in children components
   const theme = useTheme();
-  // We'll use isMobile for responsive adjustments to the layout
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
   const [user, setUser] = useState(null);
@@ -75,20 +74,9 @@ export default function RealProfile() {
   const [dialogContent, setDialogContent] = useState(null);
   const [dialogTitle, setDialogTitle] = useState('');
   
-  // Determine if this is the current user's profile
   const [isMe, setIsMe] = useState(false);
   
-  // No longer needed as BackButton component handles this
-  // const handleBack = () => {
-  //   navigate(-1);
-  // };
   
-  // These styles are no longer needed as we use MUI's responsive features directly
-  // const responsiveStyles = {
-  //   container: {
-  //     padding: isMobile ? '8px' : '16px'
-  //   }
-  // };
   
   const handleDialog = (type) => {
     setDialogTitle(type === 'bio' ? 'Edit Bio' : 
@@ -125,52 +113,26 @@ export default function RealProfile() {
         />
       );
     }
-    
     setDialogOpen(true);
   };
   
-  // Use useCallback to memoize functions and prevent dependency cycle
-  const getUserId = useCallback(async () => {
-    try {
-      if (!token) return;
-      
-      const { data } = await axios.get('/user/me', {
-        headers: { token }
-      });
-      
-      setUserId(data.user.id);
-      setIsMe(id ? id === data.user.id : true);
-    } catch (error) {
-      console.error('Error getting user ID:', error);
-    }
-  }, [id, token]); // Stable dependencies
-  
   const getProfileData = useCallback(async () => {
-    // Don't fetch if already loading
     if (loading) return;
-    
     try {
       setLoading(true);
-      
-      // Use different endpoints based on if it's the current user's profile or another user's profile
       let response;
       if (!id || id === userId) {
-        // Fetch current user's profile with enhanced data
         response = await axios.get('http://localhost:4545/user/my-profile', {
           headers: { token }
         });
       } else {
-        // Fetch another user's profile
         response = await axios.post('http://localhost:4545/user/fullprofile', {
           id
         }, {
           headers: { token }
         });
       }
-
       setUser(response.data.user);
-      
-      // If this is the current user, update userId
       if (!id && !userId && response.data.user.id) {
         setUserId(response.data.user.id);
       }
@@ -179,27 +141,16 @@ export default function RealProfile() {
     } finally {
       setLoading(false);
     }
-  }, [id, userId, token, loading]); // Stable dependencies
-  
-  // Combined effect for initialization
+  }, [id, userId, token, loading]); 
   useEffect(() => {
-    // Set axios base URL once
-    axios.defaults.baseURL = 'http://localhost:4545';
-    
-    // First, get user ID
-    if (!userId) {
-      getUserId();
-    }
-    
-    // Only fetch profile data if we have enough info
+   
     if ((userId && !user) || id) {
       getProfileData();
     }
-    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, userId]); // Only re-run if ID changes
+  }, [id, userId]); 
+
   
-  // Add navigation function to view enrolled courses
   const navigateToCourse = useCallback((courseId) => {
     navigate(`/main/course/${courseId}`);
   }, [navigate]);
@@ -207,7 +158,6 @@ export default function RealProfile() {
   return (
     <Container maxWidth="lg" disableGutters>
       {loading ? (
-        // Loading skeleton
         <Box sx={{ p: 4 }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', mt: 10 }}>
             <Typography variant="h5" sx={{ mb: 2 }}>Loading profile...</Typography>
@@ -229,7 +179,6 @@ export default function RealProfile() {
 
           <Box sx={{ px: isMobile ? 2 : 4 }}>
             <Box sx={{ maxWidth: 900, mx: 'auto' }}>
-              {/* User interests display */}
               {user?.interests && user.interests.length > 0 && (
                 <Paper sx={{ p: 2, mb: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
                   <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
@@ -340,7 +289,6 @@ export default function RealProfile() {
         </>
       )}
       
-      {/* Dialog for editing profile elements */}
       <CustomDialog
         open={dialogOpen}
         onClose={() => {

@@ -26,6 +26,7 @@ export default function ProfileMenu() {
     const {user}=useContext(UserContext);
   return (<>
   <Tooltip title="Profile">
+    <span>
     <IconButton 
     onClick={handleClick}
     aria-controls={open ? 'account-menu' : undefined}
@@ -35,6 +36,7 @@ export default function ProfileMenu() {
     <Avatar   src={user?user.profilePic:''}></Avatar>
     
     </IconButton>
+    </span>
     </Tooltip>
 
 

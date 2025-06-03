@@ -238,7 +238,6 @@ export const getQuizBySectionId = async (req, res) => {
       return res.status(400).json({ message: 'Section ID is required' });
     }
     
-    // Find quiz for this section
     const quiz = await quizModel.findOne({
       where: { sectionId },
       include: [

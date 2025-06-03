@@ -20,8 +20,8 @@ router.get("/user", auth(), getUserSubmissions);
 router.get("/quiz/:quizId", auth(), getQuizSubmissions);
 
 // Get a specific submission
-router.get("/:submissionId", auth(), getSubmission);
 router.get("/isSubmitedUser/:quizId", auth(), isSubmitedUser);
 router.get("/isTaken/:quizId", auth(), isTaken);
+router.get("/:submissionId", auth(), getSubmission);
 
 export default router;

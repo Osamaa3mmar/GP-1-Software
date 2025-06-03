@@ -4,14 +4,12 @@ import { generateQuizQuestion } from "../../utils/ChatGptQuizGenerator.js";
 
 
 const updateQustionInfo=async(id,qustion)=>{
-console.log("object");
     const newQustion=await questionModel.findByPk(id);
     await newQustion.update(qustion);
     return newQustion; 
 }
 
 const addNewQustion=async(qustion)=>{
-    console.log("object2");
     const newQustion=await questionModel.create(qustion);
     return newQustion;
 }
@@ -20,7 +18,6 @@ const addNewQustion=async(qustion)=>{
 export const saveQustion=async (req,res)=>{
     try{
         const {qustion}=req.body;
-        console.log(qustion);
         let newQustion;
         if(qustion?.id){
              newQustion=await updateQustionInfo(qustion.id,qustion);

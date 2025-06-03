@@ -5,20 +5,17 @@ import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { organizationModel } from "../../../DB/models/organaization/organaization.js";
 import { where } from "sequelize";
+import { enrollmentModel } from "../../../DB/models/Enrollment/Enrollments.js";
 
 // Submit a quiz
 export const submitQuiz = async (req, res) => {
-  // try {
-    const { quizId, answers, timeSpent } = req.body;
+  try {
+    const { quizId, answers} = req.body;
     const userId = req.body.user.id;
     const userRole = req.body.user.role;
-
-    // Validate required fields
     if (!quizId || !answers || !Array.isArray(answers)) {
       return res.status(400).json({ message: "Quiz ID and answers array are required" });
     }
-
-    // Check if quiz exists
     const quiz = await quizModel.findByPk(quizId, {
       include: [{
         model: courseModel,
@@ -33,39 +30,33 @@ export const submitQuiz = async (req, res) => {
     if (!quiz) {
       return res.status(404).json({ message: "Quiz not found" });
     }
-
-    // Check if user is a teacher or course owner (organization owner)
+    const enrollment=await enrollmentModel.findOne({
+      where: {
+        courseId: quiz.course.id,
+        studentId: userId
+      }
+    });
+    console.log(enrollment,"enrollment");
     const isTeacher = quiz.course?.teacherId === userId;
     const isOrgOwner = quiz.course?.organization?.userId === userId;
     const isSpecialUser = isTeacher || isOrgOwner || userRole === 'admin';
-    
-    // If user is not a special user, check if they've already submitted
     if (!isSpecialUser) {
-      // Check if user has already submitted this quiz
       const existingSubmission = await quizSubmissionModel.findOne({
         where: { userId, quizId }
       });
-
       if (existingSubmission) {
         return res.status(400).json({ message: "You have already submitted this quiz" });
       }
     }
-
-    // Get all questions for this quiz
     const questions = await questionModel.findAll({
       where: { quizId }
     });
-
     if (!questions || questions.length === 0) {
       return res.status(400).json({ message: "This quiz has no questions" });
     }
-
-    // Calculate score
     let score = 0;
     let totalMarks = 0;
     let correctAnswers = 0;
-
-    // Create a map of question IDs to their correct answers and marks
     const questionMap = questions.reduce((map, question) => {
       map[question.id] = {
         correctAnswer: question.correctAnswer,
@@ -74,81 +65,39 @@ export const submitQuiz = async (req, res) => {
       return map;
     }, {});
 
-    // Check each answer
     for (const answer of answers) {
       const { questionId, selectedAnswer } = answer;
-      
       if (questionMap[questionId]) {
         totalMarks += questionMap[questionId].marks;
-        
-        // Check if answer is correct
         if (selectedAnswer === questionMap[questionId].correctAnswer) {
           score += questionMap[questionId].marks;
           correctAnswers++;
         }
       }
     }
-
-    // Create submission record and handle response in one block to avoid variable scope issues
     let submission;
     let submissionCreated = false;
-    
-    try {
-      // First try - with totalMarks field
+    enrollment.points+=score;
+    await enrollment.save();
       submission = await quizSubmissionModel.create({
         userId,
         quizId,
         answers: answers,
         score,
-         // Include total marks in the submission
+        maxScore: totalMarks,
         status: 'graded',
         submittedAt: new Date(),
       });
       submissionCreated = true;
-    } catch (createError) {
-      console.error('Error creating submission with totalMarks:', createError);
-      
-      try {
-        // Second try - without totalMarks field
-        submission = await quizSubmissionModel.create({
-          userId,
-          quizId,
-          answers: answers,
-          score,
-          status: 'graded',
-          submittedAt: new Date(),
-        });
-        submissionCreated = true;
-      } catch (fallbackError) {
-        console.error('Error creating submission without totalMarks:', fallbackError);
-        // If both attempts fail, we'll still return a response with the calculated data
-      }
-    }
-
-    // Calculate percentage
-    const percentage = totalMarks > 0 ? Math.round((score / totalMarks) * 100) : 0;
-
-    // Return result
     return res.status(200).json({
       message: submissionCreated ? "Quiz submitted successfully" : "Quiz processed but not saved",
-      submission: {
-        id: submission?.id,
-        userId,
-        quizId,
-        score,
-        totalMarks,
-        correctAnswers,
-        totalQuestions: questions.length,
-        percentage,
-        submittedAt: new Date(),
-        saved: submissionCreated
-      }
+      submission
     });
 
-  // } catch (error) {
-  //   console.error("Error submitting quiz:", error);
-  //   return res.status(500).json({ message: "Server error", error: error.message });
-  // }
+  } catch (error) {
+    console.error("Error submitting quiz:", error);
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
 };
 
 // Get quiz submissions for a user
@@ -479,9 +428,8 @@ return res.status(404).json({message:"success",submission})
 export const isTaken = async (req, res) => {
   try {
     const { quizId } = req.params;
-    const userId = req.user.id;
+    const userId = req.body.user.id;
     
-    // Find the submission with related quiz data
     const submission = await quizSubmissionModel.findOne({
       where: {
         quizId,
@@ -499,22 +447,11 @@ export const isTaken = async (req, res) => {
     if (!submission) {
       return res.status(200).json({ message: "Not taken", taken: false });
     }
-    
     // Return the submission data along with taken status
     return res.status(200).json({
       message: "Taken", 
       taken: true,
-      submission: {
-        id: submission.id,
-        score: submission.score,
-        totalMarks: submission.quiz?.totalMarks || 0,
-        correctAnswers: submission.answers.filter(a => a.isCorrect).length,
-        totalQuestions: submission.answers.length,
-        percentage: submission.quiz?.totalMarks ? 
-          Math.round((submission.score / submission.quiz.totalMarks) * 100) : 0,
-        submittedAt: submission.submittedAt,
-        timeSpent: submission.timeSpent
-      }
+      submission
     });
   } catch (error) {
     console.error("Error checking if quiz is taken:", error);
