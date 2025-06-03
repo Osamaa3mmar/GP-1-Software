@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import  { useContext, useEffect, useState } from 'react';
 import { Box, Typography, Paper, Button, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { UserContext } from '../../Context/UserContext';
 
-export default function Bio({ text, isEdit, onPress }) {
+export default function Bio({ text, isEdit, onPress,id }) {
   const [expanded, setExpanded] = useState(false);
   const bioText = text || "No Bio Yet";
   const truncatedBio = text ? (expanded ? bioText : `${bioText.substring(0, 150)}...`) : bioText;
   const showReadMore = text && text.length > 150;
-
+  const [me,setMe]=useState(false);
+  const {user}=useContext(UserContext);
+  useEffect(()=>{
+    if(user?.id==id){
+      setMe(true);
+    }
+  },[user]);
   return (
     <Box sx={{ p: 2 }}>
       <Box sx={{ 
@@ -19,7 +26,7 @@ export default function Bio({ text, isEdit, onPress }) {
         <Typography variant="h5" sx={{ fontWeight: 700, color: '#333' }}>
           About Me
         </Typography>
-        {isEdit && (
+        {me && (
           <IconButton 
             onClick={() => onPress("bio")} 
             color="primary"
@@ -41,7 +48,7 @@ export default function Bio({ text, isEdit, onPress }) {
         <Typography variant="body1" sx={{ fontSize: 16, lineHeight: 1.6, color: '#555' }}>
           {truncatedBio}
         </Typography>
-        {showReadMore && (
+        { (
           <Button 
             onClick={() => setExpanded(!expanded)} 
             sx={{ 

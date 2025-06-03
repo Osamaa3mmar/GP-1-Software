@@ -1,8 +1,17 @@
 
 import { Avatar, Box, Typography, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { UserContext } from '../../Context/UserContext';
+import { useContext, useEffect, useState } from 'react';
 
-export default function ProfileCircle({ image, name, specialization, isEdit, onEdit }) {
+export default function ProfileCircle({ image, name, specialization, isEdit, onEdit,id }) {
+  const [me,setMe]=useState(false);
+  const {user}=useContext(UserContext);
+  useEffect(()=>{
+    if(user?.id==id){
+      setMe(true);
+    }
+  },[user]);
   return (
     <Box sx={{
       display: 'flex',
@@ -23,9 +32,9 @@ export default function ProfileCircle({ image, name, specialization, isEdit, onE
             bgcolor: '#ccc'
           }}
         />
-        {isEdit && (
+        {me && (
           <IconButton
-            onClick={() => onEdit("specialization")}
+            onClick={() => onEdit("image")}
             sx={{
               position: 'absolute',
               bottom: 0,
@@ -47,22 +56,13 @@ export default function ProfileCircle({ image, name, specialization, isEdit, onE
           <Typography variant="h4" sx={{ fontWeight: 600 }}>
             {name}
           </Typography>
-          {isEdit && (
-            <IconButton
-              size="small"
-              sx={{ ml: 0.5 }}
-              onClick={() => onEdit('name')}
-              aria-label="Edit name"
-            >
-              <EditIcon fontSize="small" color="primary" />
-            </IconButton>
-          )}
+         
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="subtitle1" sx={{ color: '#4B4B4B' }}>
             {specialization || 'Not Specialized'}
           </Typography>
-          {isEdit && (
+          {me && (
             <IconButton
               size="small"
               sx={{ ml: 0.5 }}

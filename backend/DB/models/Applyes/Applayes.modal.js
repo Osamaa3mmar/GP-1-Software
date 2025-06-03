@@ -23,3 +23,4 @@ export const applayModal = sequelize.define('Applayes', {
 });
 
 
+

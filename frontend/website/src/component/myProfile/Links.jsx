@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, Typography, Button, Grid, Paper } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import GitHubIcon from '@mui/icons-material/GitHub';
@@ -7,8 +7,9 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import LanguageIcon from '@mui/icons-material/Language';
+import { UserContext } from '../../Context/UserContext';
 
-export default function Links({ links = [], isEdit, onPress }) {
+export default function Links({ links = [], isEdit, onPress ,id}) {
   // Map of icons by link type
   const iconMap = {
     github: GitHubIcon,
@@ -66,7 +67,13 @@ export default function Links({ links = [], isEdit, onPress }) {
   const getLinkName = (link) => {
     return link.title || link.url?.replace(/^https?:\/\//, '') || link.type || 'Link';
   };
-
+const [me,setMe]=useState(false);
+  const {user}=useContext(UserContext);
+  useEffect(()=>{
+    if(user?.id==id){
+      setMe(true);
+    }
+  },[user]);
   return (
     <Box sx={{ p: 2 }}>
       <Paper sx={{ p: 3, borderRadius: 3, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
@@ -79,7 +86,7 @@ export default function Links({ links = [], isEdit, onPress }) {
           <Typography variant="h5" sx={{ fontWeight: 700, color: '#333' }}>
             Links
           </Typography>
-          {isEdit && (
+          {me && (
             <Button
               variant="outlined"
               startIcon={<AddIcon />}

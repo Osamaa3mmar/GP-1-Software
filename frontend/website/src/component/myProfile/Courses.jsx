@@ -6,9 +6,13 @@ import {
   Paper, 
   LinearProgress 
 } from '@mui/material';
+import { useContext } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../Context/UserContext';
+import { useEffect } from 'react';
 
-export default function Courses({ courses = [], onCourseClick }) {
+export default function Courses({ courses = [], onCourseClick,id }) {
   const navigate = useNavigate();
 
   const handleCourseClick = (courseId) => {
@@ -19,12 +23,21 @@ export default function Courses({ courses = [], onCourseClick }) {
       navigate(`/main/course/${courseId}`);
     }
   };
-
+const [me,setMe]=useState(false);
+  const {user}=useContext(UserContext);
+  useEffect(()=>{
+    if(user?.id==id){
+      setMe(true);
+    }
+  },[user]);
+  if(me){
+    return null;
+  }
   return (
     <Box sx={{ p: 2 }}>
       <Paper sx={{ p: 3, borderRadius: 3, boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
         <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
-          My Courses
+           Courses
         </Typography>
 
         {courses && courses.length > 0 ? (

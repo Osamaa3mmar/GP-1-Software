@@ -12,8 +12,10 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useContext } from 'react';
+import { UserContext } from '../../Context/UserContext';
 
-export default function ContinueLearning() {
+export default function ContinueLearning({id}) {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,7 +61,13 @@ export default function ContinueLearning() {
   const handleContinue = (courseId) => {
     navigate(`/main/classrooms/${courseId}`);
   };
-
+  const [me,setMe]=useState(false);
+  const {user}=useContext(UserContext);
+  useEffect(()=>{
+    if(user?.id==id){
+      setMe(true);
+    }
+  },[user]);
   if (loading) {
     return (
       <Box sx={{ mt: 2, mb: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
@@ -75,7 +83,9 @@ export default function ContinueLearning() {
       </Box>
     );
   }
-
+if(!me){
+  return null;
+}
   if (courses.length === 0) {
     return (
       <Box sx={{ p: 2 }}>

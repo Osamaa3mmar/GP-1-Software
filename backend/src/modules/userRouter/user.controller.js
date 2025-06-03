@@ -2,6 +2,7 @@ import { sequelize } from "../../../DB/Connection.js";
 import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { enrollmentModel } from "../../../DB/models/Enrollment/Enrollments.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
+import cloudinary from "../../utils/Claoudinary.js";
 
 
 
@@ -64,23 +65,27 @@ export const getFullProfile=async (req,res)=>{
 
 export const addLink = async (req, res) => {
     try {
-        const { user, link } = req.body;
-
-        if (!link || typeof link.url !== "string" || typeof link.type !== "string") {
-            return res.status(400).json({ message: "Invalid link format. Expected { url, type }" });
-        }
+        const { user, title, 
+        url,
+        type  } = req.body;
+            console.log(title,url,type);
+        
 
         const userFromDataBase = await userModel.findByPk(user.id);
 
         if (!userFromDataBase) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found"});
         }
 
         if (!userFromDataBase.links || !Array.isArray(userFromDataBase.links.urls)) {
-            userFromDataBase.links = { urls: [] };
+            userFromDataBase.links = [];
         }
 
-        userFromDataBase.links.urls.push(link);
+        userFromDataBase.links.push({
+            title: title || "Untitled Link",
+            url,
+            type: type || "other"
+        });
         userFromDataBase.changed('links', true); 
         await userFromDataBase.save();
         
@@ -117,6 +122,7 @@ export const editBio=async(req,res)=>{
 export const editSpecialization=async(req,res)=>{
     try{
         const { user, specialization } = req.body;
+        console.log(specialization)
         const userFromDataBase = await userModel.findByPk(user.id);
         userFromDataBase.specialization = specialization;
         await userFromDataBase.save();
@@ -293,4 +299,69 @@ export const getUserById = async (req, res) => {
             error: error.message || error 
         });
     }
+}
+
+
+
+
+export const editProfilePicture = async (req, res) => {
+    try {
+        const { user } = req.body;
+        if (!req.files || !req.files.image || req.files.image.length === 0) {
+            return res.status(400).json({ message: "Profile image is required" });
+        }
+        const profileImage = req.files.image[0];
+        const userFromDataBase = await userModel.findByPk(user.id);
+        if (!userFromDataBase) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const profile = await cloudinary.uploader.upload(profileImage.path);
+        userFromDataBase.profilePic = profile.secure_url; // Use the secure URL from cloudinary 
+        await userFromDataBase.save();
+        return res.status(200).json({
+            message: "Profile picture updated successfully",
+            profilePic: userFromDataBase.profilePic
+        });
+
+
+    }catch(error){
+        return res.status(500).json({message:"server error",error});
+    }
+}
+
+
+
+
+export const resume = async (req, res) => {
+    // try {
+        const { user } = req.body;
+        console.log("osama338");
+        if (!req.file) {
+            return res.status(400).json({ message: "Resume file is required" });
+        }
+        const resumeFile = req.file;
+        const userFromDataBase = await userModel.findByPk(user.id);
+        if (!userFromDataBase) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const uploadedResume = await cloudinary.uploader.upload(resumeFile.path, {
+    resource_type: "auto",  
+    type: "upload"          
+});
+
+console.log("Resume uploaded to:", uploadedResume.secure_url);
+
+userFromDataBase.resume = uploadedResume.secure_url;
+await userFromDataBase.save();
+
+
+        await userFromDataBase.save();
+        console.log("osama343");
+        return res.status(200).json({
+            message: "Resume uploaded successfully",
+            resume: userFromDataBase.resume
+        });
+    // } catch (error) {
+    //     return res.status(500).json({ message: "Server error", error });
+    // }
 }

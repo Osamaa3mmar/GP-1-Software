@@ -144,7 +144,7 @@ const CartItems = () => {
         <Typography variant="h5">
           Total: ${getCartTotal().toFixed(2)}
         </Typography>
-        <Button onClick={() => navigate("/main/cart/checkout")} variant="contained" color="primary" size="large">
+        <Button onClick={() => navigate("/main/checkout")} variant="contained" color="primary" size="large">
           Proceed to Checkout
         </Button>
       </Box>

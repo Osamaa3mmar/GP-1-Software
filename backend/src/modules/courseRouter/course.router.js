@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { courseToggleStatus, createCourse, deleteCourse, editAll, getAdminCourses, getAllCourses, getallnotassigninorg, getDetailedCourseInfo, getFeaturedCourses, getTeacherCourses, getTopCategories } from './course.controller.js';
+import { courseToggleStatus, createCourse, deleteCourse, editAll, getAdminCourses, getAllCourses, getallnotassigninorg, getDetailedCourseInfo, getFeaturedCourses, getStaffAndCourses, getTeacherCourses, getTopCategories } from './course.controller.js';
 import { fileUpload } from '../../utils/fileUpload.js';
 import { auth } from '../../middleware/auth.js';
 const router = Router();
@@ -19,4 +19,5 @@ router.get('/getallnotassigninorg/:id',auth(),getallnotassigninorg);
 router.get('/featuredcourses',getFeaturedCourses);
 router.get('/topcategories', getTopCategories);
 router.get('/teacher',auth(),getTeacherCourses);
+router.post('/getstaffandcourses',auth(),getStaffAndCourses);
 export default router;

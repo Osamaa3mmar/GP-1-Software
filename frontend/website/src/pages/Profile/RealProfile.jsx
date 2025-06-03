@@ -27,6 +27,9 @@ import CustomDialog from '../../component/myProfile/CustomDialog';
 import EnrollmentsInfo from '../../component/myProfile/EnrollmentsInfo';
 import LearningStats from '../../component/myProfile/LearningStats';
 import ContinueLearning from '../../component/myProfile/ContinueLearning';
+import EditImage from '../../component/myProfile/EditImage';
+import ResumeUpload from '../../component/myProfile/ResumeUpload';
+import EditResume from '../../component/myProfile/EditResume';
 
 // Profile Banner Component
 const ProfileBanner = ({ image, children }) => {
@@ -76,17 +79,20 @@ export default function RealProfile() {
   
   const [isMe, setIsMe] = useState(false);
   
-  
+  console.log(user)
   
   const handleDialog = (type) => {
     setDialogTitle(type === 'bio' ? 'Edit Bio' : 
                    type === 'specialization' ? 'Edit Specialization' : 
                    type === 'name' ? 'Edit Name' : 
+                    type === 'image' ? 'Change Profile Image' :
+                    type === 'resume' ? 'Upload Resume' :
                    'Add Link');
     
     if (type === 'bio') {
       setDialogContent(
         <EditBio 
+        
           update={getProfileData} 
           onClose={() => setDialogOpen(false)} 
         />
@@ -94,6 +100,7 @@ export default function RealProfile() {
     } else if (type === 'specialization') {
       setDialogContent(
         <EditSpecialization 
+        
           update={getProfileData} 
           onClose={() => setDialogOpen(false)} 
         />
@@ -110,6 +117,21 @@ export default function RealProfile() {
         <AddLink 
           update={getProfileData} 
           onClose={() => setDialogOpen(false)} 
+        />
+      );
+    }else if (type === 'image') {
+      setDialogContent(
+        <EditImage
+          update={getProfileData}
+        onClose={() => setDialogOpen(false)}
+        />);}
+        else if (type === 'resume') {
+      setDialogContent(
+        <EditResume
+          id={user?.id}
+          onClose={() =>
+            setDialogOpen(false)}
+          update={getProfileData}
         />
       );
     }
@@ -154,7 +176,6 @@ export default function RealProfile() {
   const navigateToCourse = useCallback((courseId) => {
     navigate(`/main/course/${courseId}`);
   }, [navigate]);
-  
   return (
     <Container maxWidth="lg" disableGutters>
       {loading ? (
@@ -171,10 +192,15 @@ export default function RealProfile() {
             <ProfileCircle 
               image={user?.profilePic} 
               name={user?.username} 
-              specialization={user?.specialization} 
-              isEdit={isMe} 
+              specialization={user?.specialization}
               onEdit={handleDialog}
+              id={user?.id}
             />
+            <ResumeUpload
+              id={user?.id}
+
+              onOpen={() => handleDialog('resume')}
+              />
           </Box>
 
           <Box sx={{ px: isMobile ? 2 : 4 }}>
@@ -202,12 +228,14 @@ export default function RealProfile() {
               )}
 
               <Bio 
+              id={user?.id}
                 text={user?.bio} 
                 isEdit={isMe}
-                onEdit={() => handleDialog('bio')}
+                onPress={() => handleDialog('bio')}
               />
               
               <Links 
+              id={user?.id}
                 links={user?.links || []} 
                 isEdit={isMe}
                 onPress={handleDialog}
@@ -278,9 +306,13 @@ export default function RealProfile() {
               
               <LearningStats userId={id} />
               
-              <ContinueLearning />
+              <ContinueLearning
+              id={
+                user?.id
+              } />
               
               <Courses 
+                id={user?.id}
                 courses={user?.enrollments || []} 
                 onCourseClick={navigateToCourse}
               />

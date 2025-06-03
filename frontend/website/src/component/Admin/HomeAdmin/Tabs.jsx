@@ -1,7 +1,7 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box, Tab, CircularProgress, Typography, List, ListItem, ListItemText, Avatar, ListItemAvatar, Paper, Grid, IconButton, Chip, useTheme } from "@mui/material";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
@@ -34,43 +34,33 @@ export default function Tabs() {
     const [errorStaff, setErrorStaff] = useState(null);
     const { user } = useContext(UserContext);
     console.log(courses);
+    const {id}=useParams();
+    console.log(id,"here");
     useEffect(() => {
-        const fetchCourses = async () => {
+        const fetchAll = async () => {
             setLoadingCourses(true);
             try {
-                const { data } = await axios.get(`http://localhost:4545/course/owner/courses`, {
+                const { data } = await axios.post(`http://localhost:4545/course/getstaffandcourses`,{
+                    orgId: id 
+                }, {
                     headers: {
                         token: localStorage.getItem("token"),
                     },
                 });
+                console.log(data);
                 setCourses(data.courses || []);
+                setStaff(data.staff || []);
             } catch (err) {
                 setErrorCourses("Failed to load courses");
             } finally {
                 setLoadingCourses(false);
             }
         };
-        const fetchStaff = async () => {
-            setLoadingStaff(true);
-            try {
-                if (!user?.orgId) {
-                    setErrorStaff("No organization ID");
-                    setLoadingStaff(false);
-                    return;
-                }
-                const { data } = await axios.get(`http://localhost:4545/applye/getallaccepted/${user.orgId}`);
-                setStaff(data.accepted || []);
-            } catch (err) {
-                setErrorStaff("Failed to load staff");
-            } finally {
-                setLoadingStaff(false);
-            }
-        };
-        if (user) {
-            fetchCourses();
-            fetchStaff();
+        
+        if (user&& id) {
+          fetchAll();
         }
-    }, [user]);
+    }, [user,id]);
 
     useEffect(() => {
         const fetchStaffDetails = async () => {
@@ -210,7 +200,7 @@ export default function Tabs() {
                                 </Paper>
                             ) : (
                                 <Grid container spacing={2}>
-                                    {staffDetails.length > 0 ? staffDetails.map((member, idx) => (
+                                    {staff.length > 0 ? staff.map((member, idx) => (
                                         <Grid item xs={12} md={6} key={member.id || idx}>
                                             <Paper
                                                 elevation={3}
@@ -225,7 +215,7 @@ export default function Tabs() {
                                             >
                                                 {/* Left Side: Avatar + Info */}
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                    <IconButton component={"a"} href={`http://localhost:8081/profile/${localStorage.getItem("token")}?id=${member.userId || member.id || 999}&isMe=false&isMobile=false`}>
+                                                    <IconButton component={"a"} href={`http://localhost:5173/main/profile/user/${member.id }`}>
                                                         <Avatar src={member.profilePic || member.avatar || ''} sx={{ bgcolor: 'primary.main' }}>
                                                             {(member.name || member.username || 'U')?.charAt(0)?.toUpperCase()}
                                                         </Avatar>

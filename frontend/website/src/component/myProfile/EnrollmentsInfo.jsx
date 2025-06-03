@@ -42,8 +42,6 @@ export default function EnrollmentsInfo({ enrollments = [] }) {
   const totalCourses = enrollments?.length || 0;
   const completedCourses = enrollments?.filter(e => (e.progress || 0) >= 100)?.length || 0;
   const inProgressCourses = totalCourses - completedCourses;
-
-  // Information cards to display
   const infoCards = [
     {
       title: "Total Courses",
@@ -63,18 +61,8 @@ export default function EnrollmentsInfo({ enrollments = [] }) {
       icon: CheckCircleOutlineIcon,
       color: "#4caf50"  // Green
     },
-    {
-      title: "Total Hours",
-      value: learningHours.totalHours,
-      icon: AccessTimeIcon,
-      color: "#2196f3"  // Blue
-    },
-    {
-      title: "This Month",
-      value: learningHours.thisMonthHours,
-      icon: CalendarMonthIcon,
-      color: "#9c27b0"  // Purple
-    }
+    
+    
   ];
 
   return (

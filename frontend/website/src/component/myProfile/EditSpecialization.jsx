@@ -10,7 +10,7 @@ export default function EditSpecialization({ update, onClose }) {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:4545/user/profile', { specialization }, {
+      await axios.post('http://localhost:4545/user/edit/specialization', { specialization }, {
         headers: { token }
       });
       update();

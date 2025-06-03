@@ -32,6 +32,7 @@ import {
   People,
   AccessTime,
   VerifiedUser,
+  FileCopyRounded,
 } from '@mui/icons-material';
 
 const InstructorProfile = () => {
@@ -124,7 +125,7 @@ const InstructorProfile = () => {
           p: { xs: 3, md: 5 },
           mb: 5,
           borderRadius: 2,
-          backgroundImage: 'linear-gradient(135deg, #5B86E5 0%, #36D1DC 100%)',
+          backgroundImage: 'linear-gradient(135deg, #573f9d40 0%, #573f9d 100%)',
           color: 'white',
         }}
       >
@@ -168,21 +169,7 @@ const InstructorProfile = () => {
             </Box>
             
             <Stack direction="row" spacing={2}>
-              <Button 
-                variant="contained" 
-                color="secondary"
-                startIcon={<Email />}
-                href={`mailto:${instructor.email}`}
-                sx={{ 
-                  bgcolor: 'white', 
-                  color: 'primary.main',
-                  '&:hover': {
-                    bgcolor: 'rgba(255,255,255,0.9)',
-                  }
-                }}
-              >
-                Contact
-              </Button>
+              
               
               {instructor.links && instructor.links.urls && instructor.links.urls.length > 0 && (
                 <Box sx={{ display: 'flex', gap: 1 }}>
@@ -243,9 +230,28 @@ const InstructorProfile = () => {
                 Resume
               </Typography>
               <Divider sx={{ mb: 3 }} />
-              <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
-                {instructor.resume}
-              </Typography>
+              {instructor?.resume?
+              <Button 
+              component="a"
+                href={instructor.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                
+                variant="contained" 
+                color="secondary"
+                startIcon={<FileCopyRounded />}
+                sx={{ 
+                  bgcolor: 'white', 
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'rgba(255,255,255,0.9)',
+                  }
+                }}
+              >
+                Resume
+              </Button>
+              
+              :""}
             </Paper>
           )}
         </Grid>

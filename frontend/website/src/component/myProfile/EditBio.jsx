@@ -10,7 +10,7 @@ export default function EditBio({ update, onClose }) {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:4545/user/profile', { bio }, {
+      await axios.post('http://localhost:4545/user/edit/bio', { bio }, {
         headers: { token }
       });
       update();

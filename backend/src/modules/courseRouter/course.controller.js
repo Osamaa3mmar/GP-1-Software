@@ -5,6 +5,7 @@ import cloudinary from "../../utils/Claoudinary.js";
 import { differenceInWeeks } from 'date-fns';
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
+import { applayModal } from "../../../DB/models/Applyes/Applayes.modal.js";
 
 
 export const createCourse=async (req,res)=>{
@@ -61,7 +62,7 @@ export const createCourse=async (req,res)=>{
 
 
 export const getAdminCourses = async (req, res) => {
-  // try {
+  try {
     if (req.body.user.role == "owner") {
       const org = await organizationModel.findOne({
         where: { ownerId: req.body.user.id },
@@ -104,9 +105,9 @@ export const getAdminCourses = async (req, res) => {
     return res
       .status(403)
       .json({ message: "You are not authorized to view courses" });
-  // } catch (error) {
-  //   return res.status(500).json({ message: "Server Error", error });
-  // }
+  } catch (error) {
+    return res.status(500).json({ message: "Server Error", error });
+  }
 };
 
 
@@ -385,4 +386,48 @@ export const getTopCategories = async (req, res) => {
     console.error("Error in getTopCategories:", error);
     return res.status(500).json({ message: "Server Error", error: error.message });
   }
+}
+
+export const getStaffAndCourses=async (req, res) => {
+// try{
+  const {orgId}=req.body;
+  console.log(orgId,"dfdf")
+  const org = await organizationModel.findByPk(orgId, {
+    include: [
+      {
+        model: courseModel,
+        as: 'courses',
+        where:{
+          completionStatus: {
+            [Op.ne]: "notStarted"
+          }
+        }
+      }
+    ]
+  });
+  const applayes = await applayModal.findAll({
+    where: {
+      orgId: orgId,
+      status: 'accepted'
+    }
+  });
+  const staff = await userModel.findAll({
+    where: {
+      id: {
+        [Op.in]: applayes.map(apply => apply.userId)
+      }
+    },
+  });
+
+  if (!org) {
+    return res.status(404).json({ message: "Organization not found" });
+  }
+  return res.status(200).json({
+    message: "Organization, staff, and courses retrieved successfully",
+    courses: org.courses,
+    staff
+  });
+// }catch(error){
+//     return res.status(500).json({ message: "Server Error", error });
+// }
 }

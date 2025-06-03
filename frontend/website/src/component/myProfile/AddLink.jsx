@@ -26,9 +26,8 @@ export default function AddLink({ update, onClose }) {
   
   const handleSubmit = async () => {
     try {
-      setLoading(true);
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:4545/user/links', { 
+      await axios.post('http://localhost:4545/user/edit/addlink', { 
         title, 
         url: url.startsWith('http') ? url : `https://${url}`,
         type 

@@ -21,9 +21,9 @@ export default function HomeAdmin() {
     const [onSave,setOnSave]=useState(null);
     const [edit,setEdit]=useState(false);
     const {user}=useContext(UserContext);
+    console.log(org)
   const getOrgInfo=async(orgId)=>{
     try{
-      console.log("here")
       setLoading(true);
       await new Promise(resolve => setTimeout(resolve, 500));
       const {data}=await axios.get(`http://localhost:4545/org/getorg/${orgId}`);

@@ -158,13 +158,12 @@ export default function App() {
         },{
           path:"cart",
           element:<CartPage/>,
-          children:[
-            {
-              path:"checkout",
-              element:<Checkout/>
-            }
-          ]
+          
         },{
+          path:"checkout",
+              element:<Checkout/>
+        },
+        {
           path:'course/:id',
           element:<CourseDetails/>
         }, {
