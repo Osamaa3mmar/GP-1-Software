@@ -76,7 +76,7 @@ const QuizPreviewSummary = ({ submission }) => {
                 {percentage}%
               </Typography>
               <Typography variant="body1" sx={{ ml: 1 }}>
-                ({submission.score}/{submission.score} marks)
+                ({submission.score}/{submission.maxScore} marks)
               </Typography>
             </Box>
             <Box sx={{ mt: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
