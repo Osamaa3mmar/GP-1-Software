@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { submitQuiz, getUserSubmissions, getQuizSubmissions, getSubmission, isSubmitedUser, isTaken, startQuiz, saveAnswer } from './quiz-submission.controller.js';
+import { submitQuiz, getUserSubmissions, getQuizSubmissions, getSubmission, isSubmitedUser, isTaken, startQuiz, saveAnswer, getSubmissionPreview } from './quiz-submission.controller.js';
 import { auth } from '../../middleware/auth.js';
 
 const router = Router();
@@ -22,6 +22,7 @@ router.get("/quiz/:quizId", auth(), getQuizSubmissions);
 // Get a specific submission
 router.get("/isSubmitedUser/:quizId", auth(), isSubmitedUser);
 router.get("/isTaken/:quizId", auth(), isTaken);
+router.get("/submission/:submissionId/preview", auth(), getSubmissionPreview);
 router.get("/:submissionId", auth(), getSubmission);
 
 export default router;

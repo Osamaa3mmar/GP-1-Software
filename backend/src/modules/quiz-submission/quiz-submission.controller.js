@@ -400,6 +400,74 @@ export const getSubmission = async (req, res) => {
   }
 };
 
+// Get a detailed preview of a quiz submission with all related data
+export const getSubmissionPreview = async (req, res) => {
+  // try {
+    const { submissionId } = req.params;
+    const userId = req.body.user.id;
+    const userRole = req.body.user.role;
+    
+    // Find the submission with related quiz and student info
+    const submission = await quizSubmissionModel.findByPk(submissionId, {
+      include: [
+        {
+          model: quizModel,
+          as: "quiz",
+          include: [
+            {
+              model: courseModel,
+              as: "course",
+            }
+          ]
+        },
+        {
+          model: userModel,
+          as: "student",
+        }
+      ]
+    });
+
+    if (!submission) {
+      return res.status(404).json({
+        success: false,
+        message: "Submission not found"
+      });
+    }
+
+    // Check if the user is authorized to view this submission
+    // Allow access if: user is the submitter, or user is an instructor/admin/owner
+    if (submission.userId !== userId && 
+        userRole !== "instructor" && 
+        userRole !== "admin" && 
+        userRole !== "owner") {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to view this submission"
+      });
+    }
+
+    // Get the questions for this quiz with correct answers
+    const questions = await questionModel.findAll({
+      where: { quizId: submission.quizId },
+    });
+
+    // Process the submission data to include detailed information
+    const plainSubmission = submission.get({ plain: true });
+plainSubmission.quiz.questions = questions;
+
+return res.status(200).json({ success: true, data: plainSubmission });
+
+
+
+  // } catch (error) {
+  //   console.error("Error getting submission preview:", error);
+  //   return res.status(500).json({
+  //     success: false,
+  //     message: "Server error",
+  //     error: error.message
+  //   });
+  // }
+};
 
 
 export const isSubmitedUser=async(req,res)=>{
@@ -458,3 +526,5 @@ export const isTaken = async (req, res) => {
     return res.status(500).json({ message: "Server error", error: error.message })
   }
 }
+
+// This function has been moved to line ~403

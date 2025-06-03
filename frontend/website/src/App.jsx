@@ -46,6 +46,7 @@ import Quiz from "./pages/Quiz/Quiz";
 import Lessons from "./pages/Lessons/Lessons";
 import Lesson from "./pages/Lesson/Lesson";
 import Checkout from "./pages/Cart/Checkout";
+import QuizPreview from "./pages/QuizPreview/QuizPreview";
 import { CourseProvider } from './Context/CourseContext';
 export default function App() {
  
@@ -246,6 +247,10 @@ export default function App() {
         {
           path:"quiz/:quizId",
           element:<Quiz/>
+        },
+        {
+          path:"quiz/preview/:submissionId",
+          element:<QuizPreview/>
         }
       ]
     }
