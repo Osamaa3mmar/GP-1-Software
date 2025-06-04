@@ -8,7 +8,10 @@ import {
   Button, 
   Box,
   CircularProgress,
-  Alert
+  Alert,
+  Modal,
+  Stack,
+  IconButton
 } from '@mui/material';
 import { Check } from '@mui/icons-material';
 import { useParams, Link } from 'react-router-dom';
@@ -27,12 +30,17 @@ import CourseOrganization from '../../component/Courses/CourseDetails/CourseOrga
 import CourseReviews from '../../component/Courses/CourseDetails/CourseReviews';
 import CourseSidebar from '../../component/Courses/CourseDetails/CourseSidebar';
 
+import CloseIcon from "@mui/icons-material/Close";
+import { toast } from 'react-toastify';
+
+
 const CourseDetails = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+  const [checkRate, setCheckRate] = useState(false);
+   const [checkEnrollment, setCheckEnrollment] = useState(false);
   useEffect(() => {
     const fetchCourse = async () => {
       try {
@@ -54,7 +62,94 @@ const CourseDetails = () => {
   
     fetchCourse();
   }, [id]);
-    
+  const check = async () => {
+    try {
+      let res=await axios.get("http://localhost:4545/rate/checkisrate", {
+        params: {
+          courseId: id
+        },
+        headers: {
+          token: localStorage.getItem("token")
+        }
+
+      })
+      let {data}=await axios.get("http://localhost:4545/cart/checkenrollment", {
+        params: {
+          courseId: id
+        },
+        headers: {
+          token: localStorage.getItem("token")
+        }
+      });
+      setCheckEnrollment(data.enrolled);
+      setCheckRate(res.data.hasRated);
+    } catch (error) {
+      console.error("Error checking course enrollment:", error);
+    }
+  };
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 420,
+  bgcolor: "background.paper",
+  borderRadius: 3,
+  boxShadow: 24,
+  p: 4,
+};
+const onRateSubmit = async (rating) => {
+  try {
+    const response = await axios.post("http://localhost:4545/rate/ratecourse", {
+      courseId: id,
+      rating: rating
+    }, {
+      headers: {
+        token: localStorage.getItem("token")
+      }
+    });
+    if (response.status === 200) {
+      console.log("Rating submitted successfully:", response.data);
+      setCheckRate(true);
+      setCourse(response.data.course); // Update course with new rating
+      toast.success("Rating submitted successfully!");
+    } else {
+      console.error("Failed to submit rating:", response.data);
+    }
+
+  } catch (error) {
+    console.error("Error submitting rating:", error);
+  }
+}
+  const [value, setValue] = useState(0);
+const handleRate = () => {
+    if (value > 0) {
+      onRateSubmit(value);
+      console.log(value);
+      handleClose();
+    }
+  };
+  const [enrollNumber, setEnrollNumber] = useState(0);
+  const getAllEnrolments = async () => {
+    try {
+      const {data}= await axios.get("http://localhost:4545/enrollments/all/"+id, {
+        headers: {
+          token: localStorage.getItem("token")
+        }
+      });
+      setEnrollNumber(data.users.length);
+    } catch (error) {
+      console.error("Error fetching enrolments:", error);
+    }
+  };
+    useEffect(() => {
+      check();
+      getAllEnrolments();
+    },[]);
   // Mock data - replace with API calls
   // const course = {
   //   id: courseId,
@@ -145,13 +240,23 @@ const CourseDetails = () => {
         <Typography variant="h3" gutterBottom>{course.title}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
           <Rating value={course.rating || 0} precision={0.1} readOnly />
-          <Typography variant="subtitle1">{course.enrollmentNumber || 0} students enrolled</Typography>
+          <Typography variant="subtitle1">{enrollNumber || 0} students enrolled</Typography>
           {course.completionStatus === 'completed' && (
             <Chip label="Completed" color="success" />
           )}
           {course.completionStatus === 'inProgress' && (
             <Chip label="In Progress" color="primary" />
           )}
+          {checkEnrollment?
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={checkRate}
+            onClick={handleOpen}
+            >
+            Rate
+          </Button>:null}
+
         </Box>
       </Box>
 
@@ -227,6 +332,42 @@ const CourseDetails = () => {
           ))}
         </Grid>
       </Box> */}
+      <Modal open={open} onClose={handleClose}>
+      <Box sx={style}>
+        {/* Close Button */}
+        <IconButton
+          onClick={handleClose}
+          sx={{ position: "absolute", top: 8, right: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+
+        {/* Title */}
+        <Typography id="modal-modal-title" variant="h6" textAlign="center" mb={2}>
+          Rate Course
+        </Typography>
+
+        {/* Rating Component */}
+        <Stack direction="column" alignItems="center" spacing={2}>
+          <Rating
+            name="course-rating"
+            value={value}
+            onChange={(event, newValue) => setValue(newValue)}
+            size="large"
+          />
+
+          {/* Rate Button */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleRate}
+            disabled={value === 0}
+          >
+            Submit
+          </Button>
+        </Stack>
+      </Box>
+    </Modal>
     </Container>
   );
 };

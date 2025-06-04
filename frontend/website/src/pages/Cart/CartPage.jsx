@@ -7,7 +7,6 @@ import { useCart } from "../../contexts/CartContext";
 import { useEffect, useState } from "react";
 
 const CartPage = () => {
-  const { cartItems } = useCart();
   const [conflicts, setConflicts] = useState([]);
   const [suggestedCourses, setSuggestedCourses] = useState([]);
 

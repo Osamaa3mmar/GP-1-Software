@@ -12,32 +12,91 @@ import {
   Rating,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CourseCardStats from "../Courses/CourseContent/CourseCardStats";
 import CourseCardTags  from "../Courses/CourseContent/CourseCardTags";
 import { useCart } from "../../contexts/CartContext";
-import CourseSchedule from "../Courses/CourseSchedule";
 import { useNavigate } from "react-router-dom";
 import CourseCardHeader from "../Courses/CourseContent/CourseCardHeader";
-
+import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { OsamaCartContext } from "../../Context/CartOsama";
 const CartItems = () => {
-  const { cartItems, removeFromCart, getCartTotal } = useCart();
   const navigate = useNavigate();
+  const [cart, setCart] = useState([]);
+  const {setCartCount,cartCount}=useContext(OsamaCartContext);
+  const [loading, setLoading] = useState(false);
+  const getCart=async()=>{
+    try{
+      const {data}=await axios.get("http://localhost:4545/cart/get",{
+        headers:{
+          token: localStorage.getItem("token"),
+        }
+      });
+      console.log(data);
+      setCart(data.cart);
+    }catch(error){
+      console.error("Error fetching cart items:", error);
+    }
+  }
+  
+  const removeFromCart = async (courseId) => {
+    try{
+      const {data}=await axios.delete("http://localhost:4545/cart/removeitem",{
+        headers:{
+          token: localStorage.getItem("token"),
+        },
+        data:{
+          courseId
+        }
+      })
+      console.log(data);
+      setCartCount(cartCount-1);
+      getCart();
+    }catch(error){
+      console.error("Error fetching cart items:", error);
+    }
+  }
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-  if (cartItems.length === 0) {
+  const purchase = async () => {
+    try{
+      setLoading(true);
+      await delay(2000);
+      const {data}=await axios.get("http://localhost:4545/cart/purchase",{
+        headers:{
+          token: localStorage.getItem("token"),
+        }
+      })
+      console.log(data);
+      toast.success("Purchase successful!");
+      setCartCount(0);
+      setCart(null);
+      navigate("");
+    }catch(error){
+      console.error("Error during purchase:", error);
+    }finally{
+      setLoading(false);
+    }
+  }
+  
+  useEffect(() => {
+    getCart();
+  },[]);
+  
+  if (!cart||cart?.courses?.length === 0) {
     return (
       <Box sx={{ p: 3, textAlign: "center" }}>
         <Typography variant="h6">Your cart is empty</Typography>
       </Box>
     );
   }
-
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-        Your Cart ({cartItems.length})
+        Your Cart ({cart?.courses?.length})
       </Typography>
       <Grid container spacing={3}>
-        {cartItems.map((item, index) => (
+        {cart?.courses?.map((item, index) => (
           <Grid item xs={12} key={`${item?.course?.id}-${index}`}>
             <Card
               sx={{
@@ -102,7 +161,7 @@ const CartItems = () => {
                       precision={0.5}
                     />
                     <Typography variant="body2">
-                      ({item?.course?.rating?.count || 0} reviews)
+                      ({item?.course?.numberRating || 0} reviews)
                     </Typography>
                   </Box>
                 </Box>
@@ -142,9 +201,9 @@ const CartItems = () => {
         }}
       >
         <Typography variant="h5">
-          Total: ${getCartTotal().toFixed(2)}
+          Total: ${cart?.totalBeforeDiscount}
         </Typography>
-        <Button onClick={() => navigate("/main/checkout")} variant="contained" color="primary" size="large">
+        <Button loading={loading} onClick={purchase} variant="contained" color="primary" size="large">
           Proceed to Checkout
         </Button>
       </Box>

@@ -48,6 +48,7 @@ import Lesson from "./pages/Lesson/Lesson";
 import Checkout from "./pages/Cart/Checkout";
 import QuizPreview from "./pages/QuizPreview/QuizPreview";
 import { CourseProvider } from './Context/CourseContext';
+import OsamaCartContextProvider from "./Context/CartOsama";
 export default function App() {
  
 
@@ -129,7 +130,9 @@ export default function App() {
         <LoginCheck>
           <UserContextProvider>
             <UserNotificationsContextProvider>
+              <OsamaCartContextProvider>
             <MainLayout />
+              </OsamaCartContextProvider>
             </UserNotificationsContextProvider>
           </UserContextProvider>
         </LoginCheck>

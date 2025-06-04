@@ -49,7 +49,7 @@ export default function ContinueLearning() {
   };
 
   const handleContinue = (courseId) => {
-    navigate(`/main/classrooms/${courseId}`);
+    navigate(`/main/classrooms/${courseId}/lessons`);
   };
 
   if (loading) {

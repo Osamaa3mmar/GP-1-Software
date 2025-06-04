@@ -18,6 +18,8 @@ import cartRouter from './modules/cartRouter/cart.router.js';
 import cartCourseRouter from './modules/cartCourseRouter/cartCourse.router.js';
 import topicRouter from './modules/topicRouter/topic.router.js';
 import messagingRouter from './modules/messaging/messaging.router.js';
+import rateRouter from './modules/RateCourses/rate.router.js';
+import { purchaseModel } from '../DB/models/purchase/purchase.js';
 
 export const initApp=(app,express)=>{
     //here put use statment
@@ -41,4 +43,6 @@ export const initApp=(app,express)=>{
     app.use("/topics",topicRouter);
     app.use("/applye",applyeRouter);
     app.use("/messaging", messagingRouter);
+    app.use("/purchase",purchaseModel);
+    app.use("/rate",rateRouter);
 }

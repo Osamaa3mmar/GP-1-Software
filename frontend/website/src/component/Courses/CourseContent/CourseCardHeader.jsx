@@ -12,11 +12,11 @@ export default function CourseCardHeader({ teacher }) {
           .toUpperCase()
       : "??";
   };
-
+console.log(teacher)
   return (
     <CardHeader
       avatar={
-        <Avatar sx={{ bgcolor: red[500] }} aria-label="instructor">
+        <Avatar src={teacher?.profilePic} sx={{ bgcolor: red[500] }} aria-label="instructor">
           {getInitials(teacher?.username)}
         </Avatar>
       }
