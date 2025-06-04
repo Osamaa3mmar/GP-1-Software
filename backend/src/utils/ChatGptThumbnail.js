@@ -2,8 +2,7 @@ import GPT from "openai";
 import cloudinary from "../utils/Claoudinary.js";
 
 const client = new GPT({
-  apiKey:
-  "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"
+  apiKey:`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  `
 });
 
 export const makeThump = async (subject,desc) => {

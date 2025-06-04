@@ -239,7 +239,7 @@ const handleRate = () => {
       <Box sx={{ mb: 4 }}>
         <Typography variant="h3" gutterBottom>{course.title}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-          <Rating value={course.rating || 0} precision={0.1} readOnly />
+          <Rating value={(course.rating/course.numberRating) || 0} precision={0.1} readOnly />
           <Typography variant="subtitle1">{enrollNumber || 0} students enrolled</Typography>
           {course.completionStatus === 'completed' && (
             <Chip label="Completed" color="success" />

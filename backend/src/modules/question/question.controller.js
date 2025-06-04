@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid'; // or any ID generator
 import { quizModel } from "../../../DB/models/quizes/Quiz.js";
 import { questionModel } from "../../../DB/models/qusetions/Qustion.js";
 import { generateQuizQuestion } from "../../utils/ChatGptQuizGenerator.js";
@@ -41,7 +42,6 @@ export const getAllByQuizId=async(req,res)=>{
         })
         const quiz=await quizModel.findByPk(quizId);
         
-        console.log(qustions,"osama");
         if(!qustions||!quiz){
             return res.status(400).json({message:"Not Found"})
         }
@@ -72,77 +72,112 @@ export const deleteQustion = async (req, res) => {
 };
 
 
+
 export const generateAIQuestion = async (req, res) => {
   try {
     const { topic, details, difficulty, questionType = 'mcq', count = 1, quizId } = req.body;
-    
+
     console.log('Generate AI Question request:', { topic, difficulty, questionType, count, quizId });
-    
-    // Validate required fields
+
     if (!topic || !difficulty || !quizId) {
       return res.status(400).json({ message: "Topic, difficulty, and quizId are required" });
     }
-    
-    // Check if quiz exists
+
     const quiz = await quizModel.findByPk(quizId);
     if (!quiz) {
       return res.status(404).json({ message: "Quiz not found" });
     }
-    
-    // Generate questions using ChatGPT
+
     const generatedQuestions = await generateQuizQuestion(topic, details, difficulty, questionType, count);
-    
+
     if (!generatedQuestions) {
       return res.status(500).json({ message: "Failed to generate questions from AI" });
     }
-    
+
     console.log('Generated questions:', JSON.stringify(generatedQuestions, null, 2));
-    
-    // Handle single or multiple questions
+
+    const normalize = (val) => {
+      if (typeof val === 'string') {
+        const trimmed = val.trim().toLowerCase();
+        if (trimmed === 'true' || trimmed === 'false') return trimmed;
+        return val.trim();
+      }
+      return val;
+    };
+
+    const formatOptions = (question) => {
+      const formattedOptions = (question.options || []).map(opt => {
+        const text = typeof opt === 'string' ? opt : opt.text;
+        return {
+          id: Date.now() + Math.floor(Math.random() * 1000),
+          text: normalize(text),
+        };
+      });
+
+      const correct = formattedOptions.find(opt =>
+        opt.text.toLowerCase() === normalize(question.correctAnswer || '')
+      );
+
+      return {
+        options: formattedOptions,
+        correctAnswerId: correct ? correct.id : null
+      };
+    };
+
+    const processQuestion = async (questionObj) => {
+      questionObj.quizId = quizId;
+      console.log(questionObj,"osama");
+      const { options, correctAnswerId } = formatOptions(questionObj);
+      questionObj.options = options;
+      if(questionObj.type=='true_false'){
+        questionObj.correctAnswer = questionObj.correctAnswer === 'True' ? 'true' : 'false';
+
+      }
+      else if(questionObj.type=="mcq"){
+      questionObj.correctAnswer = correctAnswerId;
+      }
+      else{
+        questionObj.type = "fill_blank";
+      }
+      const newQuestion = await addNewQustion(questionObj);
+      return newQuestion;
+    };
+
     if (Array.isArray(generatedQuestions)) {
-      // Multiple questions case
       const savedQuestions = [];
-      
-      // Save each question to the database
+
       for (const question of generatedQuestions) {
         try {
-          // Add quiz ID to the question
-          question.quizId = quizId;
-          
-          // Save the question
-          const newQuestion = await addNewQustion(question);
-          savedQuestions.push(newQuestion);
-        } catch (saveError) {
-          console.error('Error saving question:', saveError, question);
-          // Continue with other questions if one fails
+          const saved = await processQuestion(question);
+          savedQuestions.push(saved);
+        } catch (error) {
+          console.error("Failed to save one question:", error);
         }
       }
-      
-      return res.status(200).json({ 
-        message: `${savedQuestions.length} questions generated successfully`, 
-        questions: savedQuestions 
+
+      return res.status(200).json({
+        message: `${savedQuestions.length} questions generated successfully`,
+        questions: savedQuestions
       });
     } else {
-      // Single question case
       try {
-        // Add quiz ID to the question
-        generatedQuestions.quizId = quizId;
-        
-        // Save the generated question to the database
-        const newQuestion = await addNewQustion(generatedQuestions);
-        
-        return res.status(200).json({ 
-          message: "Question generated successfully", 
-          question: newQuestion 
+        const saved = await processQuestion(generatedQuestions);
+        return res.status(200).json({
+          message: "Question generated successfully",
+          question: saved
         });
-      } catch (saveError) {
-        console.error('Error saving question:', saveError, generatedQuestions);
+      } catch (error) {
+        console.error("Failed to save question:", error);
         return res.status(500).json({ message: "Failed to save generated question" });
       }
     }
-    
+
   } catch (error) {
     console.error("Error generating AI question:", error);
     return res.status(500).json({ message: "Failed to generate question", error: error.message });
   }
 };
+
+
+
+

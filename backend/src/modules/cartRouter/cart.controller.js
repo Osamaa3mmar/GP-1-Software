@@ -126,7 +126,7 @@ export const purchaseCourses = async (req, res) => {
       include: [{
         model: courseModel,
         as: "course",
-        attributes: ["id", "title", "price", "thumbnail", "tags", "numberRating", "rating"],
+        attributes: ["id", "title", "price", "thumbnail", "tags", "numberRating", "rating", "enrollmentNumber"],
       }]
     });
 
@@ -140,22 +140,26 @@ export const purchaseCourses = async (req, res) => {
       courses
     });
 
-    // Enroll user in all purchased courses
+    // Enroll user and update enrollment number
     for (const item of courses) {
       await enrollmentModel.create({
         studentId: user.id,
         courseId: item.courseId,
         progress: 0,
       });
+
+      // Increment course enrollmentNumber by 1
+      await courseModel.increment(
+        { enrollmentNumber: 1 },
+        { where: { id: item.courseId } }
+      );
     }
 
     // Clear cart
-    await cartCourseModel.destroy({
-      where: { cartId: cart.id }
-    });
+    await cartCourseModel.destroy({ where: { cartId: cart.id } });
     await cart.destroy();
 
-    // Create a new empty cart for the user
+    // Create a new empty cart
     const newCart = await cartModel.create({
       userId: user.id,
       totalBeforeDiscount: 0,
