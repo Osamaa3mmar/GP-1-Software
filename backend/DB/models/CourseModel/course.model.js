@@ -66,7 +66,7 @@ export const courseModel = sequelize.define('Course', {
     allowNull: true
   },
   learningPath: {
-    type: DataTypes.STRING(255),
+    type: DataTypes.TEXT,
     allowNull: true
   },
   language: {

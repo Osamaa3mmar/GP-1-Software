@@ -99,6 +99,7 @@ export const generateAIQuestion = async (req, res) => {
     const normalize = (val) => {
       if (typeof val === 'string') {
         const trimmed = val.trim().toLowerCase();
+        console.log(trimmed, "trimmed");
         if (trimmed === 'true' || trimmed === 'false') return trimmed;
         return val.trim();
       }
@@ -115,7 +116,7 @@ export const generateAIQuestion = async (req, res) => {
       });
 
       const correct = formattedOptions.find(opt =>
-        opt.text.toLowerCase() === normalize(question.correctAnswer || '')
+        opt.text.toLowerCase() === normalize(question.correctAnswer || '').toLowerCase()
       );
 
       return {
@@ -134,7 +135,7 @@ export const generateAIQuestion = async (req, res) => {
 
       }
       else if(questionObj.type=="mcq"){
-      questionObj.correctAnswer = correctAnswerId;
+      questionObj.correctAnswer = correctAnswerId?correctAnswerId:questionObj.correctAnswer ;
       }
       else{
         questionObj.type = "fill_blank";

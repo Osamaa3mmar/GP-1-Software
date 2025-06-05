@@ -1,5 +1,5 @@
-import { Box, Card, CardMedia, CardContent, Button, Typography, LinearProgress, Chip, Avatar, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Card, CardMedia, CardContent, Button, Typography, LinearProgress, Chip, Avatar, useTheme, IconButton } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -181,7 +181,10 @@ export default function ClassroomCard({ course, isTeaching = false }) {
           
           {/* Teacher info */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            
             <Avatar 
+            component={Link} to={"/main/instructor/profile/"+ teacher?.id}
+            src={teacher?.profilePic }
               sx={{ 
                 width: 36, 
                 height: 36, 
@@ -206,7 +209,7 @@ export default function ClassroomCard({ course, isTeaching = false }) {
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <AccessTimeIcon fontSize="small" color="action" sx={{ mr: 0.5 }} />
               <Typography variant="body2" color="text.secondary">
-                {courseData?.duration || 0} {courseData?.duration === 1 ? 'hour' : 'hours'}
+                {courseData?.duration || 0} {courseData?.duration === 1 ? 'Week' : 'Weeks'}
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>

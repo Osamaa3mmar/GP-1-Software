@@ -20,7 +20,7 @@ export default function InstractorCard({ userId,id,accept,denied }) {
   useEffect(() => {
     getUser();
   }, [userId]);
-
+  
   return (
     <Paper
       elevation={3}
@@ -56,7 +56,7 @@ export default function InstractorCard({ userId,id,accept,denied }) {
       {/* Right Side: Actions */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Tooltip title="Open Resume">
-          <a href={user?.files?.resume || '#'} target="_blank" rel="noopener noreferrer">
+          <a href={user?.resume} target="_blank" rel="noopener noreferrer">
             <IconButton color="primary">
               <FileCopy />
             </IconButton>

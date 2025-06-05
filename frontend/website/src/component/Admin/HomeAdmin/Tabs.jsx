@@ -35,13 +35,14 @@ export default function Tabs() {
     const { user } = useContext(UserContext);
     console.log(courses);
     const {id}=useParams();
+    console.log(user)
     console.log(id,"here");
     useEffect(() => {
         const fetchAll = async () => {
             setLoadingCourses(true);
             try {
                 const { data } = await axios.post(`http://localhost:4545/course/getstaffandcourses`,{
-                    orgId: id 
+                    orgId: id?id: user?.orgId,
                 }, {
                     headers: {
                         token: localStorage.getItem("token"),
@@ -57,7 +58,7 @@ export default function Tabs() {
             }
         };
         
-        if (user&& id) {
+        if (user||id) {
           fetchAll();
         }
     }, [user,id]);

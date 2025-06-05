@@ -156,7 +156,9 @@ const ClassroomsListPage = () => {
               formattedTeachingCourses.map((course) => (
                 <Grid item key={course.course.id} xs={12} sm={12} md={6} lg={4}>
                   <ClassroomCard course={course} isTeaching={true} />
+                  {console.log(course)}
                 </Grid>
+                
               ))
             ) : (
               <Box sx={{ width: '100%', textAlign: 'center', py: 8 }}>

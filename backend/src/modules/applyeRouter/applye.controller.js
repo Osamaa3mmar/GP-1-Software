@@ -116,7 +116,7 @@ export const getInstractourInfo=async(req,res)=>{
     try{
         const {id}=req.params;
         const instructor=await userModel.findByPk(id,{
-            attributes:["id","username","email","profilePic","specialization","files"],
+            attributes:["id","username","email","profilePic","specialization","files","resume"],
         });
         if(!instructor){
             return res.status(404).json({message:"not found"});
@@ -228,7 +228,7 @@ export const assignInstructor = async (req, res) => {
         makeNotification("Assign","assign",message,actionUrl,course.orgId,false,null);
          actionUrl=`/main/classroom/${course.id}`;
          message=`You Assigned To Be Teacher Fro ${course.title} Course`
-        makeNotification("Unassign","unassign",message,actionUrl,null,false,userId);
+        makeNotification("Assign","assign",message,actionUrl,null,false,userId);
         await course.save();
         return res.status(200).json({ message: "Instructor assigned successfully", course });
     } catch (error) {

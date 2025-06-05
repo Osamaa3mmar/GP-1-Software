@@ -4,7 +4,8 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { toast } from "react-toastify";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
+
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import { useContext } from "react";
 import { OrgNotificationsContext } from "../../Context/NotificationsOrgContext";
@@ -12,7 +13,7 @@ export default function AssignCourseCard({
   title,
   thumbnail,
   id,
-  tags,
+  
   price,
   userId,
   reload,
@@ -106,7 +107,7 @@ export default function AssignCourseCard({
           </IconButton>
         </Tooltip>
         <Tooltip title="Class Room">
-          <IconButton sx={{ background: "rgba(0,0,255,0.05)" }}>
+          <IconButton component={Link} to={`/main/classrooms/${id}/lessons`} sx={{ background: "rgba(0,0,255,0.05)" }}>
             <KeyboardArrowRightIcon
               sx={{ fontSize: 28, color: theme.palette.primary.main }}
             />
