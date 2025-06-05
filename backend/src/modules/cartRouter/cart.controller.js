@@ -5,6 +5,7 @@ import { courseModel } from "../../../DB/models/CourseModel/course.model.js";
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import { purchaseModel } from "../../../DB/models/purchase/purchase.js";
 import { enrollmentModel } from "../../../DB/models/Enrollment/Enrollments.js";
+import { makeNotification } from "../Notification/Notification.controller.js";
 
 export const getCart = async (req, res) => {
   try {
@@ -126,7 +127,15 @@ export const purchaseCourses = async (req, res) => {
       include: [{
         model: courseModel,
         as: "course",
-        attributes: ["id", "title", "price", "thumbnail", "tags", "numberRating", "rating", "enrollmentNumber"],
+        attributes: [
+          "id", "title", "price", "thumbnail", "tags",
+          "numberRating", "rating", "enrollmentNumber", "teacherId"
+        ],
+        include: [{
+          model: userModel,
+          as: "teacher",
+          attributes: ["orgId"] // assumes teacher has orgId
+        }]
       }]
     });
 
@@ -140,19 +149,30 @@ export const purchaseCourses = async (req, res) => {
       courses
     });
 
-    // Enroll user and update enrollment number
+    // Enroll user, update course enrollmentNumber, and send notifications
     for (const item of courses) {
+      const courseId = item.courseId;
+      const isCourse = item.course;
+      const course=await courseModel.findByPk(courseId);      
       await enrollmentModel.create({
         studentId: user.id,
-        courseId: item.courseId,
+        courseId,
         progress: 0,
       });
 
-      // Increment course enrollmentNumber by 1
       await courseModel.increment(
         { enrollmentNumber: 1 },
-        { where: { id: item.courseId } }
+        { where: { id: courseId } }
       );
+
+      // Send notifications
+      let message = `${user.username} Enroll in ${isCourse.title} Course.`;
+      let actionUrl = "/main/profile/user/"+user.id;
+      makeNotification("Enroll", "user", message, actionUrl,course.orgId,false, null);
+
+      message = `Enrolled in ${isCourse.title} Course Success.`;
+      actionUrl = "/main/course/" + courseId;
+      makeNotification("Enroll", "user", message, actionUrl, null, false, user.id);
     }
 
     // Clear cart
@@ -180,6 +200,7 @@ export const purchaseCourses = async (req, res) => {
 
 
 
+
 export const checkEnrollment = async (req, res) => {
   try {
     const { user } = req.body;
@@ -195,7 +216,7 @@ export const checkEnrollment = async (req, res) => {
     if (enrollment) {
       return res.status(200).json({ message: "User is enrolled in this course", enrolled: true });
     } else {
-      return res.status(404).json({ message: "User is not enrolled in this course", enrolled: false });
+      return res.status(200).json({ message: "User is not enrolled in this course", enrolled: false });
     }
   } catch (error) {
     console.error(error);

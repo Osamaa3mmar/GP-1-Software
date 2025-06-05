@@ -8,9 +8,11 @@ import { UserContext } from "./userContext";
 export const UserNotificationsContext=createContext();
 
 const UserNotificationsContextProvider=({children})=>{
+    
     const {user}=useContext(UserContext);
     const [notificationCount,setNotificationCount]=useState(0);
     const [notifications,setNotifications]=useState(0);
+    console.log(notifications);
     const getUnseen=(arr)=>{
         let count =0;
         arr.forEach((item)=>{
@@ -20,7 +22,7 @@ const UserNotificationsContextProvider=({children})=>{
         })
         setNotificationCount(count);
     }
-    const getCount =async (orgId)=>{
+    const getCount =async ()=>{
         try{
             const {data}=await axios.get(`http://localhost:4545/notifications/user/${user?.id}`);
             setNotifications(data.notifications);

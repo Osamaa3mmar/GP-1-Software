@@ -15,7 +15,6 @@ const OsamaCartContextProvider=({children})=>{
                 token: localStorage.getItem("token"),
             }
         });
-        console.log(data);
         setCartCount(data.cart.courses.length);
     }catch(error){
         console.error("Error fetching cart count:", error);

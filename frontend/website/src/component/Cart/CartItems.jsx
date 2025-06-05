@@ -20,6 +20,7 @@ import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { OsamaCartContext } from "../../Context/CartOsama";
+import { UserNotificationsContext } from "../../Context/NotificationsUserContext";
 const CartItems = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useState([]);
@@ -38,7 +39,7 @@ const CartItems = () => {
       console.error("Error fetching cart items:", error);
     }
   }
-  
+  const {getCount}=useContext(UserNotificationsContext);
   const removeFromCart = async (courseId) => {
     try{
       const {data}=await axios.delete("http://localhost:4545/cart/removeitem",{
@@ -52,6 +53,7 @@ const CartItems = () => {
       console.log(data);
       setCartCount(cartCount-1);
       getCart();
+      navigate("/main/classrooms");
     }catch(error){
       console.error("Error fetching cart items:", error);
     }
@@ -67,6 +69,7 @@ const CartItems = () => {
           token: localStorage.getItem("token"),
         }
       })
+      getCount();
       console.log(data);
       toast.success("Purchase successful!");
       setCartCount(0);

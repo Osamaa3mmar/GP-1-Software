@@ -73,13 +73,23 @@ export const sendConfirmationEmail = async (req, res) => {
           return res.status(400).json({ message: "Email already verified." });
         }
         sendEmail(user.email, `
-          <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
-              <h2 style="color: #333;">Welcome to Thuraa!</h2>
-              <p>Please confirm your email address by clicking the button below.</p>
-              <a href=${"http://localhost:5173/auth/verify/"+id} style="display: inline-block; padding: 10px 20px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;">Confirm Email</a>
-              <p>If you didn't sign up for this account, you can ignore this email.</p>
-          </div>
-      `,);
+  <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; padding: 40px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden;">
+      <div style="background-color: #007bff; color: white; padding: 20px 30px; text-align: center;">
+        <h2 style="margin: 0;">Welcome to Thuraa!</h2>
+      </div>
+      <div style="padding: 30px; text-align: center; color: #333;">
+        <p style="font-size: 16px;">Thank you for joining us! Please confirm your email address to get started.</p>
+        <a href="${"http://localhost:5173/auth/verify/"+id}" 
+           style="display: inline-block; margin: 20px auto; padding: 12px 25px; font-size: 16px; color: #ffffff; background-color: #007bff; text-decoration: none; border-radius: 5px; transition: background-color 0.3s ease;">
+           Confirm Email
+        </a>
+        <p style="font-size: 14px; color: #777; margin-top: 30px;">If you didn’t sign up for this account, feel free to ignore this email.</p>
+      </div>
+    </div>
+    <p style="text-align: center; font-size: 12px; color: #aaa; margin-top: 20px;">© 2025 Thuraa. All rights reserved.</p>
+  </div>
+`,);
         user.sentVerifyEmail = true;
         await user.save();
         return res.status(200).json({

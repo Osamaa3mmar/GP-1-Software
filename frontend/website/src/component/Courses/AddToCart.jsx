@@ -7,7 +7,6 @@ import { OsamaCartContext } from "../../Context/CartOsama";
 import { toast } from "react-toastify";
 export default function AddToCart({ product }) {
   const {cartCount,setCartCount}=useContext(OsamaCartContext);
-  console.log(product);
   const [enrolled, setEnrolled] = useState(false);
   const addToCartFunction = async()=>{
     try{
@@ -39,8 +38,8 @@ export default function AddToCart({ product }) {
           courseId: product.id,
         },
       });
-      console.log(data);
-      setEnrolled(true);
+     
+      setEnrolled(data.enrolled);
     } catch (error) {
       console.error("Error checking enrollment:", error);
     }

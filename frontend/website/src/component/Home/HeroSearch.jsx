@@ -44,7 +44,6 @@ export default function HeroSearch() {
           token: localStorage.getItem("token")
         }
       });
-      console.log(data);
       if (data.teachers) {
         setTeachers(data.teachers);
       }

@@ -92,7 +92,6 @@ export const addLesson = async (req, res) => {
                 const enrollments = await courseModel.sequelize.models.Enrollment.findAll({
                     where: { courseId }
                 });
-                
                 if (enrollments && enrollments.length > 0) {
                     // Send notification to each enrolled user
                     const notificationPromises = enrollments.map(enrollment => 
@@ -102,8 +101,8 @@ export const addLesson = async (req, res) => {
                             message, 
                             actionUrl, 
                             null, 
-                            true, 
-                            enrollment.userId
+                            false, 
+                            enrollment.studentId
                         )
                     );
                     

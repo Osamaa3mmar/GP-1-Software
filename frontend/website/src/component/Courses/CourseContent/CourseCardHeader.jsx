@@ -12,7 +12,6 @@ export default function CourseCardHeader({ teacher }) {
           .toUpperCase()
       : "??";
   };
-console.log(teacher)
   return (
     <CardHeader
       avatar={

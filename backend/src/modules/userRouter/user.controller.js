@@ -65,30 +65,30 @@ export const getFullProfile=async (req,res)=>{
 
 export const addLink = async (req, res) => {
     try {
-        const { user, title, 
-        url,
-        type  } = req.body;
-            console.log(title,url,type);
-        
+        const { user, title, url, type } = req.body;
+
+        console.log(title, url, type);
 
         const userFromDataBase = await userModel.findByPk(user.id);
 
         if (!userFromDataBase) {
-            return res.status(404).json({ message: "User not found"});
+            return res.status(404).json({ message: "User not found" });
         }
 
-        if (!userFromDataBase.links || !Array.isArray(userFromDataBase.links.urls)) {
+        // Ensure links is an array
+        if (!Array.isArray(userFromDataBase.links)) {
             userFromDataBase.links = [];
         }
 
+        // Append the new link
         userFromDataBase.links.push({
             title: title || "Untitled Link",
             url,
             type: type || "other"
         });
+
         userFromDataBase.changed('links', true); 
         await userFromDataBase.save();
-        
 
         return res.status(200).json({
             message: "Success!",
@@ -101,6 +101,7 @@ export const addLink = async (req, res) => {
         });
     }
 };
+
 
 
 
