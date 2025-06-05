@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const CourseInstructor = ({ instructor }) => {
   if (!instructor) return null;
-  
+  console.log(instructor,"osama")
   return (
     <Paper 
       elevation={3} 
@@ -69,7 +69,7 @@ const CourseInstructor = ({ instructor }) => {
           >
             {instructor.profilePic ? (
               <Avatar 
-                src={`http://localhost:4545/uploads/${instructor.profilePic}`}
+                src={instructor.profilePic}
                 alt={instructor.username}
                 sx={{ 
                   width: 110, 
