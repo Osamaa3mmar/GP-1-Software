@@ -24,10 +24,7 @@ export const courseModel = sequelize.define('Course', {
   rating: {
     type: DataTypes.FLOAT,
     allowNull: true,
-    validate: {
-      min: 0,
-      max: 5
-    },
+    
     defaultValue:0,
   },
   numberRating:{

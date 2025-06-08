@@ -106,7 +106,7 @@ const onRateSubmit = async (rating) => {
   try {
     const response = await axios.post("http://localhost:4545/rate/ratecourse", {
       courseId: id,
-      rating: rating
+      rating
     }, {
       headers: {
         token: localStorage.getItem("token")

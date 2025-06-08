@@ -28,14 +28,13 @@ export const chackIsRate = async (req, res) => {
 
 
 export const rateCourse = async (req, res) => {
-    try {
+    // try {
         const { user } = req.body;
         const { courseId, rating } = req.body;
-
         if (!courseId || !rating) {
             return res.status(400).json({ error: "Course ID and rating are required" });
         }
-
+        
         const [rate, created] = await rateModel.findOrCreate({
             where: {
                 userId: user.id,
@@ -56,11 +55,13 @@ export const rateCourse = async (req, res) => {
         }
         course.numberRating += 1;
         course.rating += rating;
+        console.log(rating,"osama58");
         await course.save();
+        console.log(rating,"osama60");
         return res.status(200).json({ message: "Rating submitted successfully", rating: rate.rating,course });
-    } catch (err) {
+    // } catch (err) {
         console.error("Error submitting course rating:", err);
         return res.status(500).json({ error: "Internal server error" });
-    }
+    // }
 }
     
