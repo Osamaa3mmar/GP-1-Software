@@ -171,7 +171,7 @@ export const getAllCourses = async (req, res) => {
                     [Op.ne]: "notStarted"
                 }
             },
-            include:[{model:userModel,as:'teacher',attributes: ['id','username','specialization']}]
+            include:[{model:userModel,as:'teacher',attributes: ['id','username','specialization',"profilePic"]},]
         });
 
         return res.status(200).json({ message: "Courses retrieved successfully!", courses });

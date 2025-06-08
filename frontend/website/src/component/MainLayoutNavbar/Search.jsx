@@ -37,6 +37,7 @@ export default function CourseSearch() {
       setLoading(true);
       const response = await fetch("http://localhost:4545/course/getall");
       const data = await response.json();
+      console.log(data,"osama")
       if (data.courses) {
         setCourses(data.courses);
       }
@@ -69,7 +70,6 @@ export default function CourseSearch() {
 
     return matchTitle || matchTopics || matchCategory || matchTeacher;
   });
-
   const getInitials = (name) => {
     if (!name) return "";
     return name
@@ -84,7 +84,6 @@ export default function CourseSearch() {
     setQuery("");
     setIsFocused(false);
   };
-
   return (
     <Box
       sx={{
@@ -224,6 +223,7 @@ export default function CourseSearch() {
                         {/* Teacher Info */}{" "}
                         <Stack direction="row" spacing={1} alignItems="center">
                           <Avatar
+                            src={course.teacher?.profilePic}
                             sx={{
                               width: 24,
                               height: 24,
