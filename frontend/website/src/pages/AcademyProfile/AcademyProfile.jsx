@@ -43,6 +43,7 @@ export default function AcademyProfile() {
       if(data.isInIt) {
         setIsInIt(true);
       }
+      console.log(data);
     } catch(error) {
       console.log(error);
     }

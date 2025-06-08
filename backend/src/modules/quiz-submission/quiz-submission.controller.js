@@ -78,17 +78,19 @@ export const submitQuiz = async (req, res) => {
     let submission;
     let submissionCreated = false;
     enrollment.points+=score;
+    submission = await quizSubmissionModel.create({
+      userId,
+      quizId,
+      answers: answers,
+      score,
+      maxScore: totalMarks,
+      status: 'graded',
+      submittedAt: new Date(),
+    });
+    submissionCreated = true;
+    enrollment.progress+=10;
     await enrollment.save();
-      submission = await quizSubmissionModel.create({
-        userId,
-        quizId,
-        answers: answers,
-        score,
-        maxScore: totalMarks,
-        status: 'graded',
-        submittedAt: new Date(),
-      });
-      submissionCreated = true;
+      console.log(enrollment)
     return res.status(200).json({
       message: submissionCreated ? "Quiz submitted successfully" : "Quiz processed but not saved",
       submission
