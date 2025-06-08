@@ -6,6 +6,7 @@ import { differenceInWeeks } from 'date-fns';
 import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
 import { applayModal } from "../../../DB/models/Applyes/Applayes.modal.js";
+import { sequelize } from "../../../DB/Connection.js";
 
 
 export const createCourse=async (req,res)=>{
@@ -164,7 +165,7 @@ export const deleteCourse=async(req,res)=>{
 export const getAllCourses = async (req, res) => {
     try {
         const courses = await courseModel.findAll({
-            attributes: ["id", "title","thumbnail","tags","learningOutcomes","learningPath","duration","price","rating","enrollmentNumber","startDate","endDate"],
+            attributes: ["id", "title","thumbnail","tags","learningOutcomes","learningPath","duration","price","rating","enrollmentNumber","startDate","endDate","numberRating"],
             where: {
                 completionStatus: {
                     [Op.ne]: "notStarted"
@@ -314,10 +315,18 @@ export const getTeacherCourses=async(req,res)=>{
 }
 
 export const getFeaturedCourses=async(req,res)=>{
-   try {
+  try {
+     console.log("object")
     const courses = await courseModel.findAll({
-      order: [['rating', 'DESC']],
+      order: [
+      [sequelize.literal('CASE WHEN "numberRating" = 0 THEN 0 ELSE "rating" / "numberRating" END'), 'DESC']
+      ],
       limit: 6,
+      where: {
+        completionStatus: {
+          [Op.ne]: "notStarted"
+        }
+      },
       include: [
         {
           model: userModel,

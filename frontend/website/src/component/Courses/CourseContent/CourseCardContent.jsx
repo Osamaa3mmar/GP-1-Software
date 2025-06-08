@@ -64,7 +64,7 @@ export default function CourseCardContent({ course }) {
       
       {/* Push rating to bottom */}
       <Box sx={{ mt: 'auto' }}>
-        <CourseCardRating price={course.price} rating={course.rating}/>
+        <CourseCardRating price={course.price} rating={course.rating/course.numberRating}/>
       </Box>
     </CardContent>
   );

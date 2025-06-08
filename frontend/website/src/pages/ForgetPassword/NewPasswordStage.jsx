@@ -212,8 +212,7 @@ export default function NewPasswordStage({setStep,code,email}) {
         
     }}
     type="submit" variant="contained" endIcon={<ArrowForwardIcon/>}>
-      Send Code
-    </Button>
+Reset    </Button>
      <Button 
       sx={{
       

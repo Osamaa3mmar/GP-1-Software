@@ -21,14 +21,23 @@
 }
 .profile{
     width: 20%;
+    aspect-ratio: 1/1;
     border-radius: 50%;
     overflow: hidden;
     border: 4px solid #f9faff;
     position: absolute;
     bottom: -40%;
     transition: 400ms;
+    background: red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
+.profile img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 .editIcon2{
     position: absolute;
     bottom: 6%;

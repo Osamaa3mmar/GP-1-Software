@@ -170,39 +170,50 @@ export const editOrgImages=async(req,res)=>{
 
 export const getTopOrganizations = async (req, res) => {
     try {
-        const orgs = await organizationModel.findAll({            attributes: [
-                'id',
-                'name',
-                'profile',
-                'description',
-                'isVerified',
-                [sequelize.fn('COUNT', sequelize.col('courses.id')), 'courseCount'],
-                [sequelize.fn('COALESCE', sequelize.fn('AVG', sequelize.col('courses.rating')), 0), 'avgRating']
-            ],
-            subQuery: false,            include: [{
-                model: courseModel,
-                as: 'courses',
-                attributes: [],
-                required: false,
-                where: {
-                    completionStatus: {
-                        [Op.in]: ['inProgress', 'completed']
-                    }
-                }
-            }],            group: [
-                'id',
-                'name',
-                'profile',
-                'description',
-                'isVerified'
-            ],
-            having: sequelize.literal('COUNT(courses.id) > 0'),
-            order: [
-                [sequelize.fn('AVG', sequelize.col('courses.rating')), 'DESC'],
-                [sequelize.fn('COUNT', sequelize.col('courses.id')), 'DESC']
-            ],
-            limit: 5
-        });
+    const orgs = await organizationModel.findAll({
+    attributes: [
+        'id',
+        'name',
+        'profile',
+        'description',
+        'isVerified',
+        [sequelize.fn('COUNT', sequelize.col('courses.id')), 'courseCount'],
+        [
+            sequelize.fn(
+                'COALESCE',
+                sequelize.literal('SUM(courses.rating) / NULLIF(SUM(courses.numberRating), 0)'),
+                0
+            ),
+            'avgRating'
+        ]
+    ],
+    subQuery: false,
+    include: [{
+        model: courseModel,
+        as: 'courses',
+        attributes: [],
+        required: false,
+        where: {
+            completionStatus: {
+                [Op.in]: ['inProgress', 'completed']
+            }
+        }
+    }],
+    group: [
+        'id',
+        'name',
+        'profile',
+        'description',
+        'isVerified'
+    ],
+    having: sequelize.literal('COUNT(courses.id) > 0'),
+    order: [
+        [sequelize.literal('avgRating'), 'DESC'],
+        [sequelize.fn('COUNT', sequelize.col('courses.id')), 'DESC']
+    ],
+    limit: 5
+});
+
 
         if (!orgs.length) {
             return res.status(200).json({

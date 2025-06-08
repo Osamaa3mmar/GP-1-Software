@@ -150,7 +150,7 @@ export default function MainPage() {
         <ContinueLearning/>
         <FeaturedCourses courses={featuredCourses} />
         <CategoriesGrid categories={topCategories} />
-        <TopStudents/>
+        {/* <TopStudents/> */}
         <TopCompanies/>
         {/* <LearningPaths paths={samplePaths} />
         <UpcomingSchedule schedule={sampleSchedule} /> */}

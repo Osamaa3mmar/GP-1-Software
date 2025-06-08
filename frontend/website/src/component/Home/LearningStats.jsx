@@ -14,18 +14,6 @@ export default function LearningStats() {
       subtext: "Keep learning!"
     },
     {
-      title: "Completed Courses",
-      value: "0",
-      color: "#22c55e",
-      subtext: "Great job!"
-    },
-    {
-      title: "Hours Learned",
-      value: "0",
-      color: "#ec4899",
-      subtext: "This month"
-    },
-    {
       title: "Achievement Points",
       value: "0",
       color: "#f97316",
@@ -146,8 +134,9 @@ export default function LearningStats() {
       </Typography>
       
       <Grid container spacing={2}>
-        {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+        {stats.map((stat, index) => {
+          if( index <2) {
+          return <Grid item xs={12} sm={6} md={6} key={index}>
             <Paper 
               elevation={0} 
               sx={{ 
@@ -175,7 +164,7 @@ export default function LearningStats() {
               </Stack>
             </Paper>
           </Grid>
-        ))}
+}})}
       </Grid>
     </Box>
   );

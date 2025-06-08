@@ -179,7 +179,7 @@ export default function AcceptedInstractourCard({ index, userId, getAll,search }
               </IconButton>
             </Tooltip>
             <Tooltip title="View Instructor Profile">
-              <IconButton onClick={() => window.location.href = `/main/profile/${userId}`}>
+              <IconButton onClick={() => window.location.href = `/main/instructor/profile/${userId}`}>
                 <KeyboardArrowRightIcon
                   sx={{ fontSize: 28, color: theme.palette.primary.main }}
                 />

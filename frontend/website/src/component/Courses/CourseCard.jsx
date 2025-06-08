@@ -15,6 +15,7 @@ import CoursePopover from "./CoursePopover/CoursePopover";
 
 export default function CourseCard({ course }) {
   const navigate = useNavigate();
+  console.log(course);
   const {
     anchorEl,
     popoverDirection,
