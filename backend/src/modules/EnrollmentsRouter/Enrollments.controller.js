@@ -412,7 +412,7 @@ export const getUserTotalPoints = async (req, res) => {
         } else if (totalPoints >= 100) {
             rank = "Bronze Scholar";
         }
-        
+        console.log(totalPoints)
         return res.status(200).json({ 
             message: "Successfully retrieved user's total points", 
             totalPoints,

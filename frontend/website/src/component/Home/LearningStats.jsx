@@ -50,7 +50,7 @@ export default function LearningStats() {
         const pointsResponse = await axios.get('http://localhost:4545/enrollments/user/points', {
           headers: { token }
         });
-        
+        console.log(pointsResponse);
         // Fetch user learning hours
         const hoursResponse = await axios.get('http://localhost:4545/enrollments/user/learning-hours', {
           headers: { token }
@@ -70,11 +70,7 @@ export default function LearningStats() {
           };
           
           // Update completed courses
-          newStats[1] = {
-            ...newStats[1],
-            value: completedResponse.data.count.toString(),
-            subtext: completedResponse.data.count > 0 ? 'Completed successfully!' : 'Start completing courses!'
-          };
+          
           
           // Update hours learned
           newStats[2] = {
@@ -84,8 +80,8 @@ export default function LearningStats() {
           };
           
           // Update achievement points
-          newStats[3] = {
-            ...newStats[3],
+          newStats[1] = {
+            ...newStats[1],
             value: pointsResponse.data.totalPoints.toString(),
             subtext: `Rank: ${pointsResponse.data.rank}`
           };
