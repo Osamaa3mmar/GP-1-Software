@@ -720,7 +720,7 @@ if (isTaken) {
             </Typography>
           </Box>
           
-          <Box sx={{ 
+          {/* <Box sx={{ 
             display: 'flex', 
             alignItems: 'center', 
             bgcolor: timeRemaining < 60 ? 'error.light' : 'primary.light',
@@ -733,7 +733,7 @@ if (isTaken) {
             <Typography variant="h6" fontWeight="medium">
               {formatTime(timeRemaining)}
             </Typography>
-          </Box>
+          </Box> */}
         </Box>
         
         <LinearProgress 
