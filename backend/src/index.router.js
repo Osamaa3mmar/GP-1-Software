@@ -17,10 +17,10 @@ import categoryRouter from './modules/categoryRouter/category.router.js';
 import cartRouter from './modules/cartRouter/cart.router.js';
 import cartCourseRouter from './modules/cartCourseRouter/cartCourse.router.js';
 import topicRouter from './modules/topicRouter/topic.router.js';
-import messagingRouter from './modules/messaging/messaging.router.js';
 import rateRouter from './modules/RateCourses/rate.router.js';
 import { purchaseModel } from '../DB/models/purchase/purchase.js';
-
+import conversitionRouter from './modules/MessageSystem/Conversitions/conversition.router.js'
+import messageRouter from './modules/MessageSystem/Messages/message.router.js'
 export const initApp=(app,express)=>{
     //here put use statment
     connectDB();
@@ -42,7 +42,9 @@ export const initApp=(app,express)=>{
     app.use("/cartcourse",cartCourseRouter);
     app.use("/topics",topicRouter);
     app.use("/applye",applyeRouter);
-    app.use("/messaging", messagingRouter);
+    // app.use("/messaging", messagingRouter);
     app.use("/purchase",purchaseModel);
     app.use("/rate",rateRouter);
+    app.use("/conversitions",conversitionRouter);
+    app.use("/messages",messageRouter);
 }

@@ -2,7 +2,12 @@ import Sequelize from "sequelize";
 
 export const sequelize = new Sequelize('software_gp1', 'root', '12112228', {
     host: 'localhost',
-    dialect:'mysql' 
+    dialect:'mysql' ,
+    logging: (msg) => {
+    if (msg.toLowerCase().includes("error")) {
+      console.error(msg);
+    }
+  },
   });
 
 export const connectDB=()=>{
