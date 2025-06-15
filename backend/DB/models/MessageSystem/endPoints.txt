@@ -1,0 +1,8 @@
+1-make all prev conv---------------------------
+2-get conv for students -----------------------
+3-get conv for org 
+4-get all messages for conv -------------------
+5-send 
+6-update
+7-react
+8-get all messages for conv -------------------
