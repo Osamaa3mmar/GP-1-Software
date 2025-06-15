@@ -5,22 +5,25 @@ import axios from "axios";
 
 export default function ChatSidebar() {
   const theme = useTheme();
-  const getData=async()=>{
-        try{
-            const {data}= await axios.get("http://localhost:4545/conversitions/getconversitions/user",{
-                headers:{
-                    token:localStorage.getItem("token")
-                }
-            })
-            console.log(data)
-        }catch(error){
-            console.log(error);
+  const getData = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4545/conversitions/getconversitions/user",
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
         }
+      );
+      console.log(data);
+    } catch (error) {
+      console.log(error);
     }
+  };
 
-    useEffect(()=>{
-        getData();
-    })
+  useEffect(() => {
+    getData();
+  });
   // Mock data for demonstration - replace with actual data
   const chatUsers = [
     {
@@ -90,7 +93,7 @@ export default function ChatSidebar() {
       elevation={3}
       sx={{
         width: "25%",
-        height: "100vh",
+        height: "100%",
         borderRadius: 0,
         display: "flex",
         flexDirection: "column",

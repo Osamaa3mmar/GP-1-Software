@@ -211,7 +211,11 @@ export default function App() {
         },
         {
           path: "chat",
-          element: <ChatAdmin type={"user"} />,
+          element: 
+          <UserContextProvider>
+            <ChatAdmin type={"user"} />
+          </UserContextProvider>
+          ,
         }
       ]
     },

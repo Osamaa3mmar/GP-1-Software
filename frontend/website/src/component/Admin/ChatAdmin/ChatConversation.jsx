@@ -1,6 +1,6 @@
 import { Box, useTheme } from "@mui/material";
 import { useContext, useRef, useEffect } from "react";
-import { UserContext } from "../../../Context/userContext";
+import { UserContext } from "../../../Context/UserContext";
 import ChatMessage from "./ChatMessage";
 
 export default function ChatConversation() {
@@ -12,42 +12,42 @@ export default function ChatConversation() {
   const messages = [
     {
       id: 1,
-      senderId: "123",
+      senderId: 8,
       content: "Hi, how are you?",
       timestamp: "10:00 AM",
       senderName: "John Doe",
     },
     {
       id: 2,
-      senderId: "456",
+      senderId: 9,
       content: "I'm good, thanks! How about you?",
       timestamp: "10:01 AM",
       senderName: "Jane Smith",
     },
     {
       id: 3,
-      senderId: "123",
+      senderId: 8,
       content: "Great! I wanted to discuss the project updates.",
       timestamp: "10:02 AM",
       senderName: "John Doe",
     },
     {
-      id: 1,
-      senderId: "123",
+      id: 4,
+      senderId: 9,
       content: "Hi, how are you?",
       timestamp: "10:00 AM",
       senderName: "John Doe",
     },
     {
-      id: 2,
-      senderId: "456",
+      id: 5,
+      senderId: 8,
       content: "I'm good, thanks! How about you?",
       timestamp: "10:01 AM",
       senderName: "Jane Smith",
     },
     {
-      id: 3,
-      senderId: "123",
+      id: 6,
+      senderId: 9,
       content: "Great! I wanted to discuss the project updates.",
       timestamp: "10:02 AM",
       senderName: "John Doe",
@@ -61,7 +61,12 @@ export default function ChatConversation() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
+  console.log("user", user);
+  messages.map((message) => {
+    console.log(message.senderId === user?.id);
+  })
+  
+  
   return (
     <Box
       sx={{
@@ -99,7 +104,7 @@ export default function ChatConversation() {
         >
           <ChatMessage
             message={message}
-            isOwn={message.senderId === user?.id}
+            isOwn={message.senderId !== user?.id}
           />
         </Box>
       ))}

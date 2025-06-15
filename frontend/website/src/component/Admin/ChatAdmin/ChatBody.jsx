@@ -10,8 +10,7 @@ export default function ChatBody() {
         flexGrow: 1,
         display: "flex",
         flexDirection: "column",
-        height: "100vh",
-        maxHeight: "100vh",
+        height: "100%",
         overflow: "hidden",
         bgcolor: "#f8f9fa",
       }}
