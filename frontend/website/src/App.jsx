@@ -208,6 +208,10 @@ export default function App() {
         {
           path:"instructor/profile/:id",
           element:<InstructorProfile />
+        },
+        {
+          path: "chat",
+          element: <ChatAdmin type={"user"} />,
         }
       ]
     },

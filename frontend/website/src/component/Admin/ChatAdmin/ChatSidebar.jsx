@@ -1,9 +1,26 @@
 import { Box, Paper, Divider, useTheme } from "@mui/material";
+import { useEffect } from "react";
 import ChatCard from "./ChatCard";
+import axios from "axios";
 
 export default function ChatSidebar() {
   const theme = useTheme();
+  const getData=async()=>{
+        try{
+            const {data}= await axios.get("http://localhost:4545/conversitions/getconversitions/user",{
+                headers:{
+                    token:localStorage.getItem("token")
+                }
+            })
+            console.log(data)
+        }catch(error){
+            console.log(error);
+        }
+    }
 
+    useEffect(()=>{
+        getData();
+    })
   // Mock data for demonstration - replace with actual data
   const chatUsers = [
     {

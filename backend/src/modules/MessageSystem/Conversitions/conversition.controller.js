@@ -35,7 +35,7 @@ export const makeAllPastConv = async (req, res) => {
     });
     let x = Array.from(map.values());
     const check = await ConversitionModel.bulkCreate(x);
-    return res.status(200).json({ check: check.length });
+    return res.status(200).json({ Message: "Success", convs: enrollments });
   } catch (error) {
     return res.status(500).json({ message: "Server Error", error });
   }
