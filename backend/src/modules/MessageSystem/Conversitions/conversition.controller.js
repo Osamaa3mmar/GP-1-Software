@@ -62,7 +62,7 @@ export const getUserConvs = async (req, res) => {
       
       limit: 1,
       order: [['time', 'DESC']],
-      attributes: ['payload', 'time']
+      attributes: ['payload', 'time','isRead','senderId']
     }]
     })
     if(convs.length==0){
@@ -120,4 +120,42 @@ export const getConvMessages=async (req,res)=>{
         return res.status(500).json({message:"Server Error",error});
     }
 
+}
+
+
+
+export const getOrgConvs=async(req,res)=>{
+  try{
+    const {user}=req.body;
+    
+    const convs=await ConversitionModel.findAll({
+        where:{
+            organizationId:user.orgId
+        },
+        attributes:["id","type"],
+        include:[
+    {
+        model:organizationModel,
+        as:"organization",
+        attributes:["name","profile"],
+        
+    },
+    {
+      model: MessageModel,
+      as: 'messages',
+      
+      limit: 1,
+      order: [['time', 'DESC']],
+      attributes: ['payload', 'time','isRead','senderId']
+    }]
+    })
+    if(convs.length==0){
+        return res.status(200).json({Message:"No Conversitions",convs:[]});
+    }
+
+    return res.status(200).json({Message:"Successs",convs});
+  }catch(error){
+    return res.status(500).json({message:"Server Error",error});
+  
+  }
 }

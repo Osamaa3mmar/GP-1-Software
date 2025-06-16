@@ -28,3 +28,47 @@ export const sendMessage = async (req, res) => {
     return res.status(500).json({ message: "Server Error", error });
   }
 };
+
+
+
+export const getMessage=async(req,res)=>{
+    try{
+        const {messageId}=req.params;
+        const message=await MessageModel.findByPk(messageId);
+        return res.status(200).json({message});
+    }catch(error){
+        return res.status(500).json({message:"Server Error",error});
+    }
+}
+
+export const editMessage=async(req,res)=>{
+    try{
+        const {messageId}=req.params;
+        const {payload}=req.body;
+        const message=await MessageModel.findByPk(messageId);
+        if(!message){
+            return res.status(404).json({message:"Message not found"});
+        }
+        message.payload=payload;
+        message.edited=true;
+        await message.save();
+        return res.status(200).json({message});
+    }catch(error){
+        return res.status(500).json({message:"Server Error",error});
+    }
+}
+
+
+
+export const reactToMessage=async(req,res)=>{
+    try{
+        const {messageId}=req.params;
+        const {reaction}=req.body;
+        const message=await MessageModel.findByPk(messageId);
+        message.reaction=reaction;
+        message.save();
+        return res.status(200).json({message});
+    }catch(error){
+        return res.status(500).json({message:"Server Error",error});
+    }
+}
