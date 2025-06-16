@@ -6,6 +6,8 @@ import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import { purchaseModel } from "../../../DB/models/purchase/purchase.js";
 import { enrollmentModel } from "../../../DB/models/Enrollment/Enrollments.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
+import Stripe from "stripe";
+const stripe = new Stripe("sk_test_51RaggCRjHx0ojiIow8YwXmi3YiMoFLqZmIyMYNl4MtGSdfWFS8RFo1QVgbZYOYzpk1sImeF2hotCXg0kN2ya4Q3Z00Jn5XaFMo"); // required
 
 export const getCart = async (req, res) => {
   try {
@@ -223,3 +225,34 @@ export const checkEnrollment = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+
+
+
+export const payWithStripe=async(req,res)=>{
+  // try{
+    const {products}=req.body;
+    const lineItems=products.map((product)=>({
+      price_data:{
+        currency:"usd",
+        product_data:{
+          name:product.course.title,
+          images:[product.course.thumbnail]
+        },
+        unit_amount:product.course.price*100,
+      },
+      quantity:1,
+    }))
+    const session=await stripe.checkout.sessions.create({
+       payment_method_types:["card"],
+    line_items:lineItems,
+    mode:"payment",
+    success_url:"http://localhost:5173/main/payment/status/success",
+    cancel_url:"http://localhost:5173/main/payment/status/failed",
+    })
+      return res.status(200).json({message:"success",id:session.id});
+  // }catch(error){
+  //   return res.status(500).json({ error: "Internal server error" });
+  // }
+}
