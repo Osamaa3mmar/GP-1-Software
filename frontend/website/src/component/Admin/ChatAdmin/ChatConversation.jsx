@@ -49,7 +49,6 @@ export default function ChatConversation({ conversationData }) {
   const handleCancelReply = () => {
     setReplyingTo(null);
   };
-
   const fetchMessages = useCallback(async () => {
     try {
       const response = await axios.post(
@@ -62,7 +61,26 @@ export default function ChatConversation({ conversationData }) {
         }
       );
       const messagesArray = response.data?.conv?.messages || [];
-      setMessages(messagesArray);
+
+      // Create a map for quick message lookup by ID
+      const messageMap = new Map();
+      messagesArray.forEach((message) => messageMap.set(message.id, message));
+
+      // Enhance messages with replied-to content
+      const enhancedMessages = messagesArray.map((message) => {
+        if (message.type === "replay" && message.repliedToId) {
+          const repliedToMessage = messageMap.get(message.repliedToId);
+          return {
+            ...message,
+            repliedTo: repliedToMessage || {
+              payload: "Original message not found",
+            },
+          };
+        }
+        return message;
+      });
+
+      setMessages(enhancedMessages);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -139,12 +157,12 @@ export default function ChatConversation({ conversationData }) {
             );
           })}
         <div ref={messagesEndRef} />
-      </Box>
-      {/* <ChatInput
+      </Box>{" "}
+      <ChatInput
         onSendMessage={handleSendMessage}
         replyingTo={replyingTo}
         onCancelReply={handleCancelReply}
-      /> */}
+      />
     </>
   );
 }

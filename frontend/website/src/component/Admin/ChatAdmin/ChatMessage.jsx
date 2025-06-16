@@ -18,8 +18,8 @@ const ChatMessage = ({
         marginBottom: 1,
       }}
     >
-      {/* Replied message if exists */}
-      {type === "replay" && (
+      {/* Replied message if exists */}{" "}
+      {type === "replay" && repliedMessage && (
         <Box
           sx={{
             backgroundColor: "rgba(0, 0, 0, 0.04)",
@@ -28,12 +28,31 @@ const ChatMessage = ({
             marginBottom: 1,
             fontSize: "0.875rem",
             color: "text.secondary",
+            borderLeft: "3px solid",
+            borderColor: sent ? "#6366f1" : "grey.400",
           }}
         >
-          <Typography variant="body2">{repliedMessage}</Typography>
+          <Typography
+            variant="caption"
+            sx={{ color: "text.secondary", display: "block", mb: 0.5 }}
+          >
+            Reply to
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              whiteSpace: "pre-wrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+            }}
+          >
+            {repliedMessage}
+          </Typography>
         </Box>
       )}
-
       {/* Main message bubble */}
       <Box
         sx={{
