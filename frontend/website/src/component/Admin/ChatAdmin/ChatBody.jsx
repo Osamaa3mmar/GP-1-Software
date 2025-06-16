@@ -40,7 +40,6 @@ export default function ChatBody() {
           borderColor: "divider",
         }}
       >
-        <ChatInput conversationId={selectedConversation?.id} />
       </Box>
     </Box>
   );

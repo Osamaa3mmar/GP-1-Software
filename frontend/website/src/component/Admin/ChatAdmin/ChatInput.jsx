@@ -7,7 +7,6 @@ import {
   useTheme,
 } from "@mui/material";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import EmojiEmotionsOutlinedIcon from "@mui/icons-material/EmojiEmotionsOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
@@ -89,7 +88,6 @@ export default function ChatInput({
         >
           <EmojiEmotionsOutlinedIcon />
         </IconButton>
-
         <InputBase
           sx={{
             ml: 1,
@@ -101,19 +99,7 @@ export default function ChatInput({
           placeholder="Type a message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-        />
-
-        <IconButton
-          size="small"
-          sx={{
-            mx: 1,
-            color: theme.palette.text.secondary,
-            "&:hover": { color: "#6366f1" },
-          }}
-        >
-          <AttachFileIcon />
-        </IconButton>
-
+        />{" "}
         <IconButton
           type="submit"
           sx={{
