@@ -245,7 +245,14 @@ export default function App() {
         { path: "instructors", element: <InstructorsAdmin /> },
         { path: "students", element: <StudentsAdmin /> },
         // { path: "reports", element: <ReportsAdmin /> },
-        { path: "chat", element: <ChatAdmin type={"org"} /> },
+        { path: "chat", element: 
+          <UserContextProvider>
+            <ChatContextProvider>
+              <ChatAdmin type={"org"} /> 
+            </ChatContextProvider>
+          </UserContextProvider>
+          
+      },
         { path: "notifications", element: <Notifications type={"org"}/> },
       ],
     },{
