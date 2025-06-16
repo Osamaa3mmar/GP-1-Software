@@ -18,6 +18,7 @@ import RealProfile from "./pages/Profile/RealProfile";
 import CoursesPage from "./pages/Courses/CoursesPage";
 import LoginCheck from "./component/protected_route/LoginCheck";
 import UserContextProvider from "./Context/userContext";
+import ChatContextProvider from "./Context/ChatContext";
 import DashboardLayout from "./layouts/DashboardLayout/DashboardLayout";
 import HomeAdmin from "./pages/AdminPages/HomeAdmin";
 import EnrollmentsAdmin from "./pages/AdminPages/EnrollmentsAdmin";
@@ -213,7 +214,9 @@ export default function App() {
           path: "chat",
           element: 
           <UserContextProvider>
-            <ChatAdmin type={"user"} />
+            <ChatContextProvider>
+              <ChatAdmin type={"user"} />
+            </ChatContextProvider>
           </UserContextProvider>
           ,
         }

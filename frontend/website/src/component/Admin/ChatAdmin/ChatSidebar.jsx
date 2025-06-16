@@ -1,10 +1,14 @@
 import { Box, Paper, Divider, useTheme } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState, useContext } from "react";
 import ChatCard from "./ChatCard";
 import axios from "axios";
+import { ChatContext } from "../../../Context/ChatContext";
 
 export default function ChatSidebar() {
   const theme = useTheme();
+  const [conversations, setConversations] = useState([]);
+  const { selectedConversation, setSelectedConversation } =
+    useContext(ChatContext);
   const getData = async () => {
     try {
       const { data } = await axios.get(
@@ -16,6 +20,7 @@ export default function ChatSidebar() {
         }
       );
       console.log(data);
+      setConversations(data.convs || []);
     } catch (error) {
       console.log(error);
     }
@@ -23,70 +28,7 @@ export default function ChatSidebar() {
 
   useEffect(() => {
     getData();
-  });
-  // Mock data for demonstration - replace with actual data
-  const chatUsers = [
-    {
-      id: 1,
-      userName: "John Doe",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 2,
-      userName: "Jane Smith",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-    {
-      id: 3,
-      userName: "Mike Johnson",
-      userImage: "https://via.placeholder.com/40",
-    },
-  ];
+  }, []);
 
   return (
     <Paper
@@ -121,9 +63,14 @@ export default function ChatSidebar() {
           },
         }}
       >
-        {chatUsers.map((user) => (
-          <Box key={user.id}>
-            <ChatCard userImage={user.userImage} userName={user.userName} />
+        {conversations.map((conv) => (
+          <Box key={conv.id} onClick={() => setSelectedConversation(conv)}>
+            <ChatCard
+              name={conv?.organization?.name}
+              profile={conv?.organization?.profile}
+              lastMessage={conv?.messages}
+              isSelected={selectedConversation?.id === conv.id}
+            />
             <Divider />
           </Box>
         ))}

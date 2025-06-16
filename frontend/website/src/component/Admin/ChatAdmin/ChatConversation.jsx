@@ -1,58 +1,38 @@
 import { Box, useTheme } from "@mui/material";
-import { useContext, useRef, useEffect } from "react";
+import { useContext, useRef, useEffect, useState, useCallback } from "react";
 import { UserContext } from "../../../Context/UserContext";
 import ChatMessage from "./ChatMessage";
+import axios from "axios";
 
-export default function ChatConversation() {
+export default function ChatConversation({ conversationData }) {
   const { user } = useContext(UserContext);
   const theme = useTheme();
   const messagesEndRef = useRef(null);
-
-  // Mock messages for demonstration - replace with your actual messages
-  const messages = [
-    {
-      id: 1,
-      senderId: 8,
-      content: "Hi, how are you?",
-      timestamp: "10:00 AM",
-      senderName: "John Doe",
-    },
-    {
-      id: 2,
-      senderId: 9,
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:01 AM",
-      senderName: "Jane Smith",
-    },
-    {
-      id: 3,
-      senderId: 8,
-      content: "Great! I wanted to discuss the project updates.",
-      timestamp: "10:02 AM",
-      senderName: "John Doe",
-    },
-    {
-      id: 4,
-      senderId: 9,
-      content: "Hi, how are you?",
-      timestamp: "10:00 AM",
-      senderName: "John Doe",
-    },
-    {
-      id: 5,
-      senderId: 8,
-      content: "I'm good, thanks! How about you?",
-      timestamp: "10:01 AM",
-      senderName: "Jane Smith",
-    },
-    {
-      id: 6,
-      senderId: 9,
-      content: "Great! I wanted to discuss the project updates.",
-      timestamp: "10:02 AM",
-      senderName: "John Doe",
-    },
-  ];
+  const [messages, setMessages] = useState([]);
+  const fetchMessages = useCallback(async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:4545/conversitions/messages/user/${conversationData?.id}`,
+        { type: "user" },
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        }
+      );
+      console.log("Messages response:", response.data);
+      // Make sure we set an array to the state
+      const messagesArray = response.data?.messages || [];
+      setMessages(messagesArray);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+  }, [conversationData?.id]);
+  useEffect(() => {
+    if (conversationData?.id) {
+      fetchMessages();
+    }
+  }, [conversationData, fetchMessages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,12 +41,7 @@ export default function ChatConversation() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  console.log("user", user);
-  messages.map((message) => {
-    console.log(message.senderId === user?.id);
-  })
-  
-  
+
   return (
     <Box
       sx={{
@@ -92,22 +67,32 @@ export default function ChatConversation() {
         },
       }}
     >
-      {messages.map((message) => (
-        <Box
-          key={message.id}
-          sx={{
-            display: "flex",
-            justifyContent:
-              message.senderId === user?.id ? "flex-end" : "flex-start",
-            width: "100%",
-          }}
-        >
-          <ChatMessage
-            message={message}
-            isOwn={message.senderId !== user?.id}
-          />
-        </Box>
-      ))}
+      {" "}
+      {Array.isArray(messages) &&
+        messages.map((message, index) => (
+          <Box
+            key={message._id || index}
+            sx={{
+              display: "flex",
+              justifyContent:
+                message.senderId === user?._id ? "flex-end" : "flex-start",
+              width: "100%",
+            }}
+          >
+            <ChatMessage
+              text={message.payload}
+              sent={message.senderId === user?._id}
+              timestamp={
+                message.time
+                  ? new Date(message.time).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : ""
+              }
+            />
+          </Box>
+        ))}
       <div ref={messagesEndRef} />
     </Box>
   );

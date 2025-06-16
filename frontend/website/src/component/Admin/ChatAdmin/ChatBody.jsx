@@ -1,9 +1,12 @@
 import { Box } from "@mui/material";
+import { useContext } from "react";
 import ChatHeader from "./ChatHeader";
 import ChatConversation from "./ChatConversation";
 import ChatInput from "./ChatInput";
+import { ChatContext } from "../../../Context/ChatContext";
 
 export default function ChatBody() {
+  const { selectedConversation } = useContext(ChatContext);
   return (
     <Box
       sx={{
@@ -15,7 +18,8 @@ export default function ChatBody() {
         bgcolor: "#f8f9fa",
       }}
     >
-      <ChatHeader />
+      {" "}
+      <ChatHeader conversationData={selectedConversation} />
       <Box
         sx={{
           flex: 1,
@@ -25,7 +29,7 @@ export default function ChatBody() {
           flexDirection: "column",
         }}
       >
-        <ChatConversation />
+        <ChatConversation conversationData={selectedConversation} />
       </Box>
       <Box
         sx={{
@@ -36,7 +40,7 @@ export default function ChatBody() {
           borderColor: "divider",
         }}
       >
-        <ChatInput />
+        <ChatInput conversationId={selectedConversation?.id} />
       </Box>
     </Box>
   );

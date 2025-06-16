@@ -1,7 +1,13 @@
 import { Box, Typography, IconButton, useTheme } from "@mui/material";
 import ReplyIcon from "@mui/icons-material/Reply";
 
-const ChatMessage = ({ message, isOwn, type = "normal", repliedMessage }) => {
+const ChatMessage = ({
+  text,
+  sent,
+  timestamp,
+  type = "normal",
+  repliedMessage,
+}) => {
   const theme = useTheme();
 
   return (
@@ -32,9 +38,9 @@ const ChatMessage = ({ message, isOwn, type = "normal", repliedMessage }) => {
       {/* Main message bubble */}
       <Box
         sx={{
-          backgroundColor: isOwn ? "#6366f1" : "#f0f2f5",
-          color: isOwn ? "white" : "text.primary",
-          borderRadius: isOwn ? "20px 20px 4px 20px" : "20px 20px 20px 4px",
+          backgroundColor: sent ? "#6366f1" : "#f0f2f5",
+          color: sent ? "white" : "text.primary",
+          borderRadius: sent ? "20px 20px 4px 20px" : "20px 20px 20px 4px",
           padding: "12px 16px",
           position: "relative",
           boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
@@ -43,24 +49,10 @@ const ChatMessage = ({ message, isOwn, type = "normal", repliedMessage }) => {
           flexDirection: "column",
         }}
       >
-        {!isOwn && (
-          <Typography
-            variant="caption"
-            sx={{
-              color: "text.secondary",
-              display: "block",
-              marginBottom: 0.5,
-              fontWeight: 500,
-            }}
-          >
-            {message.senderName}
-          </Typography>
-        )}
-
+        {" "}
         <Typography variant="body1" sx={{ lineHeight: 1.4 }}>
-          {message.content}
+          {text}
         </Typography>
-
         <Box
           sx={{
             display: "flex",
@@ -72,20 +64,20 @@ const ChatMessage = ({ message, isOwn, type = "normal", repliedMessage }) => {
           <Typography
             variant="caption"
             sx={{
-              color: isOwn ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
+              color: sent ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
               fontSize: "0.75rem",
             }}
           >
-            {message.timestamp}
+            {timestamp}
           </Typography>
 
           <IconButton
             size="small"
             sx={{
-              color: isOwn ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
+              color: sent ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
               padding: "2px",
               "&:hover": {
-                backgroundColor: isOwn
+                backgroundColor: sent
                   ? "rgba(255, 255, 255, 0.1)"
                   : "rgba(0, 0, 0, 0.04)",
               },
