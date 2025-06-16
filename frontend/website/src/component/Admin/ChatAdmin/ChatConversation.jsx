@@ -21,8 +21,8 @@ export default function ChatConversation({ conversationData }) {
         }
       );
       console.log("Messages response:", response.data);
-      // Make sure we set an array to the state
-      const messagesArray = response.data?.messages || [];
+      // Extract messages array from the nested conv object
+      const messagesArray = response.data?.conv?.messages || [];
       setMessages(messagesArray);
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -67,7 +67,6 @@ export default function ChatConversation({ conversationData }) {
         },
       }}
     >
-      {" "}
       {Array.isArray(messages) &&
         messages.map((message, index) => (
           <Box
@@ -75,13 +74,15 @@ export default function ChatConversation({ conversationData }) {
             sx={{
               display: "flex",
               justifyContent:
-                message.senderId === user?._id ? "flex-end" : "flex-start",
+                Number(message.senderId) === Number(user?.id)
+                  ? "flex-start"
+                  : "flex-end",
               width: "100%",
             }}
           >
             <ChatMessage
               text={message.payload}
-              sent={message.senderId === user?._id}
+              sent={Number(message.senderId) === Number(user?.id)}
               timestamp={
                 message.time
                   ? new Date(message.time).toLocaleTimeString([], {

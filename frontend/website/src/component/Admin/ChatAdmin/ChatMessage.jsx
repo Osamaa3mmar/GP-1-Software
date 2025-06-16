@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton, useTheme } from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import ReplyIcon from "@mui/icons-material/Reply";
 
 const ChatMessage = ({
@@ -8,8 +8,6 @@ const ChatMessage = ({
   type = "normal",
   repliedMessage,
 }) => {
-  const theme = useTheme();
-
   return (
     <Box
       sx={{
@@ -40,7 +38,7 @@ const ChatMessage = ({
         sx={{
           backgroundColor: sent ? "#6366f1" : "#f0f2f5",
           color: sent ? "white" : "text.primary",
-          borderRadius: sent ? "20px 20px 4px 20px" : "20px 20px 20px 4px",
+          borderRadius: sent ? "20px 20px 20px 4px" : "20px 20px 4px 20px",
           padding: "12px 16px",
           position: "relative",
           boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
@@ -49,7 +47,6 @@ const ChatMessage = ({
           flexDirection: "column",
         }}
       >
-        {" "}
         <Typography variant="body1" sx={{ lineHeight: 1.4 }}>
           {text}
         </Typography>
