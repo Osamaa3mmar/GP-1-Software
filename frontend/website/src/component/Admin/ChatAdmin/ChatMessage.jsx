@@ -7,6 +7,7 @@ const ChatMessage = ({
   timestamp,
   type = "normal",
   repliedMessage,
+  onReply,
 }) => {
   return (
     <Box
@@ -79,7 +80,7 @@ const ChatMessage = ({
                   : "rgba(0, 0, 0, 0.04)",
               },
             }}
-            onClick={() => console.log("Reply clicked")}
+            onClick={() => onReply?.()}
           >
             <ReplyIcon fontSize="small" />
           </IconButton>

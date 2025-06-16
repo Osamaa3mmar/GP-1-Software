@@ -1,17 +1,30 @@
-import { Box, IconButton, InputBase, Paper, useTheme } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  InputBase,
+  Paper,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import EmojiEmotionsOutlinedIcon from "@mui/icons-material/EmojiEmotionsOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 
-export default function ChatInput({ onSendMessage }) {
+export default function ChatInput({
+  onSendMessage,
+  replyingTo,
+  onCancelReply,
+}) {
   const [message, setMessage] = useState("");
   const theme = useTheme();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim()) {
-      onSendMessage?.(message);
+      const messageType = replyingTo ? "replay" : "normal";
+      onSendMessage?.(message, messageType);
       setMessage("");
     }
   };
@@ -26,6 +39,27 @@ export default function ChatInput({ onSendMessage }) {
         borderTop: `1px solid ${theme.palette.divider}`,
       }}
     >
+      {replyingTo && (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            p: 1,
+            mb: 1,
+            borderRadius: 1,
+            bgcolor: "action.hover",
+          }}
+        >
+          <Typography variant="body2" color="text.secondary" sx={{ flex: 1 }}>
+            Replying to: {replyingTo.payload}
+          </Typography>
+          <IconButton size="small" onClick={onCancelReply}>
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      )}
+
       <Paper
         elevation={0}
         sx={{

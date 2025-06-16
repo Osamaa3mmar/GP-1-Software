@@ -1,14 +1,55 @@
-import { Box, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import { useContext, useRef, useEffect, useState, useCallback } from "react";
 import { UserContext } from "../../../Context/UserContext";
 import ChatMessage from "./ChatMessage";
+import ChatInput from "./ChatInput";
 import axios from "axios";
 
 export default function ChatConversation({ conversationData }) {
   const { user } = useContext(UserContext);
-  const theme = useTheme();
   const messagesEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
+  const [replyingTo, setReplyingTo] = useState(null);
+
+  const handleSendMessage = async (text, type = "normal") => {
+    try {
+      const payload = {
+        payload: text,
+        convId: conversationData.id,
+        type: type,
+      };
+
+      if (type === "replay" && replyingTo) {
+        payload.repliedToId = replyingTo.id;
+      }
+
+      const response = await axios.post(
+        "http://localhost:4545/messages/send",
+        payload,
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        }
+      );
+
+      if (response.data) {
+        fetchMessages();
+        setReplyingTo(null);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
+  const handleReply = (message) => {
+    setReplyingTo(message);
+  };
+
+  const handleCancelReply = () => {
+    setReplyingTo(null);
+  };
+
   const fetchMessages = useCallback(async () => {
     try {
       const response = await axios.post(
@@ -20,14 +61,13 @@ export default function ChatConversation({ conversationData }) {
           },
         }
       );
-      console.log("Messages response:", response.data);
-      // Extract messages array from the nested conv object
       const messagesArray = response.data?.conv?.messages || [];
       setMessages(messagesArray);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
   }, [conversationData?.id]);
+
   useEffect(() => {
     if (conversationData?.id) {
       fetchMessages();
@@ -43,58 +83,68 @@ export default function ChatConversation({ conversationData }) {
   }, [messages]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-        padding: 2,
-        maxHeight: "100%",
-        overflowY: "auto",
-        "&::-webkit-scrollbar": {
-          width: "8px",
-        },
-        "&::-webkit-scrollbar-track": {
-          background: "#f1f1f1",
-          borderRadius: "4px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          background: "#6366f140",
-          borderRadius: "4px",
-          "&:hover": {
-            background: "#6366f180",
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          padding: 2,
+          flex: 1,
+          overflowY: "auto",
+          "&::-webkit-scrollbar": {
+            width: "8px",
           },
-        },
-      }}
-    >
-      {Array.isArray(messages) &&
-        messages.map((message, index) => (
-          <Box
-            key={message._id || index}
-            sx={{
-              display: "flex",
-              justifyContent:
-                Number(message.senderId) === Number(user?.id)
-                  ? "flex-start"
-                  : "flex-end",
-              width: "100%",
-            }}
-          >
-            <ChatMessage
-              text={message.payload}
-              sent={Number(message.senderId) === Number(user?.id)}
-              timestamp={
-                message.time
-                  ? new Date(message.time).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  : ""
-              }
-            />
-          </Box>
-        ))}
-      <div ref={messagesEndRef} />
-    </Box>
+          "&::-webkit-scrollbar-track": {
+            background: "#f1f1f1",
+            borderRadius: "4px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#6366f140",
+            borderRadius: "4px",
+            "&:hover": {
+              background: "#6366f180",
+            },
+          },
+        }}
+      >
+        {Array.isArray(messages) &&
+          messages.map((message, index) => {
+            const isOwnMessage = Number(message.senderId) === Number(user?.id);
+            return (
+              <Box
+                key={message.id || index}
+                sx={{
+                  display: "flex",
+                  justifyContent: isOwnMessage ? "flex-start" : "flex-end",
+                  width: "100%",
+                }}
+              >
+                <ChatMessage
+                  text={message.payload}
+                  sent={isOwnMessage}
+                  timestamp={
+                    message.time
+                      ? new Date(message.time).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : ""
+                  }
+                  type={message.type}
+                  repliedMessage={message.repliedTo?.payload}
+                  onReply={() => handleReply(message)}
+                />
+              </Box>
+            );
+          })}
+        <div ref={messagesEndRef} />
+      </Box>
+      {/* <ChatInput
+        onSendMessage={handleSendMessage}
+        replyingTo={replyingTo}
+        onCancelReply={handleCancelReply}
+      /> */}
+    </>
   );
 }
