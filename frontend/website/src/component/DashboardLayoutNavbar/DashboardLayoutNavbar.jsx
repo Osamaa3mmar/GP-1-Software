@@ -20,6 +20,7 @@ import LocalLibraryRoundedIcon from "@mui/icons-material/LocalLibraryRounded";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import SchoolIcon from "@mui/icons-material/School";
 import FeedIcon from "@mui/icons-material/Feed";
+import ChatIcon from "@mui/icons-material/Chat";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -92,6 +93,11 @@ export default function DashboardLayoutNavbar() {
     //   icon: <FeedIcon />,
     //   path: "reports",
     // },
+    {
+      label: "Chat",
+      icon: <ChatIcon/>,
+      path: "chat",
+    },
     {
       label: "Notifications",
       icon: <NotificationsIcon />,

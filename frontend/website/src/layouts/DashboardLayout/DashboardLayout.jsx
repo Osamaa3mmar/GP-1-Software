@@ -19,7 +19,7 @@ export default function DashboardLayout() {
      <Box sx={{position:"sticky"}}>
       <DashboardLayoutNavbar/>
       </Box>
-      <Box sx={{width:"100%",paddingX:"2.5%"}}>
+      <Box sx={{width:"100%",paddingLeft:"2.5%"}}>
       <Outlet/>
       </Box>
       

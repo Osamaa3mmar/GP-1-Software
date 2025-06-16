@@ -117,8 +117,8 @@ export default function ContinueLearning() {
                 <Box sx={{ position: 'relative' }}>
                   <Box 
                     component="img" 
-                    src={course.thumbnail || 'https://via.placeholder.com/640x360?text=Course+Thumbnail'} 
-                    alt={course.title}
+                    src={course?.thumbnail || 'https://via.placeholder.com/640x360?text=Course+Thumbnail'} 
+                    alt={course?.title}
                     sx={{ 
                       width: '100%', 
                       height: 180, 
@@ -138,17 +138,17 @@ export default function ContinueLearning() {
                     }}
                   >
                     <Typography variant="caption" fontWeight={600} color="primary.main">
-                      {course.duration ? `${course.duration} weeks` : 'Self-paced'}
+                      {course?.duration ? `${course?.duration} weeks` : 'Self-paced'}
                     </Typography>
                   </Box>
                 </Box>
 
                 <Box sx={{ p: 3 }}>
                   <Typography variant="h6" fontWeight={600} gutterBottom>
-                    {course.title}
+                    {course?.title}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
-                    {course.teacher?.username || 'Instructor'}
+                    {course?.teacher?.username || 'Instructor'}
                   </Typography>
                   
                   <Box sx={{ mt: 2, mb: 1 }}>
@@ -179,7 +179,7 @@ export default function ContinueLearning() {
                     variant="contained" 
                     fullWidth
                     startIcon={<ArrowForwardIcon />}
-                    onClick={() => handleContinue(course.id)}
+                    onClick={() => handleContinue(course?.id)}
                     sx={{ 
                       borderRadius: 6,
                       py: 1.2,

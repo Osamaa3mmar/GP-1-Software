@@ -26,6 +26,7 @@ import InstructorsAdmin from "./pages/AdminPages/InstructorsAdmin";
 import StudentsAdmin from "./pages/AdminPages/StudentsAdmin";
 // import TransactionsAdmin from "./pages/AdminPages/TransactionsAdmin";
 import ReportsAdmin from "./pages/AdminPages/ReportsAdmin";
+import ChatAdmin from "./pages/AdminPages/ChatAdmin";
 import { createTheme, ThemeProvider } from "@mui/material";
 import CourseDetails from "./pages/Course/CourseDetails";
 import ClassRoomsUser from "./pages/UserClassRooms/ClassRoomsUser";
@@ -232,7 +233,8 @@ export default function App() {
         { path: "courses/:id", element: <CoursesAdminTemp /> },
         { path: "instructors", element: <InstructorsAdmin /> },
         { path: "students", element: <StudentsAdmin /> },
-        { path: "reports", element: <ReportsAdmin /> },
+        // { path: "reports", element: <ReportsAdmin /> },
+        { path: "chat", element: <ChatAdmin type={"org"} /> },
         { path: "notifications", element: <Notifications type={"org"}/> },
       ],
     },{
