@@ -9,7 +9,7 @@ export default function ChatSidebar() {
   const [conversations, setConversations] = useState([]);
   const { selectedConversation, setSelectedConversation } =
     useContext(ChatContext);
-    
+
   const getData = useCallback(async () => {
     try {
       const { data } = await axios.get(
@@ -22,7 +22,7 @@ export default function ChatSidebar() {
       );
       const conversationsData = data.convs || [];
       setConversations(conversationsData);
-      
+
       // Set the first conversation as default if there are conversations and none is selected
       if (conversationsData.length > 0 && !selectedConversation) {
         setSelectedConversation(conversationsData[0]);

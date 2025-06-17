@@ -1,5 +1,8 @@
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, TextField, Popover } from "@mui/material";
 import ReplyIcon from "@mui/icons-material/Reply";
+import EditIcon from "@mui/icons-material/Edit";
+import { useState } from "react";
+import axios from "axios";
 
 const ChatMessage = ({
   text,
@@ -8,7 +11,32 @@ const ChatMessage = ({
   type = "normal",
   repliedMessage,
   onReply,
+  messageId,
+  onMessageUpdated,
 }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [editedMessage, setEditedMessage] = useState(text);
+  const [isEditing, setIsEditing] = useState(false);
+  const handleEdit = async () => {
+    try {
+      if (editedMessage.trim() === "") return;
+
+      await axios.post(
+        `http://localhost:4545/messages/edit/${messageId}`,
+        { payload: editedMessage },
+        // {
+        //   headers: {
+        //     token: localStorage.getItem("token"),
+        //   },
+        // }
+      );
+      setIsEditing(false);
+      setAnchorEl(null);
+      onMessageUpdated?.(); // Refresh messages after successful edit
+    } catch (error) {
+      console.error("Error editing message:", error);
+    }
+  };
   return (
     <Box
       sx={{
@@ -86,25 +114,92 @@ const ChatMessage = ({
             }}
           >
             {timestamp}
-          </Typography>
-
-          <IconButton
-            size="small"
-            sx={{
-              color: sent ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
-              padding: "2px",
-              "&:hover": {
-                backgroundColor: sent
-                  ? "rgba(255, 255, 255, 0.1)"
-                  : "rgba(0, 0, 0, 0.04)",
-              },
-            }}
-            onClick={() => onReply?.()}
-          >
-            <ReplyIcon fontSize="small" />
-          </IconButton>
+          </Typography>{" "}
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <IconButton
+              size="small"
+              sx={{
+                color: sent ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
+                padding: "2px",
+                "&:hover": {
+                  backgroundColor: sent
+                    ? "rgba(255, 255, 255, 0.1)"
+                    : "rgba(0, 0, 0, 0.04)",
+                },
+              }}
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              size="small"
+              sx={{
+                color: sent ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
+                padding: "2px",
+                "&:hover": {
+                  backgroundColor: sent
+                    ? "rgba(255, 255, 255, 0.1)"
+                    : "rgba(0, 0, 0, 0.04)",
+                },
+              }}
+              onClick={() => onReply?.()}
+            >
+              <ReplyIcon fontSize="small" />
+            </IconButton>
+          </Box>
         </Box>
       </Box>
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => {
+          setAnchorEl(null);
+          setEditedMessage(text);
+        }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+            minWidth: 300,
+          }}
+        >
+          <TextField
+            fullWidth
+            multiline
+            maxRows={4}
+            value={editedMessage}
+            onChange={(e) => setEditedMessage(e.target.value)}
+            variant="outlined"
+            size="small"
+          />
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+            <IconButton
+              size="small"
+              onClick={handleEdit}
+              sx={{
+                backgroundColor: "#6366f1",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#4f46e5",
+                },
+              }}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        </Box>
+      </Popover>
     </Box>
   );
 };
