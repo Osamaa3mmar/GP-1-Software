@@ -51,6 +51,8 @@ import Checkout from "./pages/Cart/Checkout";
 import QuizPreview from "./pages/QuizPreview/QuizPreview";
 import { CourseProvider } from './Context/CourseContext';
 import OsamaCartContextProvider from "./Context/CartOsama";
+import { MessageCountProvider } from "./Context/MessageCountContext";
+
 export default function App() {
  
 
@@ -133,7 +135,9 @@ export default function App() {
           <UserContextProvider>
             <UserNotificationsContextProvider>
               <OsamaCartContextProvider>
-            <MainLayout />
+                <MessageCountProvider type={"user"}>
+                  <MainLayout />
+                </MessageCountProvider>
               </OsamaCartContextProvider>
             </UserNotificationsContextProvider>
           </UserContextProvider>
@@ -215,7 +219,9 @@ export default function App() {
           element: 
           <UserContextProvider>
             <ChatContextProvider>
-              <ChatAdmin type={"user"} />
+              <MessageCountProvider type={"user"}>
+                <ChatAdmin type={"user"} />
+              </MessageCountProvider>
             </ChatContextProvider>
           </UserContextProvider>
           ,
@@ -228,7 +234,9 @@ export default function App() {
         <LoginCheck>
          <UserContextProvider>
          <OrgNotificationsContextProvider>
+          <MessageCountProvider type={"org"}>
            <DashboardLayout/>
+           </MessageCountProvider>
            </OrgNotificationsContextProvider>
            </UserContextProvider>
            </LoginCheck>
@@ -248,7 +256,9 @@ export default function App() {
         { path: "chat", element: 
           <UserContextProvider>
             <ChatContextProvider>
-              <ChatAdmin type={"org"} /> 
+              <MessageCountProvider type={"org"}>
+                <ChatAdmin type={"org"} />
+              </MessageCountProvider>
             </ChatContextProvider>
           </UserContextProvider>
           

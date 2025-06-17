@@ -1,6 +1,9 @@
 import { Avatar, Box, Typography } from "@mui/material";
+import { UserContext } from "../../../Context/UserContext";
+import { useContext } from "react";
 
 const ChatCard = ({ profile, name, lastMessage, isSelected }) => {
+  const { user } = useContext(UserContext);
   return (
     <Box
       sx={{
@@ -36,7 +39,8 @@ const ChatCard = ({ profile, name, lastMessage, isSelected }) => {
           </Typography>
           {Array.isArray(lastMessage) &&
             lastMessage.length > 0 &&
-            !lastMessage[0].isRead && (
+            !lastMessage[0].isRead && 
+            lastMessage[0].senderId != user?.id &&(
               <Box
                 sx={{
                   width: 8,
@@ -60,7 +64,9 @@ const ChatCard = ({ profile, name, lastMessage, isSelected }) => {
               whiteSpace: "nowrap",
               fontSize: "0.875rem",
               flex: 1,
-              fontWeight: lastMessage?.[0]?.isRead ? 400 : 600,
+              fontWeight: lastMessage.length > 0 &&
+            !lastMessage[0].isRead && 
+            lastMessage[0].senderId != user?.id ? 600 : 400,
             }}
           >
             {Array.isArray(lastMessage) && lastMessage.length > 0

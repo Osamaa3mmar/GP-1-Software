@@ -3,12 +3,16 @@ import { useEffect, useState, useContext, useCallback } from "react";
 import ChatCard from "./ChatCard";
 import axios from "axios";
 import { ChatContext } from "../../../Context/ChatContext";
+import { MessageCountContext } from "../../../Context/MessageCountContext";
+import { UserContext } from "../../../Context/UserContext";
 
 export default function ChatSidebar({ type }) {
   const theme = useTheme();
   const [conversations, setConversations] = useState([]);
   const { selectedConversation, setSelectedConversation } =
     useContext(ChatContext);
+  const { messageCount, setCount } = useContext(MessageCountContext);
+  const { user } = useContext(UserContext);
   const getData = useCallback(async () => {
     try {
       const endpoint =
@@ -71,8 +75,23 @@ export default function ChatSidebar({ type }) {
           },
         }}
       >
+        {" "}
         {conversations.map((conv) => (
-          <Box key={conv.id} onClick={() => setSelectedConversation(conv)}>
+          <Box
+            key={conv.id}
+            onClick={() => {
+              // Check if this conversation has unread messages
+              if (
+                conv.messages?.length > 0 &&
+                !conv.messages[0].isRead &&
+                conv.messages[0].senderId != user.id
+              ) {
+                // Decrease the unread count by 1
+                setCount((prevCount) =>  (prevCount - 1));
+              }
+              setSelectedConversation(conv);
+            }}
+          >
             <ChatCard
               name={
                 type === "org" ? conv?.user?.username : conv?.organization?.name

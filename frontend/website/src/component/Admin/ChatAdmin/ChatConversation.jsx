@@ -4,13 +4,14 @@ import { UserContext } from "../../../Context/UserContext";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import axios from "axios";
+// import { MessageCountContext } from "../../../Context/MessageCountContext";
 
 export default function ChatConversation({ conversationData }) {
   const { user } = useContext(UserContext);
   const messagesEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [replyingTo, setReplyingTo] = useState(null);
-
+  // const { messageCount, setCount } = useContext(MessageCountContext);
   const handleSendMessage = async (text, type = "normal") => {
     try {
       const payload = {
