@@ -3,7 +3,7 @@ import ReplyIcon from "@mui/icons-material/Reply";
 import EditIcon from "@mui/icons-material/Edit";
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 const ChatMessage = ({
@@ -19,6 +19,52 @@ const ChatMessage = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [editedMessage, setEditedMessage] = useState(text);
+  const [localReaction, setLocalReaction] = useState(reaction);
+
+  // Sync local reaction with prop updates
+  useEffect(() => {
+    setLocalReaction(reaction);
+  }, [reaction]);
+
+  const handleReaction = async (reactionType) => {
+    try {
+      // Determine the new reaction value
+      let newReactionValue;
+      if (localReaction === reactionType) {
+        // Clicking same reaction again - remove it
+        newReactionValue = null;
+      } else {
+        // New reaction
+        newReactionValue = reactionType;
+      }
+
+      // Optimistic UI update
+      setLocalReaction(newReactionValue);
+
+      // Prepare payload
+      const payload = newReactionValue 
+        ? { reaction: { name: newReactionValue } } 
+        : { reaction: {} };
+
+      // Send reaction to server
+      await axios.post(
+        `http://localhost:4545/messages/react/${messageId}`,
+        payload,
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        }
+      );
+
+      // Refresh messages to get updated data
+      onMessageUpdated?.();
+    } catch (error) {
+      console.error("Error reacting to message:", error);
+      // Revert on error
+      setLocalReaction(reaction);
+    }
+  };
 
   const handleEdit = async () => {
     try {
@@ -146,8 +192,36 @@ const ChatMessage = ({
           <ReplyIcon fontSize="small" />
         </IconButton>
 
-        {/* Reaction indicator */}
-        {reaction && (
+        {/* Reaction buttons - only for received messages */}
+        {!sent && (
+          <>
+            <IconButton
+              size="small"
+              sx={{
+                padding: "4px",
+                color: localReaction === "like" ? "#2196f3" : "text.secondary",
+                "&:hover": { backgroundColor: "action.hover" },
+              }}
+              onClick={() => handleReaction("like")}
+            >
+              <ThumbUpAltIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              size="small"
+              sx={{
+                padding: "4px",
+                color: localReaction === "disLike" ? "#f44336" : "text.secondary",
+                "&:hover": { backgroundColor: "action.hover" },
+              }}
+              onClick={() => handleReaction("disLike")}
+            >
+              <ThumbDownAltIcon fontSize="small" />
+            </IconButton>
+          </>
+        )}
+
+        {/* Reaction indicator for sent messages */}
+        {sent && localReaction && (
           <Box
             sx={{
               display: 'flex',
@@ -157,12 +231,12 @@ const ChatMessage = ({
               padding: '4px 8px',
             }}
           >
-            {reaction === 'like' ? (
+            {localReaction === 'like' ? (
               <ThumbUpAltIcon sx={{ 
                 fontSize: 18,
                 color: '#2196f3'
               }} />
-            ) : reaction === 'disLike' ? (
+            ) : localReaction === 'disLike' ? (
               <ThumbDownAltIcon sx={{ 
                 fontSize: 18,
                 color: '#f44336'
