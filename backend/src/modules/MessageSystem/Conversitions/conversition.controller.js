@@ -127,17 +127,16 @@ export const getConvMessages=async (req,res)=>{
 export const getOrgConvs=async(req,res)=>{
   try{
     const {user}=req.body;
-    
-    const convs=await ConversitionModel.findAll({
+      const convs=await ConversitionModel.findAll({
         where:{
             organizationId:user.orgId
         },
         attributes:["id","type"],
         include:[
     {
-        model:organizationModel,
-        as:"organization",
-        attributes:["name","profile"],
+        model:userModel,
+        as:"user",
+        attributes:["username","profilePic"],
         
     },
     {
