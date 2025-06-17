@@ -97,10 +97,13 @@ export const removeItem=async(req,res)=>{
     if(!cart){
       return res.status(404).json({ error: "Cart not found" });
     }
+    console.log(cart.id)
     const cartItem=await cartCourseModel.findOne({
       where:{courseId,cartId:cart.id}
     })
+    console.log(cartItem);
     if(!cartItem){
+      console.log("object")
       return res.status(404).json({ error: "Item not found in cart" });
     }
     cart.totalBeforeDiscount -= cartItem.priceAtAddTime;
