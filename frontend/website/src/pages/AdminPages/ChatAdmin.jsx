@@ -7,14 +7,14 @@ export default function ChatAdmin({type}) {
     <Stack
       direction={"row"}
       sx={{
-        height: type === "user" ? "calc(100vh - 74.4px)" : "100vh",
+        height: type === "org" ? "100vh" : "calc(100vh - 74.4px)",
         position: "relative",
         overflow: "hidden",
         bgcolor: "#f8f9fa",
       }}
     >
-      <ChatBody />
-      <ChatSidebar />
+      <ChatBody type={type}/>
+      <ChatSidebar type={type}/>
     </Stack>
   );
 }

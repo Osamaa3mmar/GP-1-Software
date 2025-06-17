@@ -5,7 +5,7 @@ import ChatConversation from "./ChatConversation";
 import ChatInput from "./ChatInput";
 import { ChatContext } from "../../../Context/ChatContext";
 
-export default function ChatBody() {
+export default function ChatBody({type}) {
   const { selectedConversation } = useContext(ChatContext);
   return (
     <Box
@@ -19,7 +19,7 @@ export default function ChatBody() {
       }}
     >
       {" "}
-      <ChatHeader conversationData={selectedConversation} />
+      <ChatHeader conversationData={selectedConversation} type={type}/>
       <Box
         sx={{
           flex: 1,
