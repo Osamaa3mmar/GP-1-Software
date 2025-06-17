@@ -138,8 +138,7 @@ export default function ChatConversation({ conversationData }) {
                   width: "100%",
                 }}
               >
-                {" "}
-                <ChatMessage
+                {" "}                <ChatMessage
                   messageId={message.id}
                   text={message.payload}
                   sent={isOwnMessage}
@@ -155,6 +154,7 @@ export default function ChatConversation({ conversationData }) {
                   repliedMessage={message.repliedTo?.payload}
                   onReply={() => handleReply(message)}
                   onMessageUpdated={fetchMessages}
+                  reaction={message.reaction?.name}
                 />
               </Box>
             );

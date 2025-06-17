@@ -1,6 +1,8 @@
 import { Box, Typography, IconButton, TextField, Popover } from "@mui/material";
 import ReplyIcon from "@mui/icons-material/Reply";
 import EditIcon from "@mui/icons-material/Edit";
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import { useState } from "react";
 import axios from "axios";
 
@@ -13,10 +15,11 @@ const ChatMessage = ({
   onReply,
   messageId,
   onMessageUpdated,
+  reaction,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [editedMessage, setEditedMessage] = useState(text);
-  const [isEditing, setIsEditing] = useState(false);
+
   const handleEdit = async () => {
     try {
       if (editedMessage.trim() === "") return;
@@ -24,19 +27,14 @@ const ChatMessage = ({
       await axios.post(
         `http://localhost:4545/messages/edit/${messageId}`,
         { payload: editedMessage },
-        // {
-        //   headers: {
-        //     token: localStorage.getItem("token"),
-        //   },
-        // }
       );
-      setIsEditing(false);
       setAnchorEl(null);
-      onMessageUpdated?.(); // Refresh messages after successful edit
+      onMessageUpdated?.();
     } catch (error) {
       console.error("Error editing message:", error);
     }
   };
+
   return (
     <Box
       sx={{
@@ -81,7 +79,7 @@ const ChatMessage = ({
           </Typography>
         </Box>
       )}
-      {/* Main message bubble */}
+      {/* Main message container */}
       <Box
         sx={{
           backgroundColor: sent ? "#6366f1" : "#f0f2f5",
@@ -91,64 +89,90 @@ const ChatMessage = ({
           position: "relative",
           boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
           wordBreak: "break-word",
-          display: "flex",
-          flexDirection: "column",
         }}
       >
-        <Typography variant="body1" sx={{ lineHeight: 1.4 }}>
+        {/* Message content */}
+        <Typography variant="body1" sx={{ lineHeight: 1.4, mb: 1 }}>
           {text}
         </Typography>
-        <Box
+
+        {/* Timestamp */}
+        <Typography
+          variant="caption"
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginTop: 0.5,
+            color: sent ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
+            fontSize: "0.75rem",
           }}
         >
-          <Typography
-            variant="caption"
+          {timestamp}
+        </Typography>
+      </Box>
+
+      {/* Controls and reactions below message */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          mt: 0.5,
+          pl: 1,
+        }}
+      >
+        {/* Edit button (only for sent messages) */}
+        {sent && (
+          <IconButton
+            size="small"
             sx={{
-              color: sent ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
-              fontSize: "0.75rem",
+              padding: "4px",
+              color: "text.secondary",
+              "&:hover": { backgroundColor: "action.hover" },
+            }}
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+        )}
+        
+        {/* Reply button */}
+        <IconButton
+          size="small"
+          sx={{
+            padding: "4px",
+            color: "text.secondary",
+            "&:hover": { backgroundColor: "action.hover" },
+          }}
+          onClick={() => onReply?.()}
+        >
+          <ReplyIcon fontSize="small" />
+        </IconButton>
+
+        {/* Reaction indicator */}
+        {reaction && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              borderRadius: '12px',
+              padding: '4px 8px',
             }}
           >
-            {timestamp}
-          </Typography>{" "}
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <IconButton
-              size="small"
-              sx={{
-                color: sent ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
-                padding: "2px",
-                "&:hover": {
-                  backgroundColor: sent
-                    ? "rgba(255, 255, 255, 0.1)"
-                    : "rgba(0, 0, 0, 0.04)",
-                },
-              }}
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-            >
-              <EditIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
-              sx={{
-                color: sent ? "rgba(255, 255, 255, 0.8)" : "text.secondary",
-                padding: "2px",
-                "&:hover": {
-                  backgroundColor: sent
-                    ? "rgba(255, 255, 255, 0.1)"
-                    : "rgba(0, 0, 0, 0.04)",
-                },
-              }}
-              onClick={() => onReply?.()}
-            >
-              <ReplyIcon fontSize="small" />
-            </IconButton>
+            {reaction === 'like' ? (
+              <ThumbUpAltIcon sx={{ 
+                fontSize: 18,
+                color: '#2196f3'
+              }} />
+            ) : reaction === 'disLike' ? (
+              <ThumbDownAltIcon sx={{ 
+                fontSize: 18,
+                color: '#f44336'
+              }} />
+            ) : null}
           </Box>
-        </Box>
+        )}
       </Box>
+
+      {/* Edit popover */}
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
