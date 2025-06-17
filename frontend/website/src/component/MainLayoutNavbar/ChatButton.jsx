@@ -20,7 +20,7 @@ export default function ChatButton() {
             },
           }}
         >
-          <ChatIcon sx={{ fontSize: "50px" }} />
+          <ChatIcon sx={{ fontSize: "30px" }} />
         </IconButton>
       </Tooltip>
     </div>
