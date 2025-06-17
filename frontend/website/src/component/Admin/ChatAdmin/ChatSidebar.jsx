@@ -4,23 +4,24 @@ import ChatCard from "./ChatCard";
 import axios from "axios";
 import { ChatContext } from "../../../Context/ChatContext";
 
-export default function ChatSidebar({type}) {
+export default function ChatSidebar({ type }) {
   const theme = useTheme();
   const [conversations, setConversations] = useState([]);
   const { selectedConversation, setSelectedConversation } =
     useContext(ChatContext);
   const getData = useCallback(async () => {
     try {
-      const endpoint = type === "org" 
-        ? "http://localhost:4545/conversitions/getconversitions/org"
-        : "http://localhost:4545/conversitions/getconversitions/user";
+      const endpoint =
+        type === "org"
+          ? "http://localhost:4545/conversitions/getconversitions/org"
+          : "http://localhost:4545/conversitions/getconversitions/user";
 
       const { data } = await axios.get(endpoint, {
         headers: {
           token: localStorage.getItem("token"),
         },
       });
-      
+
       const conversationsData = data.convs || [];
       setConversations(conversationsData);
 
@@ -70,10 +71,17 @@ export default function ChatSidebar({type}) {
           },
         }}
       >
-        {conversations.map((conv) => (          <Box key={conv.id} onClick={() => setSelectedConversation(conv)}>
+        {conversations.map((conv) => (
+          <Box key={conv.id} onClick={() => setSelectedConversation(conv)}>
             <ChatCard
-              name={type === "org" ? conv?.user?.username : conv?.organization?.name}
-              profile={type === "org" ? conv?.user?.profilePic : conv?.organization?.profile}
+              name={
+                type === "org" ? conv?.user?.username : conv?.organization?.name
+              }
+              profile={
+                type === "org"
+                  ? conv?.user?.profilePic
+                  : conv?.organization?.profile
+              }
               lastMessage={conv?.messages}
               isSelected={selectedConversation?.id === conv.id}
             />
