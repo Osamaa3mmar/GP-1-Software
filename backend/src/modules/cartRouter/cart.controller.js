@@ -6,6 +6,9 @@ import { userModel } from "../../../DB/models/UserModel/user.model.js";
 import { purchaseModel } from "../../../DB/models/purchase/purchase.js";
 import { enrollmentModel } from "../../../DB/models/Enrollment/Enrollments.js";
 import { makeNotification } from "../Notification/Notification.controller.js";
+import Stripe from "stripe";
+import { ConversitionModel } from "../../../DB/models/MessageSystem/Conversition.js";
+const stripe = new Stripe("sk_test_51RaggCRjHx0ojiIow8YwXmi3YiMoFLqZmIyMYNl4MtGSdfWFS8RFo1QVgbZYOYzpk1sImeF2hotCXg0kN2ya4Q3Z00Jn5XaFMo"); // required
 
 export const getCart = async (req, res) => {
   try {
@@ -94,10 +97,13 @@ export const removeItem=async(req,res)=>{
     if(!cart){
       return res.status(404).json({ error: "Cart not found" });
     }
+    console.log(cart.id)
     const cartItem=await cartCourseModel.findOne({
       where:{courseId,cartId:cart.id}
     })
+    console.log(cartItem);
     if(!cartItem){
+      console.log("object")
       return res.status(404).json({ error: "Item not found in cart" });
     }
     cart.totalBeforeDiscount -= cartItem.priceAtAddTime;
@@ -129,7 +135,7 @@ export const purchaseCourses = async (req, res) => {
         as: "course",
         attributes: [
           "id", "title", "price", "thumbnail", "tags",
-          "numberRating", "rating", "enrollmentNumber", "teacherId"
+          "numberRating", "rating", "enrollmentNumber", "teacherId","orgId"
         ],
         include: [{
           model: userModel,
@@ -153,13 +159,20 @@ export const purchaseCourses = async (req, res) => {
     for (const item of courses) {
       const courseId = item.courseId;
       const isCourse = item.course;
+      console.log(item.course.orgId,'here');
       const course=await courseModel.findByPk(courseId);      
       await enrollmentModel.create({
         studentId: user.id,
         courseId,
         progress: 0,
       });
-
+      await ConversitionModel.findOrCreate({
+        where:{
+          userId:user.id,
+          organizationId:isCourse.orgId,
+          type:"s-o"
+        }
+      })
       await courseModel.increment(
         { enrollmentNumber: 1 },
         { where: { id: courseId } }
@@ -175,11 +188,9 @@ export const purchaseCourses = async (req, res) => {
       makeNotification("Enroll", "user", message, actionUrl, null, false, user.id);
     }
 
-    // Clear cart
     await cartCourseModel.destroy({ where: { cartId: cart.id } });
     await cart.destroy();
 
-    // Create a new empty cart
     const newCart = await cartModel.create({
       userId: user.id,
       totalBeforeDiscount: 0,
@@ -191,6 +202,7 @@ export const purchaseCourses = async (req, res) => {
       cart,
       purchase
     });
+   
 
   } catch (error) {
     console.error(error);
@@ -223,3 +235,34 @@ export const checkEnrollment = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+
+
+
+export const payWithStripe=async(req,res)=>{
+  try{
+    const {products}=req.body;
+    const lineItems=products.map((product)=>({
+      price_data:{
+        currency:"usd",
+        product_data:{
+          name:product.course.title,
+          images:[product.course.thumbnail]
+        },
+        unit_amount:product.course.price*100,
+      },
+      quantity:1,
+    }))
+    const session=await stripe.checkout.sessions.create({
+       payment_method_types:["card"],
+    line_items:lineItems,
+    mode:"payment",
+    success_url:"http://localhost:5173/main/payment/status/success",
+    cancel_url:"http://localhost:5173/main/payment/status/failed",
+    })
+      return res.status(200).json({message:"success",id:session.id});
+  }catch(error){
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}

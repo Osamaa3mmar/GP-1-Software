@@ -52,7 +52,8 @@ import QuizPreview from "./pages/QuizPreview/QuizPreview";
 import { CourseProvider } from './Context/CourseContext';
 import OsamaCartContextProvider from "./Context/CartOsama";
 import { MessageCountProvider } from "./Context/MessageCountContext";
-
+import { SuccessPage } from "./pages/paymentStatus/SuccessPage";
+import { FailedPage } from "./pages/paymentStatus/FailedPage";
 export default function App() {
  
 
@@ -147,6 +148,12 @@ export default function App() {
         {
           index: true,
           element: <MainPage />,
+        },{
+          path:"payment/status/success",
+          element:<SuccessPage/>
+        },{
+          path:"payment/status/failed",
+          element:<FailedPage/>
         },
         {
           path: "main",

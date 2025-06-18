@@ -11,6 +11,8 @@ import {
   Divider,
   Rating,
 } from "@mui/material";
+import {loadStripe} from '@stripe/stripe-js';
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import CourseCardTags  from "../Courses/CourseContent/CourseCardTags";
 import { useCart } from "../../contexts/CartContext";
@@ -59,24 +61,38 @@ const CartItems = () => {
     }
   }
   const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
   const purchase = async () => {
+    // try{
+    //   setLoading(true);
+    //   await delay(2000);
+    //   const {data}=await axios.get("http://localhost:4545/cart/purchase",{
+    //     headers:{
+    //       token: localStorage.getItem("token"),
+    //     }
+    //   })
+    //   getCount();
+    //   console.log(data);
+    //   toast.success("Purchase successful!");
+    //   setCartCount(0);
+    //   setCart(null);
+    //   navigate("");
+    // }catch(error){
+    //   console.error("Error during purchase:", error);
+    // }finally{
+    //   setLoading(false);
+    // }
+
     try{
-      setLoading(true);
-      await delay(2000);
-      const {data}=await axios.get("http://localhost:4545/cart/purchase",{
-        headers:{
-          token: localStorage.getItem("token"),
-        }
+      const stripe=await loadStripe("pk_test_51RaggCRjHx0ojiIowSdep7iwC3KkArDgYqq6XhVY1uqSEGisoPo0LDKoDmc1wAL4KDIw7kKnXtt421li4XtSf2k200wENZTSAQ");
+      const {data}=await axios.post("http://localhost:4545/cart/stripepay",{
+        products:cart.courses
       })
-      getCount();
       console.log(data);
-      toast.success("Purchase successful!");
-      setCartCount(0);
-      setCart(null);
-      navigate("");
+      stripe.redirectToCheckout({
+        sessionId:data.id
+      })
     }catch(error){
-      console.error("Error during purchase:", error);
+      console.log(error)
     }finally{
       setLoading(false);
     }
